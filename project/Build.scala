@@ -24,18 +24,18 @@ object MyFleetGirlsBuild extends Build {
 
   lazy val rootSettings = settings ++ disableAggregates ++ Seq(
     commands ++= Seq(start),
-    proxy <<= run in (client, Compile),
+    proxy := (run in (client, Compile)).evaluated,
     assembly := {
       (assembly in update).value
       (assembly in client).value
     },
-    run <<= run in (server, Compile),
-    stage <<= stage in server,
-    dist <<= dist in server,
-    scalikejdbcGen <<= scalikejdbcGen in (server, Compile),
-    prof <<= run in (profiler, Compile),
-    runTester <<= run in (tester, Compile),
-    runTesterEarth <<= runTester.toTask(" https://myfleet.moe")
+    run := (run in (server, Compile)).evaluated,
+    stage := (stage in server).value,
+    dist := (dist in server).value,
+    scalikejdbcGen := (scalikejdbcGen in (server, Compile)).evaluated,
+    prof := (run in (profiler, Compile)).evaluated,
+    runTester := (run in (tester, Compile)).evaluated,
+    runTesterEarth := runTester.toTask(" https://myfleet.moe").value
   )
 
   lazy val disableAggregates = Seq(
@@ -49,8 +49,8 @@ object MyFleetGirlsBuild extends Build {
     .enablePlugins(sbt.PlayScala)
     .settings(
       scalaVersion := scalaVer,
-      downLib <<= downLibTask,
-      unmanagedJars in Compile <<= (unmanagedJars in Compile).dependsOn(downLib)
+      downLib := downLibTask.value,
+      unmanagedJars in Compile := (unmanagedJars in Compile).dependsOn(downLib).value
     )
     .enablePlugins(SbtWeb, BuildInfoPlugin)
 
