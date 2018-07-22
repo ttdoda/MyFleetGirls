@@ -1,18 +1,18 @@
 
 name := "MyFleetGirlsServer"
 
-val scalikeJdbcVer = "2.4.1"
+val scalikeJdbcVer = "3.1.0"
 
 libraryDependencies ++= Seq(
   "org.scalikejdbc" %% "scalikejdbc" % scalikeJdbcVer,
   "org.scalikejdbc" %% "scalikejdbc-config" % scalikeJdbcVer,
-  "org.scalikejdbc" %% "scalikejdbc-play-initializer" % "2.5.1",
+  "org.scalikejdbc" %% "scalikejdbc-play-initializer" % "2.5.3",
   "org.scalikejdbc" %% "scalikejdbc-syntax-support-macro" % scalikeJdbcVer,
   "com.github.nscala-time" %% "nscala-time" % "2.12.0",
   "mysql" % "mysql-connector-java" % "5.1.39",
   "org.scalatest" %% "scalatest" % "2.2.6" % "test",
   "org.apache.abdera" % "abdera-parser" % "1.1.3",
-  "net.sf.ehcache" % "ehcache" % "2.10.2",
+  "net.sf.ehcache" % "ehcache" % "2.10.5",
   "org.flywaydb" %% "flyway-play" % "3.0.0"
 )
 
@@ -27,8 +27,6 @@ LessKeys.compress := true
 buildInfoKeys := Seq[BuildInfoKey](name, version, scalaVersion, sbtVersion)
 
 buildInfoPackage := "build"
-
-scalikejdbcSettings
 
 TwirlKeys.templateImports ++= Seq("views._", "models.db._", "models.join._")
 

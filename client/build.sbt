@@ -7,7 +7,7 @@ name := "MyFleetGirls"
 libraryDependencies ++= Seq(
   "com.typesafe" % "config" % "1.3.2",
   "org.littleshoot" % "littleproxy" % "1.1.2",
-  "com.netaporter" %% "scala-uri" % "0.4.14",
+  "io.lemonlabs" %% "scala-uri" % "0.5.7",
   "org.apache.httpcomponents" % "httpclient" % "4.5.2",
   "org.apache.httpcomponents" % "httpmime" % "4.5.2",
   "org.slf4j" % "slf4j-api" % "1.7.25",

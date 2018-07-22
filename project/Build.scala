@@ -5,7 +5,7 @@ import sbt._
 import play._
 import sbtassembly.AssemblyPlugin.autoImport._
 import sbtbuildinfo.BuildInfoPlugin
-import scalikejdbc.mapper.SbtKeys._
+import scalikejdbc.mapper.ScalikejdbcPlugin.autoImport._
 
 object MyFleetGirlsBuild extends Build {
 
@@ -47,7 +47,7 @@ object MyFleetGirlsBuild extends Build {
     .settings(scalaVersion := scalaVer)
     .dependsOn(library)
     .enablePlugins(sbt.PlayScala)
-    .enablePlugins(SbtWeb, BuildInfoPlugin)
+    .enablePlugins(SbtWeb, scalikejdbc.mapper.ScalikejdbcPlugin, BuildInfoPlugin)
 
   lazy val client = project
     .settings(scalaVersion := scalaVer)
