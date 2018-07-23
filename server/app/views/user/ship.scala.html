@@ -98,7 +98,7 @@
               <td>@ship.kaihi</td>
               <td>@ship.taisen</td>
               <td>@ship.sakuteki</td>
-              <td>@ship.lucky</td>
+              <td style="padding:0px;"><div style="background-color:#D9EDF7;width:@{(ship.luckyRate*100).toInt}%;padding:5px;">@ship.lucky</div></td>
             </tr>
             }
           </tbody>
@@ -116,6 +116,7 @@
         <dt>Exp</dt><dd>Lv100 or LvMAXまでの経験値取得率</dd>
         <dt>Cond</dt><dd>Condition、疲労度です。キラキラ状態（50以上）は青になります</dd>
         <dt>火力・雷装・対空・装甲</dt><dd>近代化率</dd>
+        <dt>運</dt><dd>運改修率</dd>
       </dl>
       <div class="modal fade bs-example-modal-lg" aria-hidden="true" role="dialog" aria-labelledby="modalLabel" id="modal">
         <div class="modal-dialog modal-lg">

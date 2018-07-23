@@ -61,6 +61,7 @@ trait ShipParameter extends GraphData with AntiAirCutin {
 
   /** 運の改修度 */
   def upLucky: Int = lucky - spec.luckyMin
+  def luckyRate: Double = calcRate(lucky, spec.luckyMin, spec.luckyMax)
 
   /** Condition値による色の変化 */
   def rgb: RGB = ShipParameter.rgb(cond)
