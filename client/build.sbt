@@ -28,7 +28,7 @@ buildInfoPackage := "com.ponkotuy.build"
 
 licenses := Seq("MIT License" -> url("http://www.opensource.org/licenses/mit-license.html"))
 
-homepage := Some(url("https://myfleet.moe"))
+homepage := Some(url("https://myfleet.terminal.moe"))
 
 licenseOverrides := {
   case DepModuleInfo("org.json4s", _, _) | DepModuleInfo("org.apache.httpcomponents", _, _) | DepModuleInfo("com.google.guava", _, _) | DepModuleInfo("commons-codec", _, _) | DepModuleInfo("commons-collections", _, _) | DepModuleInfo("commons-lang", _, _) | DepModuleInfo("commons-logging", _, _) =>

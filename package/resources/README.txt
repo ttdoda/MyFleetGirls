@@ -2,13 +2,13 @@
 
 MyFleetGirls の為のクライアントアプリケーションです。
 詳細は以下のサイトを参照。基本的な使い方も載っています。
-  http://myfleet.moe/entire/about
+  http://myfleet.terminal.moe/entire/about
 
 細かい設定方法(Windows 用)：
  1. proxy の設定
     各種ブラウザに proxy 設定を行います。
     自動プロキシ設定スクリプトを用意していますので、以下のアドレスを設定するだけです。
-      http://myfleet.moe/assets/proxy.pac
+      http://myfleet.terminal.moe/assets/proxy.pac
     IE および IE コンポーネント系の艦これ専用ブラウザーをしようしている方は同
     梱の IE_PROXY.REG をダブルクリックすると楽に設定出来ます。
 

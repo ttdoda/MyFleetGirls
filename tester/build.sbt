@@ -6,4 +6,4 @@ libraryDependencies ++= Seq(
 
 licenses := Seq("MIT License" -> url("http://www.opensource.org/licenses/mit-license.html"))
 
-homepage := Some(url("https://myfleet.moe"))
+homepage := Some(url("https://myfleet.terminal.moe"))
