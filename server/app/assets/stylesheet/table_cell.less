@@ -1,0 +1,35 @@
+.table-cell-progress {
+    position: relative;
+
+    &[data-damage="minor"] {
+        color: #777;
+    }
+    &[data-damage="half"] {
+        color: #8A6D3B;
+    }
+    &[data-damage="major"] {
+        color: #A94442;
+    }
+
+    &>span {
+        position: relative;
+    }
+
+    &>div.background {
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 100%;
+    }
+
+    &, &[ata-background-color="#D9EDF7"] {
+        &>div.background {
+            background-color: #D9EDF7;
+        }
+    }
+
+    &[data-kakkokari="true"]>div.background {
+        background-color: #EBCCD1;
+    }
+}
+
