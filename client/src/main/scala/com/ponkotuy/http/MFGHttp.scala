@@ -3,7 +3,6 @@ package com.ponkotuy.http
 import java.io._
 import java.nio.charset.Charset
 import java.util.concurrent.TimeUnit
-import javax.net.ssl.SSLContext
 
 import com.ponkotuy.build.BuildInfo
 import com.ponkotuy.config.ClientConfig
@@ -15,7 +14,6 @@ import org.apache.http.client.config.RequestConfig
 import org.apache.http.client.entity.UrlEncodedFormEntity
 import org.apache.http.client.methods._
 import org.apache.http.client.utils.HttpClientUtils
-import org.apache.http.conn.ssl.SSLConnectionSocketFactory
 import org.apache.http.entity.ContentType
 import org.apache.http.entity.mime.MultipartEntityBuilder
 import org.apache.http.entity.mime.content.FileBody
@@ -37,7 +35,6 @@ import scala.util.{Failure, Success, Try}
 object MFGHttp extends Log {
   val UTF8 = Charset.forName("UTF-8")
   val userAgent = s"${BuildInfo.name} client ver:${BuildInfo.version} w/JVM: ${util.Properties.javaVersion}"
-  val sslContext: SSLContext = new MFGKeyStore().getSslContext
   val config = RequestConfig.custom()
       .setConnectTimeout(60*1000)
       .setRedirectsEnabled(true)
@@ -46,8 +43,6 @@ object MFGHttp extends Log {
   val httpBuilder = HttpClientBuilder.create()
       .setUserAgent(userAgent)
       .setDefaultRequestConfig(config)
-      .setSSLSocketFactory(new SSLConnectionSocketFactory(sslContext))
-      .setSSLContext(sslContext)
       .setConnectionTimeToLive(5 * 60 , TimeUnit.SECONDS)
       .setMaxConnPerRoute(1)
       .setRetryHandler(new RetryWithWait(10, 10000L))
