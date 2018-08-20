@@ -19,7 +19,7 @@ import scala.util.matching.Regex
 case object ApiStart2 extends ResType {
   import ResType._
 
-  override val regexp: Regex = s"\\A$Api/api_start2\\z".r
+  override val regexp: Regex = s"\\A$Api/api_start2/".r
 
   override def postables(q: Query): Seq[HttpPostable] = postablesFromJValue(q.obj)
 
