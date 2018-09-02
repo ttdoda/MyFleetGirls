@@ -13,15 +13,15 @@
 
   艦これのデータをProxy経由で取得し、サーバに送って、
 
-  [[https://myfleet.terminal.moe/]]
+  [[https://myfleet.iwmt.org/]]
 
   こんな感じで見れるようにするツールです。
 
   以下ではGitHub cloneした人が動かすための方法になります。
-  普通に使いたいだけの人は https://myfleet.terminal.moe/entire/about を参照してください。
+  普通に使いたいだけの人は https://myfleet.iwmt.org/entire/about を参照してください。
 
 ** MyFleetGirls Client
-   基本的には https://myfleet.terminal.moe/entire/about 参照。ただし、起動は
+   基本的には https://myfleet.iwmt.org/entire/about 参照。ただし、起動は
 
 #+BEGIN_SRC
 $ sbt proxy

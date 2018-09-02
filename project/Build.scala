@@ -35,7 +35,7 @@ object MyFleetGirlsBuild extends Build {
     scalikejdbcGen := (scalikejdbcGen in (server, Compile)).evaluated,
     prof := (run in (profiler, Compile)).evaluated,
     runTester := (run in (tester, Compile)).evaluated,
-    runTesterEarth := runTester.toTask(" https://myfleet.terminal.moe").value
+    runTesterEarth := runTester.toTask(" https://myfleet.iwmt.org").value
   )
 
   lazy val disableAggregates = Seq(
