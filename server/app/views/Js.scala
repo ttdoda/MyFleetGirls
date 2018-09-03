@@ -50,7 +50,7 @@ object Css {
 }
 
 object About {
-  val Host = "https://myfleetweb.herokuapp.com"
+  val Host = "https://myfleet-web.herokuapp.com"
   val Top = s"$Host/entire/about"
 
   val ChangeLog = s"$Top/change"
