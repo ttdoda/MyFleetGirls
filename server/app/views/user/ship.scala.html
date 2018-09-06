@@ -26,27 +26,15 @@
   <script src="//cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.16.4/jquery.tablesorter.min.js"></script>
   <script src="//cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.16.4/jquery.tablesorter.widgets.min.js"></script>
   <script src="@Js.Common"></script>
-  <script src="@Js.Coffee("table_cell")"></script>
   <script src="@Js.Coffee("graph")"></script>
   <script src="@Js.Coffee("ship")"></script>
   <link rel="stylesheet" href="@routes.Assets.at("stylesheet/table_cell.min.css")" />
   <style>
     div.chart { height: 400px; }
     div.overview { height: 160px; }
-    @backColors.map { color =>
-      td.table-cell-progress[data-background-color="@color"]>div.background { background-color: @color; }
-    }
-    @if(! rates.filter(_ > 0).isEmpty) {
-      @Html(rates.filterNot(_ > 0).map("td.table-cell-progress[data-rate=\""+_+"\"]>div.background").mkString(", ")+" { display: none; }")
-    }
-    @if(! rates.filter(_ >= 100).isEmpty) {
-      @Html(rates.filter(_ >= 100).map("td.table-cell-progress[data-rate=\""+_+"\"]>div.background").mkString(", ")+" { width: 100%; }")
-    }
-    @rates.filter(_ > 0).filterNot(_ >= 100).map { rate =>
-      td.table-cell-progress[data-rate="@rate"]>div.background {
-        width: @rate%;
-      }
-    }
+    @backColors.map { color => td.table-cell-progress[data-background-color="@color"]::before { background-color: @color; } }
+    @if(! rates.filter(_ >= 100).isEmpty) {@Html(rates.filter(_ >= 100).map("td.table-cell-progress[data-rate=\""+_+"\"]::before").mkString(", ")+" { width: 100%; }")}
+    @rates.filter(_ > 0).filterNot(_ >= 100).map { rate => td.table-cell-progress[data-rate="@rate"]::before { width: @rate%; } }
   </style>
 } {
   @head_content(user) {

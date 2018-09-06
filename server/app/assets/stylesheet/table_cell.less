@@ -1,5 +1,6 @@
-.table-cell-progress {
+td.table-cell-progress {
     position: relative;
+    z-index: 0;
 
     &[data-damage="minor"] {
         color: #777;
@@ -11,24 +12,20 @@
         color: #A94442;
     }
 
-    &>span {
-        position: relative;
-    }
-
-    &>div.background {
+    &::before {
+        content: "";
+        display: block;
         position: absolute;
         top: 0;
         left: 0;
+        width: 0%;
         height: 100%;
+        z-index: -1;
+
+        background-color: #D9EDF7;
     }
 
-    &, &[ata-background-color="#D9EDF7"] {
-        &>div.background {
-            background-color: #D9EDF7;
-        }
-    }
-
-    &[data-kakkokari="true"]>div.background {
+    &[data-kakkokari="true"]::before {
         background-color: #EBCCD1;
     }
 }

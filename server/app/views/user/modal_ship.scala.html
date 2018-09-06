@@ -64,18 +64,18 @@
     <tbody>
       <tr>
         <td>@ship.stName</td>
-        <td class="table-cell-progress" data-rate="@{rateFormat(ship.expRate*100)}"><div class="background"></div><span>@ship.lv</span></td>
-        <td class="table-cell-progress" data-rate="@{rateFormat(ship.entireExpRate*100)}" data-kakkokari="@if(ship.lv >= 100){true}else{false}"><div class="background"></div><span>@{f"${ship.exp}%,d"}</span></td>
-        <td class="table-cell-progress" data-rate="@{rateFormat(ship.hpRate*100)}" @if(ship.damage){data-damage="@ship.damage.map(_.name)" }data-background-color="@ship.hpRGB.toString"><div class="background"></div><span>@ship.nowhp/@ship.maxhp</span></td>
-        <td class="table-cell-progress" data-rate="@{ship.cond*1.0}" data-background-color="@ship.condBarRGB.toString"><div class="background"></div><span>@ship.cond</span></td>
-        <td class="table-cell-progress" data-rate="@{rateFormat(ship.karyokuRate*100)}"><div class="background"></div><span>@ship.karyoku</span></td>
-        <td class="table-cell-progress" data-rate="@{rateFormat(ship.raisouRate*100)}"><div class="background"></div><span>@ship.raisou</span></td>
-        <td class="table-cell-progress" data-rate="@{rateFormat(ship.taikuRate*100)}"><div class="background"></div><span>@ship.taiku</span></td>
-        <td class="table-cell-progress" data-rate="@{rateFormat(ship.soukouRate*100)}"><div class="background"></div><span>@ship.soukou</span></td>
+        <td class="table-cell-progress" data-rate="@{rateFormat(ship.expRate*100)}">@ship.lv</td>
+        <td class="table-cell-progress" data-rate="@{rateFormat(ship.entireExpRate*100)}" data-kakkokari="@if(ship.lv >= 100){true}else{false}">@{f"${ship.exp}%,d"}</td>
+        <td class="table-cell-progress" data-rate="@{rateFormat(ship.hpRate*100)}" @if(ship.damage){data-damage="@ship.damage.map(_.name)" }data-background-color="@ship.hpRGB.toString">@ship.nowhp/@ship.maxhp</td>
+        <td class="table-cell-progress" data-rate="@{ship.cond*1.0}" data-background-color="@ship.condBarRGB.toString">@ship.cond</td>
+        <td class="table-cell-progress" data-rate="@{rateFormat(ship.karyokuRate*100)}">@ship.karyoku</td>
+        <td class="table-cell-progress" data-rate="@{rateFormat(ship.raisouRate*100)}">@ship.raisou</td>
+        <td class="table-cell-progress" data-rate="@{rateFormat(ship.taikuRate*100)}">@ship.taiku</td>
+        <td class="table-cell-progress" data-rate="@{rateFormat(ship.soukouRate*100)}">@ship.soukou</td>
         <td>@ship.kaihi</td>
         <td>@ship.taisen</td>
         <td>@ship.sakuteki</td>
-        <td class="table-cell-progress" data-rate="@{rateFormat(ship.luckyRate*100)}"><div class="background"></div><span>@ship.lucky</span></td>
+        <td class="table-cell-progress" data-rate="@{rateFormat(ship.luckyRate*100)}">@ship.lucky</td>
       </tr>
     </tbody>
   </table>
