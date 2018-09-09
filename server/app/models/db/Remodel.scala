@@ -106,18 +106,20 @@ object Remodel extends SQLSyntaxSupport[Remodel] {
      * 本来正確な旗艦と2番艦のデータを持っているのはClientなので、data.Remodelにはそれらが入っているべき
      * 歴史的事情で昔入ってなかったので、無いときは補完をする
      */
-    val firstShipId = x.firstShip.getOrElse {
-      val deck = DeckShip.find(memberId, 1, 0).get.shipId // 第一艦隊旗艦は必ずいる
-      Ship.find(memberId, deck).get.shipId
+    val firstiDeckId = x.firstShip.getOrElse {
+      DeckShip.find(memberId, 1, 0).get.shipId // 第一艦隊旗艦は必ずいる
     }
-    val secondShipId = x.secondShip.orElse {
+    val firstShipId = Ship.find(memberId, firstiDeckId).get.shipId
+    val secondDeckId = x.secondShip.orElse {
       for {
         secondShipDeck <- DeckShip.find(memberId, 1, 1)
         deckId = secondShipDeck.shipId
-        secondShip <- Ship.find(memberId, deckId)
-        shipId = secondShip.shipId
-      } yield shipId
-    }
+      } yield deckId
+    }.getOrElse {0}
+    val secondShipId = for {
+      secondShip <- Ship.find(memberId, secondDeckId)
+      shipId = secondShip.shipId
+    } yield shipId
     val now = System.currentTimeMillis()
     SlotItem.find(x.slotId, memberId).map { beforeItem =>
       val key = createOrig(memberId, x.flag, x.beforeItemId, x.afterItemId, x.voiceId, x.useSlotIds.mkString(","), x.certain, beforeItem.level, firstShipId, secondShipId, now)
