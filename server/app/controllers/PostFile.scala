@@ -20,6 +20,8 @@ import scala.util.Try
  * Date: 14/03/22.
  */
 class PostFile @Inject()(implicit val ec: ExecutionContext) extends Controller {
+  /**
+   * 一期flash版の画像 使われないのでコメントアウト
   def ship(shipKey: String, version: Int) = Action.async(parse.multipartFormData) { request =>
     val form = request.body.asFormUrlEncoded
     authentication(form) { auth =>
@@ -71,6 +73,7 @@ class PostFile @Inject()(implicit val ec: ExecutionContext) extends Controller {
       }
     }
   }
+  **/
 
   def sound(shipKey: String, soundId: Int, version: Int) = Action.async(parse.multipartFormData) { request =>
     val form = request.body.asFormUrlEncoded
