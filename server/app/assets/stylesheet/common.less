@@ -33,8 +33,7 @@ body { background-color: @base-color; }
 .page-header { border-bottom-color: @gray; }
 
 // Table Color Settings
-.table-striped > tbody > tr:nth-child(2n + 1) > th,
-.table-striped > tbody > tr:nth-child(2n + 1) > td {
+.table-striped > tbody > tr:nth-of-type(odd) {
     background-color: #F9F1EF;
 }
 .table > thead > tr > th {

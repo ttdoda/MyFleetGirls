@@ -8,6 +8,24 @@
 )
 
 @import models.join.ShipWithName
+@import scala.math.floor
+
+@ships = @{yomes ++ best ++ flagship}
+
+@rateFormat(double: Double) = @{
+    floor(double*100)/100
+}
+
+@backColors = @{
+  ships.flatMap { ship =>
+    Seq(ship.hpRGB.toString, ship.condBarRGB.toString).filter(_ != ShipParameter.Blue.toString)
+  }.distinct
+}
+@rates = @{
+  ships.flatMap { ship =>
+    Seq( ship.expRate*100, ship.entireExpRate*100, ship.hpRate*100, ship.cond*1.0, ship.karyokuRate*100, ship.raisouRate*100, ship.taikuRate*100, ship.soukouRate*100, ship.luckyRate*100 ).filterNot(_.isNaN).map(rateFormat(_))
+  }.distinct
+}
 
 @main {
   <title>@{user.admiral.nickname}提督 -MyFleetGirls-</title>
@@ -17,17 +35,14 @@
   <script src="@Js.Common"></script>
   <script src="@Js.Coffee("graph")"></script>
   <script src="@Js.Coffee("user")"></script>
+  <link rel="stylesheet" href="@routes.Assets.at("stylesheet/table_cell.min.css")" />
   <style>
-    div.chart {
-      height: 500px;
-    }
-
-    div.overview {
-      height: 200px;
-    }
-    td.strong {
-      font-weight: bold;
-    }
+    div.chart { height: 500px; }
+    div.overview { height: 200px; }
+    td.strong { font-weight: bold; }
+    @backColors.map { color => td.table-cell-progress[data-background-color="@color"]::before { background-color: @color; } }
+    @if(! rates.filter(_ >= 100).isEmpty) {@Html(rates.filter(_ >= 100).map("td.table-cell-progress[data-rate=\""+_+"\"]::before").mkString(", ")+" { width: 100%; }")}
+    @rates.filter(_ > 0).filterNot(_ >= 100).map { rate => td.table-cell-progress[data-rate="@rate"]::before { width: @rate%; } }
   </style>
 } {
   @head_content(user) {
@@ -82,20 +97,20 @@
         <tbody>
         @for((ship, isYome) <- yomes.map(_ -> true) ++ (best ++ flagship).map(_ -> false)) {
           <tr>
-            <td>@ship.stName</td>
-            <td>@ship.name</td>
-            <td style="padding:0px;"><div style="@if(ship.expRate > 0){background-color:#D9EDF7;}width:@{(ship.expRate*100).toInt}%;padding:5px;">@ship.lv</div></td>
-            <td style="padding:0px;"><div style="background-color:@if(ship.lv > 100){#EBCCD1}else{#D9EDF7};width:@{(ship.entireExpRate*100).toInt}%;padding:5px;">@{f"${ship.exp}%,d"}</div></td>
-            <td style="padding:0px;"><div style="background-color:@ship.hpRGB.toString;width:@{(ship.hpRate*100).toInt}%;padding:5px;">@ship.nowhp/@ship.maxhp</div></td>
-            <td style="padding:0px;"><div style="background-color:@ship.condBarRGB.toString;width:@{ship.cond}%;padding:5px;">@ship.cond</div></td>
-            <td style="padding:0px;"><div style="background-color:#D9EDF7;width:@{(ship.karyokuRate*100).toInt}%;padding:5px;">@ship.karyoku</div></td>
-            <td style="padding:0px;"><div style="background-color:#D9EDF7;width:@{(ship.raisouRate*100).toInt}%;padding:5px;">@ship.raisou</div></td>
-            <td style="padding:0px;"><div style="background-color:#D9EDF7;width:@{(ship.taikuRate*100).toInt}%;padding:5px;">@ship.taiku</div></td>
-            <td style="padding:0px;"><div style="background-color:#D9EDF7;width:@{(ship.soukouRate*100).toInt}%;padding:5px;">@ship.soukou</div></td>
+            <td class="nowrap">@ship.stName</td>
+            <td class="nowrap">@ship.name</td>
+            <td class="table-cell-progress" data-rate="@{rateFormat(ship.expRate*100)}">@ship.lv</td>
+            <td class="table-cell-progress" data-rate="@{rateFormat(ship.entireExpRate*100)}" data-kakkokari="@if(ship.lv >= 100){true}else{false}">@{f"${ship.exp}%,d"}</td>
+            <td class="table-cell-progress" data-rate="@{rateFormat(ship.hpRate*100)}" @if(ship.damage){data-damage="@ship.damage.map(_.name)" }data-background-color="@ship.hpRGB.toString">@ship.nowhp/@ship.maxhp</td>
+            <td class="table-cell-progress" data-rate="@{ship.cond*1.0}" data-background-color="@ship.condBarRGB.toString">@ship.cond</td>
+            <td class="table-cell-progress" data-rate="@{rateFormat(ship.karyokuRate*100)}">@ship.karyoku</td>
+            <td class="table-cell-progress" data-rate="@{rateFormat(ship.raisouRate*100)}">@ship.raisou</td>
+            <td class="table-cell-progress" data-rate="@{rateFormat(ship.taikuRate*100)}">@ship.taiku</td>
+            <td class="table-cell-progress" data-rate="@{rateFormat(ship.soukouRate*100)}">@ship.soukou</td>
             <td>@ship.kaihi</td>
             <td>@ship.taisen</td>
             <td>@ship.sakuteki</td>
-            <td>@ship.lucky</td>
+            <td class="table-cell-progress" data-rate="@{rateFormat(ship.luckyRate*100)}">@ship.lucky</td>
             @if(user.isMine) {
               @if(isYome) {
                 <td>

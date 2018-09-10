@@ -1,6 +1,24 @@
 @(snap: models.query.SnapshotSearch)
 @import com.github.nscala_time.time.Imports.DateTime
 @import models.query.SnapshotSearch.PageCount
+@import scala.math.floor
+
+@ships = @{snap.snaps.flatMap(_.ships)}
+
+@rateFormat(double: Double) = @{
+    floor(double*100)/100
+}
+
+@backColors = @{
+  ships.flatMap { ship =>
+    Seq(ship.hpRGB.toString, ship.condBarRGB.toString).filter(_ != ShipParameter.Blue.toString)
+  }.distinct
+}
+@rates = @{
+  ships.flatMap { ship =>
+    Seq( ship.expRate*100, ship.entireExpRate*100, ship.hpRate*100, ship.cond*1.0, ship.karyokuRate*100, ship.raisouRate*100, ship.taikuRate*100, ship.soukouRate*100, ship.luckyRate*100 ).filterNot(_.isNaN).map(rateFormat(_))
+  }.distinct
+}
 
 @main {
   <title>スナップショット検索</title>
@@ -8,11 +26,15 @@
   <script src="@Js.Common"></script>
   <script src="@Js.Vue"></script>
   <script src="@Js.Coffee("snapshot")"></script>
+  <link rel="stylesheet" href="@routes.Assets.at("stylesheet/table_cell.min.css")" />
   <style>
     .fleetinfo {
       float: right;
       margin-bottom: -6px;
     }
+    @backColors.map { color => td.table-cell-progress[data-background-color="@color"]::before { background-color: @color; } }
+    @if(! rates.filter(_ >= 100).isEmpty) {@Html(rates.filter(_ >= 100).map("td.table-cell-progress[data-rate=\""+_+"\"]::before").mkString(", ")+" { width: 100%; }")}
+    @rates.filter(_ > 0).filterNot(_ >= 100).map { rate => td.table-cell-progress[data-rate="@rate"]::before { width: @rate%; } }
   </style>
 } {
   @statistics_head("search_snap") {
@@ -99,8 +121,8 @@
                   <a data-toggle="modal" href="@routes.UserView.snapAship(x.memberId, ship.id)" class="modal_link" data-target="#modal">@ship.name</a>
                   @ship.antiAirCutinOpt.map { cutin => <span class="label label-default">対空@cutin</span> }
                 </td>
-                <td style="@if(ship.expRate > 0){background-color:#D9EDF7;display:block;width:@{(ship.expRate*100).toInt}%}">@ship.lv</td>
-                <td style="padding:0px;"><div style="background-color:@ship.hpRGB.toString;width:@{(ship.hpRate*100).toInt}%;padding:5px;">@ship.nowhp/@ship.maxhp</div></td>
+                <td class="table-cell-progress" data-rate="@{rateFormat(ship.expRate*100)}">@ship.lv</td>
+                <td class="table-cell-progress" data-rate="@{rateFormat(ship.hpRate*100)}" @if(ship.damage){data-damage="@ship.damage.map(_.name)" }data-background-color="@ship.hpRGB.toString">@ship.nowhp/@ship.maxhp</td>
                 @ship.slotNames.map { slot => <td>@slot</td> }
                 @{(0 until (5 - ship.slotNames.size)).map { _ => <td></td> }}
               </tr>
