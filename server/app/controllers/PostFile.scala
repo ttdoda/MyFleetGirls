@@ -1,6 +1,6 @@
 package controllers
 
-import java.io.FileInputStream
+import java.io._
 import javax.inject.Inject
 
 import com.ponkotuy.value.ShipIds
@@ -20,7 +20,7 @@ import scala.util.Try
  */
 class PostFile @Inject()(implicit val ec: ExecutionContext) extends Controller {
   /**
-   * 一期flash版の画像 使われないのでコメントアウト
+   * 一期Flash版艦娘画像 使われないのでコメントアウト
   def ship(shipKey: String, version: Int) = Action.async(parse.multipartFormData) { request =>
     val form = request.body.asFormUrlEncoded
     authentication(form) { auth =>
@@ -45,8 +45,32 @@ class PostFile @Inject()(implicit val ec: ExecutionContext) extends Controller {
         case None => BadRequest("Need image")
       }
     }
+  }*/
+
+  /**
+   * 二期HTML5版艦娘画像
+   */
+  def ship(shipId: Int, kind: String, version: Int) = Action.async(parse.multipartFormData) { request =>
+    val form = request.body.asFormUrlEncoded
+    authentication(form) { auth =>
+      request.body.file("image") match {
+        case Some(ref) =>
+          if(ShipIds.isEnemy(shipId)) Ok("Unnecessary Enemy")
+          else if(db.ShipImage2nd.find(shipId, kind, version).isDefined) Ok("Already exists")
+          else {
+            val pngFile = ref.ref.file
+            val image = readAll(new FileInputStream(pngFile))
+            db.ShipImage2nd.create(shipId, image, auth.id, kind, version)
+            Ok("Success")
+          }
+        case _ => BadRequest("Need ship image")
+      }
+    }
   }
 
+  /**
+   * 一期Flash版海域画像 使われないのでコメントアウト
+   * TODO:二期対応
   def map(areaId: Int, infoNo: Int, version: Int) = Action.async(parse.multipartFormData) { request =>
     val form = request.body.asFormUrlEncoded
     authentication(form) { auth =>
@@ -71,8 +95,7 @@ class PostFile @Inject()(implicit val ec: ExecutionContext) extends Controller {
         case None => BadRequest("Need swf file")
       }
     }
-  }
-  **/
+  }*/
 
   def sound(shipKey: String, soundId: Int, version: Int) = Action.async(parse.multipartFormData) { request =>
     val form = request.body.asFormUrlEncoded

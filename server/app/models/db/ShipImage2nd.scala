@@ -29,7 +29,7 @@ object ShipImage2nd extends SQLSyntaxSupport[ShipImage2nd] {
   override val autoSession = AutoSession
 
   def find(id: Int, kind: String, ver: Int = 0)(implicit session: DBSession = autoSession): Option[ShipImage2nd] = {
-    if (ver != 0) findWithVersion(id, kind, ver)
+    if(ver != 0) findWithVersion(id, kind, ver)
     else {
       withSQL {
         select.from(ShipImage2nd as si)
