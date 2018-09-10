@@ -9,7 +9,6 @@ import models.db
 import models.db.{CellPosition, MapImage}
 import play.api.mvc._
 import scalikejdbc._
-import tool.swf.{MapData, WrappedSWF}
 
 import scala.concurrent.ExecutionContext
 import scala.util.Try
@@ -82,7 +81,7 @@ class PostFile @Inject()(implicit val ec: ExecutionContext) extends Controller {
         case Some(ref) =>
           findKey(shipKey) { ship =>
             val mp3File = ref.ref.file
-            val sound = WrappedSWF.readAll(new FileInputStream(mp3File))
+            val sound = readAll(new FileInputStream(mp3File))
             try {
               db.ShipSound.create(ship.id, soundId, version, sound)
               Ok("Success")
@@ -100,5 +99,16 @@ class PostFile @Inject()(implicit val ec: ExecutionContext) extends Controller {
       case Some(ship) => f(ship)
       case None => Ok("Is enemy, wrong filename or Not found master data")
     }
+  }
+
+  private def readAll(is: InputStream): Array[Byte] = {
+    val bout = new ByteArrayOutputStream()
+    val buffer = new Array[Byte](1024)
+    var len = is.read(buffer)
+    while(len >= 0) {
+      bout.write(buffer, 0, len)
+      len = is.read(buffer)
+    }
+    bout.toByteArray
   }
 }
