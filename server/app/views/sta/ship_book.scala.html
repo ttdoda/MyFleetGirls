@@ -16,8 +16,8 @@
 
     <div class="col-lg-3 col-md-4 col-sm-5" id="ship_image">
       <div v-on="click: change" class="clickable">
-        <img v-if="!damaged" src="@routes.RestImage.ship2nd(master.id, "card")" style="margin: 25px;" />
-        <img v-if="damaged" src="@routes.RestImage.ship2nd(master.id, "card_dmg")" style="margin: 25px;" />
+        <img v-if="!damaged" src="@routes.RestImage.ship2nd(master.id, "card")" style="margin: 25px;max-width:213px" />
+        <img v-if="damaged" src="@routes.RestImage.ship2nd(master.id, "card_dmg")" style="margin: 25px;max-width:213px" />
       </div>
       @admiral.map { ad =>
         <small>画像提供： <a href="@routes.UserView.user(ad.id)">@ad.nickname</a></small>
