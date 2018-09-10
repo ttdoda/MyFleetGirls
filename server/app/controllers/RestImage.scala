@@ -17,6 +17,21 @@ import scala.concurrent.ExecutionContext
 class RestImage @Inject()(implicit val ec: ExecutionContext) extends Controller {
   import controllers.Common._
 
+  def ship2nd(shipId: Int, _kind: String) = actionAsync {
+    val kind = if(ShipIds.isEnemy(shipId)) "banner" else _kind
+    db.ShipImage2nd.find(shipId, kind) match {
+      case Some(img) => Ok(img.image).as("image/png")
+      case None => NotFound(s"Not Found Image (id=$shipId, kind=$kind)")
+    }
+  }
+
+  def ship2ndHead(shipId: Int, kind: String, version: Int) = actionAsync {
+    db.ShipImage2nd.find(shipId, kind, version) match {
+      case None => NotFound(s"Not Found Image (id=$shipId)")
+      case Some(img) => Ok(img.image).as("image/png")
+    }
+  }
+
   def ship = shipCommon(_: Int, _: Int)
 
   def shipHead = shipCommon(_: Int, _: Int)
