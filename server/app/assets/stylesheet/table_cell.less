@@ -1,0 +1,32 @@
+td.table-cell-progress {
+    position: relative;
+    z-index: 0;
+
+    &[data-damage="minor"] {
+        color: #777;
+    }
+    &[data-damage="half"] {
+        color: #8A6D3B;
+    }
+    &[data-damage="major"] {
+        color: #A94442;
+    }
+
+    &::before {
+        content: "";
+        display: block;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 0%;
+        height: 100%;
+        z-index: -1;
+
+        background-color: #D9EDF7;
+    }
+
+    &[data-kakkokari="true"]::before {
+        background-color: #EBCCD1;
+    }
+}
+
