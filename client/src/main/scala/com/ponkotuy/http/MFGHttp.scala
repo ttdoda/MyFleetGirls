@@ -163,6 +163,9 @@ object MFGHttp extends Log {
     stCode
   }
 
+  def existsImage2nd(id: Int, kind: String, version: Int): Boolean =
+    head(s"/image/ship_obf/$id/$kind/$version.png", ver = 2).getStatusLine.getStatusCode == 200
+
   def existsImage(key: String, version: Int): Boolean =
     head(s"/image/ship_obf/$key/$version.jpg", ver = 2).getStatusLine.getStatusCode == 200
 

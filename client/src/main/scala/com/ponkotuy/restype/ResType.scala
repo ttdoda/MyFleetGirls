@@ -64,13 +64,14 @@ object ResType extends Log {
     Ship2,
     Ship3,
     ShipDeck,
-    ShipSWF,
+    ShipImage,
+    //ShipSWF,
     SoundMP3,
     SlotItem,
     MapStart,
     MapNext,
-    MapSWF,
-    ObfuscatedMapSWF, // 判定順序の問題で必ずMapSWFの後でないといけない
+    //MapSWF,
+    //ObfuscatedMapSWF, // 判定順序の問題で必ずMapSWFの後でないといけない
     SortieBattleResult,
     CombinedBattleResult,
     RequireInfo
