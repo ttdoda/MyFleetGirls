@@ -14,9 +14,16 @@ object ShipImageKinds {
   trait KindWithDmg extends Kind {
     def parent: Kind = this
 
-    object Dmg extends Kind {
+    trait Dmg extends Kind {
+      override def swfId = if(parent.swfId > 0) parent.swfId + 2 else NonDefined.swfId
+    }
+
+    object Damage extends Dmg {
       def name = s"${parent.name}_dmg"
-      override def swfId = if(parent.swfId != 0) parent.swfId + 2 else NonDefined.swfId
+    }
+
+    object Gray extends Dmg {
+      def name = s"${parent.name}_g_dmg"
     }
   }
 
@@ -44,14 +51,16 @@ object ShipImageKinds {
   }
 
   val kinds: Vector[Kind] = Vector(
+    NonDefined,
     Banner,
-    Banner.Dmg,
+    Banner.Damage,
+    Banner.Gray,
     Card,
-    Card.Dmg,
+    Card.Damage,
     Full,
-    Full.Dmg,
+    Full.Damage,
     SupplyCharacter,
-    SupplyCharacter.Dmg
+    SupplyCharacter.Damage
   )
 
   def toSwfId(name: String): Int = kinds.find(_.name == name) match {
