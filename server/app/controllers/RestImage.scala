@@ -22,7 +22,7 @@ class RestImage @Inject()(implicit val ec: ExecutionContext) extends Controller 
     db.ShipImage2nd.find(shipId, kind) match {
       case Some(img) => Ok(img.image).as("image/png")
       case None =>
-        val swfId = ShipKindDict.toSwfId(kind)
+        val swfId = ShipImageKinds.toSwfId(kind)
         db.ShipImage.find(shipId, swfId) match {
           case None => NotFound(s"Not Found Image (id=$shipId, kind=$kind)")
           case Some(si) => Redirect(routes.RestImage.ship(si.id, si.swfId))
