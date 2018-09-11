@@ -20,34 +20,6 @@ import scala.util.Try
  */
 class PostFile @Inject()(implicit val ec: ExecutionContext) extends Controller {
   /**
-   * 一期Flash版艦娘画像 使われないのでコメントアウト
-  def ship(shipKey: String, version: Int) = Action.async(parse.multipartFormData) { request =>
-    val form = request.body.asFormUrlEncoded
-    authentication(form) { auth =>
-      request.body.file("image") match {
-        case Some(ref) =>
-          findKey(shipKey) { ship =>
-            val si = db.ShipImage.si
-            if(ShipIds.isEnemy(ship.id)) { Ok("Unnecessary Enemy") }
-            else if(db.ShipImage.countBy(sqls.eq(si.id, ship.id).and.eq(si.version, version)) > 0) Ok("Already Exists")
-            else {
-              val swfFile = ref.ref.file
-              val swf = WrappedSWF.fromFile(swfFile)
-              val isExec = swf.getImages.flatMap { case (id, imgTag) =>
-                Try {
-                  val image = WrappedSWF.imageToBytes(imgTag).get
-                  db.ShipImage.create(ship.id, image, shipKey, auth.id, id, version)
-                }.toOption
-              }.nonEmpty
-              if(isExec) Ok("Success") else BadRequest("Not found image")
-            }
-          }
-        case None => BadRequest("Need image")
-      }
-    }
-  }*/
-
-  /**
    * 二期HTML5版艦娘画像
    */
   def ship(shipId: Int, kind: String, version: Int) = Action.async(parse.multipartFormData) { request =>
