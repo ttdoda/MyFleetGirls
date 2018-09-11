@@ -41,13 +41,34 @@ object ShipImageKinds {
     override def swfId = 5
   }
 
+  object CharacterUp extends KindWithDmg {
+    def name = "character_up"
+    override def swfId = 9
+  }
+
+  object CharacterFull extends KindWithDmg {
+    def name = "character_full"
+    override def swfId = 13
+  }
+
   object Full extends KindWithDmg {
     def name = "full"
     override def swfId = 17
   }
 
+  object Remodel extends KindWithDmg {
+    def name = "remodel"
+    override def swfId = 21
+  }
+
+  object AlbumStatus extends Kind {
+    def name = "album_status"
+    override def swfId = 25
+  }
+
   object SupplyCharacter extends KindWithDmg {
     def name = "supply_character"
+    override def swfId = 27
   }
 
   val kinds: Vector[Kind] = Vector(
@@ -57,8 +78,15 @@ object ShipImageKinds {
     Banner.Gray,
     Card,
     Card.Damage,
+    CharacterUp,
+    CharacterUp.Damage,
+    CharacterFull,
+    CharacterFull.Damage,
     Full,
     Full.Damage,
+    Remodel,
+    Remodel.Damage,
+    AlbumStatus,
     SupplyCharacter,
     SupplyCharacter.Damage
   )
