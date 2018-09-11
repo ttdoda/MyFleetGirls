@@ -2,7 +2,7 @@ package controllers
 
 import javax.inject.Inject
 
-import com.ponkotuy.value.ShipIds
+import com.ponkotuy.value.{ShipIds, ShipImageKinds}
 import models.db
 import play.api.mvc._
 import scalikejdbc._
@@ -22,13 +22,7 @@ class RestImage @Inject()(implicit val ec: ExecutionContext) extends Controller 
     db.ShipImage2nd.find(shipId, kind) match {
       case Some(img) => Ok(img.image).as("image/png")
       case None =>
-        val swfId = kind match {
-            case "banner" => 1
-            case "banner_dmg" => 3
-            case "card" => 5
-            case "card_dmg" => 7
-            case _ => 0
-        }
+        val swfId = ShipKindDict.toSwfId(kind)
         db.ShipImage.find(shipId, swfId) match {
           case None => NotFound(s"Not Found Image (id=$shipId, kind=$kind)")
           case Some(si) => Redirect(routes.RestImage.ship(si.id, si.swfId))
