@@ -65,7 +65,6 @@ object ResType extends Log {
     Ship3,
     ShipDeck,
     ShipImage,
-    //ShipSWF,
     SoundMP3,
     SlotItem,
     MapStart,

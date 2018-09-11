@@ -14,7 +14,7 @@ case object ShipImage extends Resources {
 
   def postables(q: Query): Seq[Result] = {
     val ver = q.uri.query.param("version").map(_.toInt).getOrElse(DefaultVer)
-    parse(q.uri).filterNot { case (shipId, kind) => MFGHttp.existsImage2nd(shipId, kind, ver) }.map { case (shipId, kind) =>
+    parse(q.uri).filterNot { case (shipId, kind) => MFGHttp.existsImage(shipId, kind, ver) }.map { case (shipId, kind) =>
       val png = allRead(q.responseContent)
       FilePostable(s"/image/ship/${shipId}/${kind}/${ver}", "image", 2, png, "png")
     }.toList
