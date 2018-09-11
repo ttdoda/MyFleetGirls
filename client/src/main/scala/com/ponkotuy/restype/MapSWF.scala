@@ -1,3 +1,5 @@
+/**
+ * 使われていないのとビルドの邪魔になるのでコメントアウト
 package com.ponkotuy.restype
 
 import com.netaporter.uri.Uri
@@ -5,11 +7,10 @@ import com.ponkotuy.http.MFGHttp
 import com.ponkotuy.parser.Query
 
 import scala.util.Try
-import scala.util.matching.Regex
+import scala.util.matching.Regex*/
 
 /**
  * Normal swf stage
- */
 object MapSWF extends ResType {
   override val regexp: Regex = """\A/kcs/resources/swf/map/\d+_\d+\.swf\z""".r
 
@@ -28,9 +29,10 @@ object MapSWF extends ResType {
     val (rawArea, rawInfo) = fName.takeWhile(_ != '.').span(_ != '_')
     (rawArea.toInt, rawInfo.tail.toInt)
   }
-}
+}*/
 
-/** Obfuscated swf stage */
+/**
+ * Obfuscated swf stage
 object ObfuscatedMapSWF extends ResType {
   override val regexp: Regex = """\A/kcs/resources/swf/map/(.+).swf\z""".r
 
@@ -46,12 +48,13 @@ object ObfuscatedMapSWF extends ResType {
     }
     opt.toList
   }
-}
+}*/
 
+/**
 object CommonMapSWF {
   def readSWF(q: Query): Array[Byte] = ShipSWF.allRead(q.responseContent)
   def parseVersion(q: Query): Option[Int] = q.uri.query.param("version").flatMap(extractNumber)
   def extractNumber(str: String): Option[Int] = Try {
     str.filter { c => '0' <= c && c <= '9' }.toInt
   }.toOption
-}
+}*/
