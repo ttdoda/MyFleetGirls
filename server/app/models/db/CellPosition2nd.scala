@@ -1,5 +1,7 @@
 package models.db
 
+import com.ponkotuy.data.master
+
 import scalikejdbc._
 
 case class CellPosition2nd(
@@ -74,14 +76,26 @@ object CellPosition2nd extends SQLSyntaxSupport[CellPosition2nd] {
     }.map(_.long(1)).single().apply().get
   }
 
-  def create(
-    areaId: Int,
-    infoNo: Int,
-    cell: Int,
-    posX: Int,
-    posY: Int,
-    version: Int)(implicit session: DBSession = autoSession): CellPosition2nd = {
+  def create(cp: master.CellPosition)(implicit session: DBSession = autoSession): CellPosition2nd = {
     withSQL {
+      insert.into(CellPosition2nd).namedValues(
+        column.areaId -> cp.areaId, column.infoNo -> cp.infoNo,
+        column.cell -> cp.cell, column.posX -> cp.posX, column.posY -> cp.posY,
+        column.version -> cp.version
+      )
+    }.update().apply()
+    CellPosition2nd(
+      cp.areaId,
+      cp.infoNo,
+      cp.cell,
+      cp.posX,
+      cp.posY,
+      cp.version)
+  }
+
+  def bulkInsert(ss: Seq[master.CellPosition], memberId: Long)(
+      implicit session: DBSession = autoSession): Unit = {
+    applyUpdate {
       insert.into(CellPosition2nd).columns(
         column.areaId,
         column.infoNo,
@@ -89,24 +103,14 @@ object CellPosition2nd extends SQLSyntaxSupport[CellPosition2nd] {
         column.posX,
         column.posY,
         column.version
-      ).values(
-            areaId,
-            infoNo,
-            cell,
-            posX,
-            posY,
-            version
-          )
-    }.update().apply()
-
-    CellPosition2nd(
-      areaId = areaId,
-      infoNo = infoNo,
-      cell = cell,
-      posX = posX,
-      posY = posY,
-      version = version)
+      ).multiValues(
+          cp.map(_.areaId), cp.map(_.infoNo),
+          cp.map(_.cell), cp.map(_.posX), cp.map(_.posY),
+          cp.map(_.version)
+        )
+    }
   }
+
 
   def save(entity: CellPosition2nd)(implicit session: DBSession = autoSession): CellPosition2nd = {
     withSQL {

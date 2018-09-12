@@ -1,5 +1,7 @@
 package models.db
 
+import com.ponkotuy.data.master
+
 import scalikejdbc._
 
 case class MapData(
@@ -76,46 +78,41 @@ object MapData extends SQLSyntaxSupport[MapData] {
     }.map(_.long(1)).single().apply().get
   }
 
-  def create(
-    areaId: Int,
-    infoNo: Int,
-    name: String,
-    frameX: Int,
-    frameY: Int,
-    frameW: Int,
-    frameH: Int,
-    version: Int)(implicit session: DBSession = autoSession): MapData = {
+  def create(md: master.MapData)(implicit session: DBSession = autoSession): MapData = {
     withSQL {
-      insert.into(MapData).columns(
-        column.areaId,
-        column.infoNo,
-        column.name,
-        column.frameX,
-        column.frameY,
-        column.frameW,
-        column.frameH,
-        column.version
-      ).values(
-            areaId,
-            infoNo,
-            name,
-            frameX,
-            frameY,
-            frameW,
-            frameH,
-            version
-          )
+      insert.into(MapData).namedValues(
+        column.areaId -> md.areaId, column.infoNo -> md.infoNo, column.name -> md.name,
+        column.frameX -> md.frameX, column.frameY -> md.frameY,
+        column.frameW -> md.frameW, column.frameH -> md.frameH,
+        column.version -> md.version
+      )
     }.update().apply()
-
     MapData(
-      areaId = areaId,
-      infoNo = infoNo,
-      name = name,
-      frameX = frameX,
-      frameY = frameY,
-      frameW = frameW,
-      frameH = frameH,
-      version = version)
+      md.areaId,
+      md.infoNo,
+      md.name,
+      md.frameX,
+      md.frameY,
+      md.frameW,
+      md.frameH,
+      md.version)
+  }
+
+  def bulkInsert(ss: Seq[master.MapData], memberId: Long)(
+      implicit session: DBSession = autoSession): Unit = {
+    applyUpdate {
+      insert.into(MapData).columns(
+        column.areaId, column.infoNo, column.name,
+        column.frameX, column.frameY,
+        column.frameW, column.frameH,
+        column.version
+      ).multiValues(
+          md.map(_.areaId), md.map(_.infoNo), md.map(_.name),
+          md.map(_.frameX), md.map(_.frameY),
+          md.map(_.frameW), md.map(_.frameH),
+          md.map(_.version)
+        )
+    }
   }
 
   def save(entity: MapData)(implicit session: DBSession = autoSession): MapData = {
