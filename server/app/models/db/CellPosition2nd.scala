@@ -3,6 +3,7 @@ package models.db
 import com.ponkotuy.data.master
 
 import scalikejdbc._
+import util.scalikejdbc.BulkInsert._
 
 case class CellPosition2nd(
   areaId: Int,
@@ -32,8 +33,8 @@ object CellPosition2nd extends SQLSyntaxSupport[CellPosition2nd] {
 
   override val autoSession = AutoSession
 
-  def find(areaId: Int, cell: Int, infoNo: Int, version: Int = 0)(implicit session: DBSession = autoSession): Option[CellPosition2nd] = {
-    if(version != 0) findWithVersion(areaId, cell, infoNo, version)
+  def find(areaId: Int, infoNo: Int, cell: Int, version: Int = 0)(implicit session: DBSession = autoSession): Option[CellPosition2nd] = {
+    if(version != 0) findWithVersion(areaId, infoNo, cell, version)
     else {
       withSQL {
         select.from(CellPosition2nd as cp)
@@ -43,7 +44,7 @@ object CellPosition2nd extends SQLSyntaxSupport[CellPosition2nd] {
     }
   }
 
-  private def findWithVersion(areaId: Int, cell: Int, infoNo: Int, version: Int = 0)(implicit session: DBSession = autoSession): Option[CellPosition2nd] = {
+  private def findWithVersion(areaId: Int, infoNo: Int, cell: Int, version: Int = 0)(implicit session: DBSession = autoSession): Option[CellPosition2nd] = {
     withSQL {
       select.from(CellPosition2nd as cp)
           .where.eq(cp.areaId, areaId).and.eq(cp.cell, cell).and.eq(cp.infoNo, infoNo).and.eq(cp.version, version)
@@ -93,8 +94,7 @@ object CellPosition2nd extends SQLSyntaxSupport[CellPosition2nd] {
       cp.version)
   }
 
-  def bulkInsert(ss: Seq[master.CellPosition], memberId: Long)(
-      implicit session: DBSession = autoSession): Unit = {
+  def bulkInsert(cp: Seq[master.CellPosition])(implicit session: DBSession = autoSession): Unit = {
     applyUpdate {
       insert.into(CellPosition2nd).columns(
         column.areaId,

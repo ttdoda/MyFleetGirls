@@ -3,6 +3,7 @@ package models.db
 import com.ponkotuy.data.master
 
 import scalikejdbc._
+import util.scalikejdbc.BulkInsert._
 
 case class MapData(
   areaId: Int,
@@ -34,8 +35,8 @@ object MapData extends SQLSyntaxSupport[MapData] {
 
   override val autoSession = AutoSession
 
-  def find(areaId: Int, name: String, infoNo: Int, version: Int = 0)(implicit session: DBSession = autoSession): Option[MapData] = {
-    if(version != 0) findWithVersion(areaId, name, infoNo, version)
+  def find(areaId: Int, infoNo: Int, name: String, version: Int = 0)(implicit session: DBSession = autoSession): Option[MapData] = {
+    if(version != 0) findWithVersion(areaId, infoNo, name, version)
     else {
       withSQL {
         select.from(MapData as md)
@@ -45,7 +46,7 @@ object MapData extends SQLSyntaxSupport[MapData] {
     }
   }
 
-  private def findWithVersion(areaId: Int, name: String, infoNo: Int, version: Int = 0)(implicit session: DBSession = autoSession): Option[MapData] = {
+  private def findWithVersion(areaId: Int, infoNo: Int, name: String, version: Int = 0)(implicit session: DBSession = autoSession): Option[MapData] = {
     withSQL {
       select.from(MapData as md)
           .where.eq(md.areaId, areaId).and.eq(md.name, name).and.eq(md.infoNo, infoNo).and.eq(md.version, version)
@@ -98,8 +99,7 @@ object MapData extends SQLSyntaxSupport[MapData] {
       md.version)
   }
 
-  def bulkInsert(ss: Seq[master.MapData], memberId: Long)(
-      implicit session: DBSession = autoSession): Unit = {
+  def bulkInsert(md: Seq[master.MapData])(implicit session: DBSession = autoSession): Unit = {
     applyUpdate {
       insert.into(MapData).columns(
         column.areaId, column.infoNo, column.name,
