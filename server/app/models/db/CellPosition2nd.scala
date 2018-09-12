@@ -30,9 +30,21 @@ object CellPosition2nd extends SQLSyntaxSupport[CellPosition2nd] {
 
   override val autoSession = AutoSession
 
-  def find(areaId: Int, cell: Int, infoNo: Int)(implicit session: DBSession = autoSession): Option[CellPosition2nd] = {
+  def find(areaId: Int, cell: Int, infoNo: Int, version: Int = 0)(implicit session: DBSession = autoSession): Option[CellPosition2nd] = {
+    if(version != 0) findWithVersion(areaId, cell, infoNo, version)
+    else {
+      withSQL {
+        select.from(CellPosition2nd as cp)
+            .where.eq(cp.areaId, areaId).and.eq(cp.cell, cell).and.eq(cp.infoNo, infoNo)
+            .orderBy(cp.version.desc).limit(1)
+      }.map(CellPosition2nd(cp.resultName)).single().apply()
+    }
+  }
+
+  private def findWithVersion(areaId: Int, cell: Int, infoNo: Int, version: Int = 0)(implicit session: DBSession = autoSession): Option[CellPosition2nd] = {
     withSQL {
-      select.from(CellPosition2nd as cp).where.eq(cp.areaId, areaId).and.eq(cp.cell, cell).and.eq(cp.infoNo, infoNo)
+      select.from(CellPosition2nd as cp)
+          .where.eq(cp.areaId, areaId).and.eq(cp.cell, cell).and.eq(cp.infoNo, infoNo).and.eq(cp.version, version)
     }.map(CellPosition2nd(cp.resultName)).single().apply()
   }
 

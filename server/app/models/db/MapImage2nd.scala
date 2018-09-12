@@ -91,8 +91,7 @@ object MapImage2nd extends SQLSyntaxSupport[MapImage2nd] {
       update(MapImage2nd).set(
         column.areaId -> entity.areaId,
         column.infoNo -> entity.infoNo,
-        column.image -> entity.image,
-        column.version -> entity.version
+        column.image -> entity.image
       ).where.eq(column.areaId, entity.areaId).and.eq(column.infoNo, entity.infoNo).and.eq(column.version, entity.version)
     }.update().apply()
     entity
