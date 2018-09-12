@@ -50,6 +50,7 @@ POST          /post/v1/master/stype                controllers.PostMaster.stype
 #POST          /post/v2/swf/ship/:shipKey/:version        controllers.PostFile.ship(shipKey: String, version: Int)
 #POST          /post/v2/swf/map/:areaId/:infoNo/:version                     controllers.PostFile.map(areaId: Int, infoNo: Int, version: Int)
 POST          /post/v2/image/ship/:shipId/:kind/:version                    controllers.PostFile.ship(shipId: Int, kind: String, version: Int)
+POST          /post/v2/image/map/:areaId/:infoNo/:version                   controllers.PostFile.map(areaId: Int, infoNo: Int, version: Int)
 POST          /post/v2/mp3/kc/:shipKey/:soundId/:version                    controllers.PostFile.sound(shipKey: String, soundId: Int, version: Int)
 
 # Rest
