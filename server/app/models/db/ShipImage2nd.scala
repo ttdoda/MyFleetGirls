@@ -43,7 +43,6 @@ object ShipImage2nd extends SQLSyntaxSupport[ShipImage2nd] {
     withSQL {
       select.from(ShipImage2nd as si)
           .where.eq(si.id, id).and.eq(si.kind, kind).and.eq(si.version, ver)
-          .orderBy(si.version.desc).limit(1)
     }.map(ShipImage2nd(si.resultName)).single().apply()
   }
 
