@@ -40,35 +40,6 @@ class PostFile @Inject()(implicit val ec: ExecutionContext) extends Controller {
   }
 
   /**
-   * 一期Flash版海域画像 使われないのでコメントアウト
-   * TODO:二期対応
-  def map(areaId: Int, infoNo: Int, version: Int) = Action.async(parse.multipartFormData) { request =>
-    val form = request.body.asFormUrlEncoded
-    authentication(form) { auth =>
-      request.body.file("map") match {
-        case Some(ref) =>
-          if(db.MapImage.find(areaId, infoNo, version.toShort).isDefined) Ok("Already exists")
-          else {
-            val swfFile = ref.ref.file
-            MapData.fromFile(swfFile) match {
-              case Some(mapData) =>
-                MapImage.create(areaId, infoNo, mapData.bytes, version.toShort)
-                val cp = CellPosition.cp
-                if(CellPosition.countBy(sqls.eq(cp.areaId, areaId).and.eq(cp.infoNo, infoNo)) == 0) {
-                  mapData.cells.map { cell =>
-                    CellPosition.create(areaId, infoNo, cell.cell, cell.posX, cell.posY)
-                  }
-                }
-                Ok("Success")
-              case None => BadRequest("SWF parse error")
-            }
-          }
-        case None => BadRequest("Need swf file")
-      }
-    }
-  }*/
-
-  /**
    * 二期HTML5版海域画像
    *
    * 一期はswfファイルにCellPositionも含まれていたが二期では別のjsonなのでCellPositionに当たるものはcontroller.Post.cellPositionへ移動する
