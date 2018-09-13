@@ -10,6 +10,7 @@ import scala.util.Try
 import scala.util.matching.Regex
 
 import org.json4s.native.Serialization.write
+import org.json4s.native.JsonMethods.parse
 
 /**
  * @author kPherox
@@ -18,7 +19,7 @@ import org.json4s.native.Serialization.write
 trait MapData {
   def regexp: Regex
 
-  def parse(uri: Uri): Option[(Int, Int)] = {
+  def parseUrl(uri: Uri): Option[(Int, Int)] = {
     Try {
       uri.path match {
         case this.regexp(id, no) => (id.toInt, no.toInt)
@@ -39,7 +40,7 @@ object MapImage extends ResType with Resources with Media with MapData {
 
   def postables(q: Query): Seq[Result] = {
     val ver = q.uri.query.param("version").flatMap(extractNumber).getOrElse(DefaultVer)
-    parse(q.uri).filterNot { case (areaId, infoNo) => MFGHttp.existsMap(areaId, infoNo, ver) }.map { case (areaId, infoNo) =>
+    parseUrl(q.uri).filterNot { case (areaId, infoNo) => MFGHttp.existsMap(areaId, infoNo, ver) }.map { case (areaId, infoNo) =>
       val png = allRead(q.responseContent)
       FilePostable(s"/image/map/${areaId}/${infoNo}/${ver}", "map", 2, png, "png")
     }.toList
@@ -54,9 +55,10 @@ object MapImageSprite extends ResType with Resources with MapData {
 
   def postables(q: Query): Seq[Result] = {
     val ver = q.uri.query.param("version").flatMap(extractNumber).getOrElse(DefaultVer)
-    parse(q.uri).map { case (areaId, infoNo) =>
+    parseUrl(q.uri).map { case (areaId, infoNo) =>
       //val result = master.MapData.fromJson(json, areaId, infoNo, ver)
       //NormalPostable(s"/map_data", write(result)) :: Nil
+      Nil
     }.getOrElse(Nil)
   }
 }
@@ -69,9 +71,10 @@ object MapImageInfo extends ResType with Resources with MapData {
 
   def postables(q: Query): Seq[Result] = {
     val ver = q.uri.query.param("version").flatMap(extractNumber).getOrElse(DefaultVer)
-    parse(q.uri).map { case (areaId, infoNo) =>
-      //val result = master.CellPosition.fromJson(json, areaId, infoNo, ver)
-      //NormalPostable(s"/cell_position", write(result)) :: Nil
+    parseUrl(q.uri).map { case (areaId, infoNo) =>
+      val json = parse(q.resCont)
+      val result = master.CellPosition.fromJson(json \ "spots", areaId, infoNo, ver)
+      NormalPostable(s"/cell_position", write(result), 2) :: Nil
     }.getOrElse(Nil)
   }
 }

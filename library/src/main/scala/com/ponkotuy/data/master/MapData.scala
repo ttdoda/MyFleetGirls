@@ -21,5 +21,16 @@ case class CellPosition(
 )
 
 object CellPosition {
-  //def fromJson(json: JValue,  areaId: Int, infoNo: Int, version: Int): List[CellPosition]
+  implicit val formats = DefaultFormats
+
+  def fromJson(json: JValue, areaId: Int, infoNo: Int, version: Int): List[CellPosition] = {
+    json.extractOrElse[List[RawCellPosition]](Nil).map(_.build(areaId, infoNo, version))
+  }
+
+  private case class RawCellPosition(
+    no: Int, x: Int, y: Int
+  ) {
+    def build(areaId: Int, infoNo: Int, version: Int): CellPosition =
+      CellPosition(areaId, infoNo, no, x, y, version)
+  }
 }
