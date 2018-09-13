@@ -79,27 +79,27 @@ object MapData extends SQLSyntaxSupport[MapData] {
     }.map(_.long(1)).single().apply().get
   }
 
-  def create(md: master.MapData)(implicit session: DBSession = autoSession): MapData = {
+  def create(mf: master.MapFrame)(implicit session: DBSession = autoSession): MapData = {
     withSQL {
       insert.into(MapData).namedValues(
-        column.areaId -> md.areaId, column.infoNo -> md.infoNo, column.name -> md.name,
-        column.frameX -> md.frameX, column.frameY -> md.frameY,
-        column.frameW -> md.frameW, column.frameH -> md.frameH,
-        column.version -> md.version
+        column.areaId -> mf.areaId, column.infoNo -> mf.infoNo, column.name -> mf.name,
+        column.frameX -> mf.frameX, column.frameY -> mf.frameY,
+        column.frameW -> mf.frameW, column.frameH -> mf.frameH,
+        column.version -> mf.version
       )
     }.update().apply()
     MapData(
-      md.areaId,
-      md.infoNo,
-      md.name,
-      md.frameX,
-      md.frameY,
-      md.frameW,
-      md.frameH,
-      md.version)
+      mf.areaId,
+      mf.infoNo,
+      mf.name,
+      mf.frameX,
+      mf.frameY,
+      mf.frameW,
+      mf.frameH,
+      mf.version)
   }
 
-  def bulkInsert(md: Seq[master.MapData])(implicit session: DBSession = autoSession): Unit = {
+  def bulkInsert(mf: Seq[master.MapFrame])(implicit session: DBSession = autoSession): Unit = {
     applyUpdate {
       insert.into(MapData).columns(
         column.areaId, column.infoNo, column.name,
@@ -107,10 +107,10 @@ object MapData extends SQLSyntaxSupport[MapData] {
         column.frameW, column.frameH,
         column.version
       ).multiValues(
-          md.map(_.areaId), md.map(_.infoNo), md.map(_.name),
-          md.map(_.frameX), md.map(_.frameY),
-          md.map(_.frameW), md.map(_.frameH),
-          md.map(_.version)
+          mf.map(_.areaId), mf.map(_.infoNo), mf.map(_.name),
+          mf.map(_.frameX), mf.map(_.frameY),
+          mf.map(_.frameW), mf.map(_.frameH),
+          mf.map(_.version)
         )
     }
   }

@@ -3,7 +3,7 @@ package controllers
 import javax.inject.Inject
 
 import com.ponkotuy.data._
-import com.ponkotuy.data.master.{MasterRemodel, MapData, CellPosition}
+import com.ponkotuy.data.master.{MasterRemodel, MapFrame, CellPosition}
 import com.ponkotuy.value.KCServer
 import controllers.Common._
 import models.db
@@ -182,7 +182,7 @@ class Post @Inject()(implicit val ec: ExecutionContext) extends Controller {
     Res.success
   }
 
-  def mapData() = authAndParse[List[MapData]] { case (auth, request) =>
+  def mapData() = authAndParse[List[MapFrame]] { case (auth, request) =>
     if(db.MapData.find(request.head.areaId, request.head.infoNo, request.head.name, request.head.version).isDefined) Ok("Already exists")
     else {
       db.MapData.bulkInsert(request)
