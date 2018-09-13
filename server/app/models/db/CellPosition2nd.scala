@@ -8,6 +8,7 @@ import util.scalikejdbc.BulkInsert._
 case class CellPosition2nd(
   areaId: Int,
   infoNo: Int,
+  suffix: Int,
   cell: Int,
   posX: Int,
   posY: Int,
@@ -24,7 +25,7 @@ object CellPosition2nd extends SQLSyntaxSupport[CellPosition2nd] {
 
   override val tableName = "cell_position_2nd"
 
-  override val columns = Seq("area_id", "info_no", "cell", "pos_x", "pos_y", "version")
+  override val columns = Seq("area_id", "info_no", "suffix", "cell", "pos_x", "pos_y", "version")
 
   def apply(cp: SyntaxProvider[CellPosition2nd])(rs: WrappedResultSet): CellPosition2nd = autoConstruct(rs, cp)
   def apply(cp: ResultName[CellPosition2nd])(rs: WrappedResultSet): CellPosition2nd = autoConstruct(rs, cp)
@@ -33,21 +34,21 @@ object CellPosition2nd extends SQLSyntaxSupport[CellPosition2nd] {
 
   override val autoSession = AutoSession
 
-  def find(areaId: Int, infoNo: Int, cell: Int, version: Int = 0)(implicit session: DBSession = autoSession): Option[CellPosition2nd] = {
+  def find(areaId: Int, infoNo: Int, suffix: Int, cell: Int, version: Int = 0)(implicit session: DBSession = autoSession): Option[CellPosition2nd] = {
     if(version != 0) findWithVersion(areaId, infoNo, cell, version)
     else {
       withSQL {
         select.from(CellPosition2nd as cp)
-            .where.eq(cp.areaId, areaId).and.eq(cp.cell, cell).and.eq(cp.infoNo, infoNo)
+            .where.eq(cp.areaId, areaId).and.eq(cp.infoNo, infoNo).and.eq(cp.suffix, suffix).and.eq(cp.cell, cell)
             .orderBy(cp.version.desc).limit(1)
       }.map(CellPosition2nd(cp.resultName)).single().apply()
     }
   }
 
-  private def findWithVersion(areaId: Int, infoNo: Int, cell: Int, version: Int = 0)(implicit session: DBSession = autoSession): Option[CellPosition2nd] = {
+  private def findWithVersion(areaId: Int, infoNo: Int, suffix: Int, cell: Int, version: Int = 0)(implicit session: DBSession = autoSession): Option[CellPosition2nd] = {
     withSQL {
       select.from(CellPosition2nd as cp)
-          .where.eq(cp.areaId, areaId).and.eq(cp.cell, cell).and.eq(cp.infoNo, infoNo).and.eq(cp.version, version)
+          .where.eq(cp.areaId, areaId).and.eq(cp.infoNo, infoNo).and.eq(cp.suffix, suffix).and.eq(cp.cell, cell).and.eq(cp.version, version)
     }.map(CellPosition2nd(cp.resultName)).single().apply()
   }
 
@@ -81,13 +82,15 @@ object CellPosition2nd extends SQLSyntaxSupport[CellPosition2nd] {
     withSQL {
       insert.into(CellPosition2nd).namedValues(
         column.areaId -> cp.areaId, column.infoNo -> cp.infoNo,
-        column.cell -> cp.cell, column.posX -> cp.posX, column.posY -> cp.posY,
+        column.suffix -> cp.suffix, column.cell -> cp.cell,
+        column.posX -> cp.posX, column.posY -> cp.posY,
         column.version -> cp.version
       )
     }.update().apply()
     CellPosition2nd(
       cp.areaId,
       cp.infoNo,
+      cp.suffix,
       cp.cell,
       cp.posX,
       cp.posY,
@@ -99,13 +102,15 @@ object CellPosition2nd extends SQLSyntaxSupport[CellPosition2nd] {
       insert.into(CellPosition2nd).columns(
         column.areaId,
         column.infoNo,
+        column.suffix,
         column.cell,
         column.posX,
         column.posY,
         column.version
       ).multiValues(
           cp.map(_.areaId), cp.map(_.infoNo),
-          cp.map(_.cell), cp.map(_.posX), cp.map(_.posY),
+          cp.map(_.suffix), cp.map(_.cell),
+          cp.map(_.posX), cp.map(_.posY),
           cp.map(_.version)
         )
     }
@@ -117,17 +122,18 @@ object CellPosition2nd extends SQLSyntaxSupport[CellPosition2nd] {
       update(CellPosition2nd).set(
         column.areaId -> entity.areaId,
         column.infoNo -> entity.infoNo,
+        column.suffix -> entity.suffix,
         column.cell -> entity.cell,
         column.posX -> entity.posX,
         column.posY -> entity.posY
-      ).where.eq(column.areaId, entity.areaId).and.eq(column.cell, entity.cell).and.eq(column.infoNo, entity.infoNo).and.eq(column.version, entity.version)
+      ).where.eq(column.areaId, entity.areaId).and.eq(column.infoNo, entity.infoNo).and.eq(column.suffix, entity.suffix).and.eq(column.cell, entity.cell).and.eq(column.version, entity.version)
     }.update().apply()
     entity
   }
 
   def destroy(entity: CellPosition2nd)(implicit session: DBSession = autoSession): Unit = {
     withSQL {
-      delete.from(CellPosition2nd).where.eq(column.areaId, entity.areaId).and.eq(column.cell, entity.cell).and.eq(column.infoNo, entity.infoNo).and.eq(column.version, entity.version)
+      delete.from(CellPosition2nd).where.eq(column.areaId, entity.areaId).and.eq(column.infoNo, entity.infoNo).and.eq(column.suffix, entity.suffix).and.eq(column.cell, entity.cell).and.eq(column.version, entity.version)
     }.update().apply()
   }
 

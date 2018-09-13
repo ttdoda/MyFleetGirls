@@ -8,6 +8,7 @@ import util.scalikejdbc.BulkInsert._
 case class MapData(
   areaId: Int,
   infoNo: Int,
+  suffix: Int,
   name: String,
   frameX: Int,
   frameY: Int,
@@ -26,7 +27,7 @@ object MapData extends SQLSyntaxSupport[MapData] {
 
   override val tableName = "map_data"
 
-  override val columns = Seq("area_id", "info_no", "name", "frame_x", "frame_y", "frame_w", "frame_h", "version")
+  override val columns = Seq("area_id", "info_no", "suffix", "name", "frame_x", "frame_y", "frame_w", "frame_h", "version")
 
   def apply(md: SyntaxProvider[MapData])(rs: WrappedResultSet): MapData = autoConstruct(rs, md)
   def apply(md: ResultName[MapData])(rs: WrappedResultSet): MapData = autoConstruct(rs, md)
@@ -35,21 +36,21 @@ object MapData extends SQLSyntaxSupport[MapData] {
 
   override val autoSession = AutoSession
 
-  def find(areaId: Int, infoNo: Int, name: String, version: Int = 0)(implicit session: DBSession = autoSession): Option[MapData] = {
-    if(version != 0) findWithVersion(areaId, infoNo, name, version)
+  def find(areaId: Int, infoNo: Int, suffix: Int, name: String, version: Int = 0)(implicit session: DBSession = autoSession): Option[MapData] = {
+    if(version != 0) findWithVersion(areaId, infoNo, suffix, name, version)
     else {
       withSQL {
         select.from(MapData as md)
-            .where.eq(md.areaId, areaId).and.eq(md.name, name).and.eq(md.infoNo, infoNo)
+            .where.eq(md.areaId, areaId).and.eq(md.infoNo, infoNo).and.eq(md.suffix, suffix).and.eq(md.name, name)
             .orderBy(md.version.desc).limit(1)
       }.map(MapData(md.resultName)).single().apply()
     }
   }
 
-  private def findWithVersion(areaId: Int, infoNo: Int, name: String, version: Int = 0)(implicit session: DBSession = autoSession): Option[MapData] = {
+  private def findWithVersion(areaId: Int, infoNo: Int, suffix: Int, name: String, version: Int = 0)(implicit session: DBSession = autoSession): Option[MapData] = {
     withSQL {
       select.from(MapData as md)
-          .where.eq(md.areaId, areaId).and.eq(md.name, name).and.eq(md.infoNo, infoNo).and.eq(md.version, version)
+          .where.eq(md.areaId, areaId).and.eq(md.infoNo, infoNo).and.eq(md.suffix, suffix).and.eq(md.name, name).and.eq(md.version, version)
     }.map(MapData(md.resultName)).single().apply()
   }
 
@@ -82,7 +83,8 @@ object MapData extends SQLSyntaxSupport[MapData] {
   def create(mf: master.MapFrame)(implicit session: DBSession = autoSession): MapData = {
     withSQL {
       insert.into(MapData).namedValues(
-        column.areaId -> mf.areaId, column.infoNo -> mf.infoNo, column.name -> mf.name,
+        column.areaId -> mf.areaId, column.infoNo -> mf.infoNo,
+        column.suffix -> mf.suffix, column.name -> mf.name,
         column.frameX -> mf.frameX, column.frameY -> mf.frameY,
         column.frameW -> mf.frameW, column.frameH -> mf.frameH,
         column.version -> mf.version
@@ -91,6 +93,7 @@ object MapData extends SQLSyntaxSupport[MapData] {
     MapData(
       mf.areaId,
       mf.infoNo,
+      mf.suffix,
       mf.name,
       mf.frameX,
       mf.frameY,
@@ -102,12 +105,14 @@ object MapData extends SQLSyntaxSupport[MapData] {
   def bulkInsert(mf: Seq[master.MapFrame])(implicit session: DBSession = autoSession): Unit = {
     applyUpdate {
       insert.into(MapData).columns(
-        column.areaId, column.infoNo, column.name,
+        column.areaId, column.infoNo,
+        column.suffix, column.name,
         column.frameX, column.frameY,
         column.frameW, column.frameH,
         column.version
       ).multiValues(
-          mf.map(_.areaId), mf.map(_.infoNo), mf.map(_.name),
+          mf.map(_.areaId), mf.map(_.infoNo),
+          mf.map(_.suffix), mf.map(_.name),
           mf.map(_.frameX), mf.map(_.frameY),
           mf.map(_.frameW), mf.map(_.frameH),
           mf.map(_.version)
@@ -120,12 +125,13 @@ object MapData extends SQLSyntaxSupport[MapData] {
       update(MapData).set(
         column.areaId -> entity.areaId,
         column.infoNo -> entity.infoNo,
+        column.suffix -> entity.suffix,
         column.name -> entity.name,
         column.frameX -> entity.frameX,
         column.frameY -> entity.frameY,
         column.frameW -> entity.frameW,
         column.frameH -> entity.frameH
-      ).where.eq(column.areaId, entity.areaId).and.eq(column.name, entity.name).and.eq(column.infoNo, entity.infoNo).and.eq(column.version, entity.version)
+      ).where.eq(column.areaId, entity.areaId).and.eq(column.infoNo, entity.infoNo).and.eq(column.suffix, entity.suffix).and.eq(column.name, entity.name).and.eq(column.version, entity.version)
 
     }.update().apply()
     entity
@@ -133,7 +139,7 @@ object MapData extends SQLSyntaxSupport[MapData] {
 
   def destroy(entity: MapData)(implicit session: DBSession = autoSession): Unit = {
     withSQL {
-      delete.from(MapData).where.eq(column.areaId, entity.areaId).and.eq(column.name, entity.name).and.eq(column.infoNo, entity.infoNo).and.eq(column.version, entity.version)
+      delete.from(MapData).where.eq(column.areaId, entity.areaId).and.eq(column.infoNo, entity.infoNo).and.eq(column.suffix, entity.suffix).and.eq(column.name, entity.name).and.eq(column.version, entity.version)
     }.update().apply()
   }
 

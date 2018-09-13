@@ -5,6 +5,7 @@ import scalikejdbc._
 case class MapImage2nd(
   areaId: Int,
   infoNo: Int,
+  suffix: Int,
   image: Array[Byte],
   version: Short) {
 
@@ -19,7 +20,7 @@ object MapImage2nd extends SQLSyntaxSupport[MapImage2nd] {
 
   override val tableName = "map_image_2nd"
 
-  override val columns = Seq("area_id", "info_no", "image", "version")
+  override val columns = Seq("area_id", "info_no", "suffix", "image", "version")
 
   def apply(mi: SyntaxProvider[MapImage2nd])(rs: WrappedResultSet): MapImage2nd = autoConstruct(rs, mi)
   def apply(mi: ResultName[MapImage2nd])(rs: WrappedResultSet): MapImage2nd = autoConstruct(rs, mi)
@@ -28,9 +29,9 @@ object MapImage2nd extends SQLSyntaxSupport[MapImage2nd] {
 
   override val autoSession = AutoSession
 
-  def find(areaId: Int, infoNo: Int, version: Short)(implicit session: DBSession = autoSession): Option[MapImage2nd] = {
+  def find(areaId: Int, infoNo: Int, suffix: Int, version: Short)(implicit session: DBSession = autoSession): Option[MapImage2nd] = {
     withSQL {
-      select.from(MapImage2nd as mi).where.eq(mi.areaId, areaId).and.eq(mi.infoNo, infoNo).and.eq(mi.version, version)
+      select.from(MapImage2nd as mi).where.eq(mi.areaId, areaId).and.eq(mi.infoNo, infoNo).and.eq(mi.suffix, suffix).and.eq(mi.version, version)
     }.map(MapImage2nd(mi.resultName)).single().apply()
   }
 
@@ -63,17 +64,20 @@ object MapImage2nd extends SQLSyntaxSupport[MapImage2nd] {
   def create(
     areaId: Int,
     infoNo: Int,
+    suffix: Int,
     image: Array[Byte],
     version: Short)(implicit session: DBSession = autoSession): MapImage2nd = {
     withSQL {
       insert.into(MapImage2nd).columns(
         column.areaId,
         column.infoNo,
+        column.suffix,
         column.image,
         column.version
       ).values(
             areaId,
             infoNo,
+            suffix,
             image,
             version
           )
@@ -82,6 +86,7 @@ object MapImage2nd extends SQLSyntaxSupport[MapImage2nd] {
     MapImage2nd(
       areaId = areaId,
       infoNo = infoNo,
+      suffix = suffix,
       image = image,
       version = version)
   }
@@ -91,15 +96,16 @@ object MapImage2nd extends SQLSyntaxSupport[MapImage2nd] {
       update(MapImage2nd).set(
         column.areaId -> entity.areaId,
         column.infoNo -> entity.infoNo,
+        column.suffix -> entity.suffix,
         column.image -> entity.image
-      ).where.eq(column.areaId, entity.areaId).and.eq(column.infoNo, entity.infoNo).and.eq(column.version, entity.version)
+      ).where.eq(column.areaId, entity.areaId).and.eq(column.infoNo, entity.infoNo).and.eq(column.suffix, entity.suffix).and.eq(column.version, entity.version)
     }.update().apply()
     entity
   }
 
   def destroy(entity: MapImage2nd)(implicit session: DBSession = autoSession): Unit = {
     withSQL {
-      delete.from(MapImage2nd).where.eq(column.areaId, entity.areaId).and.eq(column.infoNo, entity.infoNo).and.eq(column.version, entity.version)
+      delete.from(MapImage2nd).where.eq(column.areaId, entity.areaId).and.eq(column.infoNo, entity.infoNo).and.eq(column.suffix, entity.suffix).and.eq(column.version, entity.version)
     }.update().apply()
   }
 
