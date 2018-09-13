@@ -184,14 +184,18 @@ class Post @Inject()(implicit val ec: ExecutionContext) extends Controller {
 
   def mapData() = authAndParse[List[MapData]] { case (auth, request) =>
     if(db.MapData.find(request.head.areaId, request.head.infoNo, request.head.name, request.head.version).isDefined) Ok("Already exists")
-    db.MapData.bulkInsert(request)
-    Res.success
+    else {
+      db.MapData.bulkInsert(request)
+      Res.success
+    }
   }
 
   def cellPosition() = authAndParse[List[CellPosition]] { case (auth, request) =>
     if(db.CellPosition2nd.find(request.head.areaId, request.head.infoNo, request.head.cell, request.head.version).isDefined) Ok("Already exists")
-    db.CellPosition2nd.bulkInsert(request)
-    Res.success
+    else {
+      db.CellPosition2nd.bulkInsert(request)
+      Res.success
+    }
   }
 
   def ranking = Action { Ok("v1 is deprecated. use latest client.") }
