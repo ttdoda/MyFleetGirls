@@ -20,7 +20,6 @@ object MyFleetGirlsBuild extends Build {
   val prof = inputKey[Unit]("run profiler")
   val runTester = inputKey[Unit]("run tester")
   val runTesterEarth = taskKey[Unit]("run tester")
-  val downLib = taskKey[File]("download library")
 
   lazy val rootSettings = settings ++ disableAggregates ++ Seq(
     commands ++= Seq(start),
@@ -45,13 +44,9 @@ object MyFleetGirlsBuild extends Build {
   }
 
   lazy val server = project
+    .settings(scalaVersion := scalaVer)
     .dependsOn(library)
     .enablePlugins(sbt.PlayScala)
-    .settings(
-      scalaVersion := scalaVer,
-      downLib := downLibTask.value,
-      unmanagedJars in Compile := (unmanagedJars in Compile).dependsOn(downLib).value
-    )
     .enablePlugins(SbtWeb, BuildInfoPlugin)
 
   lazy val client = project
@@ -90,21 +85,6 @@ object MyFleetGirlsBuild extends Build {
     val subState = Command.process("project server", state)
     Command.process("testProd", subState)
     state
-  }
-
-  def downLibTask = Def.task {
-    val s = streams.value
-    val libName = "ffdec_5.3.0_lib.jar"
-    val libFile = unmanagedBase.value / libName
-    if (!libFile.exists()) {
-      IO.withTemporaryFile("ffdec-", ".tmp") { tmp =>
-        val dlUrl = url(s"https://www.free-decompiler.com/flash/download/$libName")
-        s.log.info(s"downloading $dlUrl ...")
-        IO.download(dlUrl, tmp)
-        IO.move(tmp, libFile)
-      }
-    }
-    libFile
   }
 
 }
