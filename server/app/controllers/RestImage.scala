@@ -37,6 +37,21 @@ class RestImage @Inject()(implicit val ec: ExecutionContext) extends Controller 
     }
   }
 
+  def map2nd(areaId: Int, infoNo: Int, suffix: Int) = actionAsync {
+    val mi = db.MapImage2nd.mi
+    db.MapImage2nd.findAllBy(sqls.eq(mi.areaId, areaId).and.eq(mi.infoNo, infoNo).and.eq(mi.suffix, suffix)).sortBy(-_.version).headOption match {
+      case None => NotFound(s"Not found map image (${areaId}-${infoNo}) suffix=${suffix}")
+      case Some(img) => Ok(img.image).as("image/jpeg")
+    }
+  }
+
+  def map2ndHead(areaId: Int, infoNo: Int, suffix: Int, version: Int) = actionAsync {
+    db.MapImage2nd.find(areaId, infoNo, suffix, version.toShort) match {
+      case None => NotFound(s"Not found map image (${areaId}-${infoNo} suffix=${suffix} ver=${version})")
+      case Some(img) => Ok(img.image).as("image/png")
+    }
+  }
+
   def ship = shipCommon(_: Int, _: Int)
 
   def shipHead = shipCommon(_: Int, _: Int)
@@ -46,13 +61,6 @@ class RestImage @Inject()(implicit val ec: ExecutionContext) extends Controller 
     db.MapImage.findAllBy(sqls.eq(mi.areaId, areaId).and.eq(mi.infoNo, infoNo)).sortBy(-_.version).headOption match {
       case None => NotFound(s"Not found map image (${areaId}-${infoNo})")
       case Some(img) => Ok(img.image).as("image/jpeg")
-    }
-  }
-
-  def map2ndHead(areaId: Int, infoNo: Int, suffix: Int, version: Int) = actionAsync {
-    db.MapImage2nd.find(areaId, infoNo, suffix, version.toShort) match {
-      case None => NotFound(s"Not found map image (${areaId}-${infoNo} suffix=${suffix} ver=${version})")
-      case Some(img) => Ok(img.image).as("image/png")
     }
   }
 

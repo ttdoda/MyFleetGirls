@@ -106,6 +106,7 @@ GET           /rest/v2/user/:userId/honors                                  cont
 GET           /rest/v2/user/:userId/ship/exps/:groupId                      controllers.RestUser.shipGroupExp(userId: Long, groupId: Int, agg: Int ?= 1)
 GET           /rest/v2/image/ship/:shipId/:kind.png                         controllers.RestImage.ship2nd(shipId: Int, kind: String)
 GET           /rest/v1/image/ship/:shipId/:swfId.jpg                        controllers.RestImage.ship(shipId: Int, swfId: Int)
+GET           /rest/v2/image/map/:areaId/:infoNo.png                        controllers.RestImage.map2nd(areaId: Int, infoNo: Int, suffix: Int ?= 0)
 GET           /rest/v2/image/map/:areaId/:infoNo.jpg                        controllers.RestImage.map(areaId: Int, infoNo: Int)
 GET           /rest/v1/sound/ship/:shipId/:soundId.mp3                      controllers.RestSound.ship(shipId: Int, soundId: Int)
 # 一期flash版の画像の存在確認 クライアントからは使われない
