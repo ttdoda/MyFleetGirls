@@ -74,16 +74,16 @@ class PostFile @Inject()(implicit val ec: ExecutionContext) extends Controller {
    * 一期はswfファイルにCellPositionも含まれていたが二期では別のjsonなのでCellPositionに当たるものはcontroller.Post.cellPositionへ移動する
    * また、ここで保存する画像はスプライトなので実際に使用する際にはMapDataを利用して描写すること
    */
-  def map(areaId: Int, infoNo: Int, version: Int) = Action.async(parse.multipartFormData) { request =>
+  def map(areaId: Int, infoNo: Int, suffix: Int, version: Int) = Action.async(parse.multipartFormData) { request =>
     val form = request.body.asFormUrlEncoded
     authentication(form) { auth =>
       request.body.file("map") match {
         case Some(ref) =>
-          if(MapImage2nd.find(areaId, infoNo, version.toShort).isDefined) Ok("Already exists")
+          if(MapImage2nd.find(areaId, infoNo, suffix, version.toShort).isDefined) Ok("Already exists")
           else {
             val pngFile = ref.ref.file
             val image = readAll(new FileInputStream(pngFile))
-            MapImage2nd.create(areaId, infoNo, image, version.toShort)
+            MapImage2nd.create(areaId, infoNo, suffix, image, version.toShort)
             Ok("Success")
           }
         case _ => BadRequest("Need ship image")

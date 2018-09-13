@@ -19,10 +19,11 @@ import org.json4s.native.JsonMethods.parse
 trait MapData {
   def regexp: Regex
 
-  def parseUrl(uri: Uri): Option[(Int, Int)] = {
+  def parseUrl(uri: Uri): Option[(Int, Int, Int)] = {
     Try {
       uri.path match {
-        case this.regexp(id, no) => (id.toInt, no.toInt)
+        case this.regexp(id, no, suffix) => (id.toInt, no.toInt, suffix.toInt)
+        case this.regexp(id, no) => (id.toInt, no.toInt, 0)
       }
     }.toOption
   }
@@ -36,13 +37,13 @@ trait MapData {
  * Map image
  */
 object MapImage extends ResType with Resources with Media with MapData {
-  def regexp: Regex = """\A/kcs2/resources/map/(\d+)/(\d+)_image.png\z""".r
+  def regexp: Regex = """\A/kcs2/resources/map/(\d+)/(\d+)_image(\d+)?.png\z""".r
 
   def postables(q: Query): Seq[Result] = {
     val ver = q.uri.query.param("version").flatMap(extractNumber).getOrElse(DefaultVer)
-    parseUrl(q.uri).filterNot { case (areaId, infoNo) => MFGHttp.existsMap(areaId, infoNo, ver) }.map { case (areaId, infoNo) =>
+    parseUrl(q.uri).filterNot { case (areaId, infoNo, suffix) => MFGHttp.existsMap(areaId, infoNo, suffix, ver) }.map { case (areaId, infoNo, suffix) =>
       val png = allRead(q.responseContent)
-      FilePostable(s"/image/map/${areaId}/${infoNo}/${ver}", "map", 2, png, "png")
+      FilePostable(s"/image/map/${areaId}/${infoNo}/${suffix}/${ver}", "map", 2, png, "png")
     }.toList
   }
 }
@@ -51,13 +52,13 @@ object MapImage extends ResType with Resources with Media with MapData {
  * Map image sprite data
  */
 object MapImageSprite extends ResType with Resources with MapData {
-  def regexp: Regex = """\A/kcs2/resources/map/(\d+)/(\d+)_image.json\z""".r
+  def regexp: Regex = """\A/kcs2/resources/map/(\d+)/(\d+)_image(\d+)?.json\z""".r
 
   def postables(q: Query): Seq[Result] = {
     val ver = q.uri.query.param("version").flatMap(extractNumber).getOrElse(DefaultVer)
-    parseUrl(q.uri).map { case (areaId, infoNo) =>
+    parseUrl(q.uri).map { case (areaId, infoNo, suffix) =>
       val json = parse(q.resCont)
-      val result = master.MapFrame.fromJson(json \ "frames", areaId, infoNo, ver)
+      val result = master.MapFrame.fromJson(json \ "frames", areaId, infoNo, suffix, ver)
       NormalPostable(s"/map_data", write(result), 2) :: Nil
     }.getOrElse(Nil)
   }
@@ -67,13 +68,13 @@ object MapImageSprite extends ResType with Resources with MapData {
  * Map image cell position
  */
 object MapImageInfo extends ResType with Resources with MapData {
-  def regexp: Regex = """\A/kcs2/resources/map/(\d+)/(\d+)_info.json\z""".r
+  def regexp: Regex = """\A/kcs2/resources/map/(\d+)/(\d+)_info(\d+)?.json\z""".r
 
   def postables(q: Query): Seq[Result] = {
     val ver = q.uri.query.param("version").flatMap(extractNumber).getOrElse(DefaultVer)
-    parseUrl(q.uri).map { case (areaId, infoNo) =>
+    parseUrl(q.uri).map { case (areaId, infoNo, suffix) =>
       val json = parse(q.resCont)
-      val result = master.CellPosition.fromJson(json \ "spots", areaId, infoNo, ver)
+      val result = master.CellPosition.fromJson(json \ "spots", areaId, infoNo, suffix, ver)
       NormalPostable(s"/cell_position", write(result), 2) :: Nil
     }.getOrElse(Nil)
   }

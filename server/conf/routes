@@ -52,7 +52,7 @@ POST          /post/v1/master/stype                controllers.PostMaster.stype
 #POST          /post/v2/swf/ship/:shipKey/:version        controllers.PostFile.ship(shipKey: String, version: Int)
 #POST          /post/v2/swf/map/:areaId/:infoNo/:version                     controllers.PostFile.map(areaId: Int, infoNo: Int, version: Int)
 POST          /post/v2/image/ship/:shipId/:kind/:version                    controllers.PostFile.ship(shipId: Int, kind: String, version: Int)
-POST          /post/v2/image/map/:areaId/:infoNo/:version                   controllers.PostFile.map(areaId: Int, infoNo: Int, version: Int)
+POST          /post/v2/image/map/:areaId/:infoNo/:suffix/:version           controllers.PostFile.map(areaId: Int, infoNo: Int, suffix: Int, version: Int)
 POST          /post/v2/mp3/kc/:shipKey/:soundId/:version                    controllers.PostFile.sound(shipKey: String, soundId: Int, version: Int)
 
 # Rest
@@ -116,7 +116,7 @@ GET           /rest/v1/sound/ship/:shipId/:soundId.mp3                      cont
 #HEAD          /rest/v2/image/ship_obf/:shipKey/:version.jpg                 controllers.RestImage.shipKeyHead(shipKey: String, version: Int)
 #HEAD          /rest/v2/image/map/:areaId/:infoNo/:version.jpg               controllers.RestImage.mapHead(areaId: Int, infoNo: Int, version: Int)
 HEAD          /rest/v2/image/ship_obf/:shipId/:kind/:version.png            controllers.RestImage.ship2ndHead(shipId: Int, kind: String, version: Int)
-HEAD          /rest/v2/image/map/:areaId/:infoNo/:version.png               controllers.RestImage.map2ndHead(areaId: Int, infoNo: Int, version: Int)
+HEAD          /rest/v2/image/map/:areaId/:infoNo/:suffix/:version.png       controllers.RestImage.map2ndHead(areaId: Int, infoNo: Int, suffix: Int, version: Int)
 HEAD          /rest/v1/sound/ship/:shipId/:soundId.mp3                      controllers.RestSound.shipHead(shipId: Int, soundId: Int)
 HEAD          /rest/v2/sound/ship_obf/:shipKey/:soundId/:version.mp3        controllers.RestSound.shipKeyHead(shipKey: String, soundId: Int, version: Int)
 GET           /rest/v1/sound/random                                         controllers.RestSound.random()

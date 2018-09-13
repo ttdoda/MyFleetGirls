@@ -183,7 +183,7 @@ class Post @Inject()(implicit val ec: ExecutionContext) extends Controller {
   }
 
   def mapData() = authAndParse[List[MapFrame]] { case (auth, request) =>
-    if(db.MapData.find(request.head.areaId, request.head.infoNo, request.head.name, request.head.version).isDefined) Ok("Already exists")
+    if(db.MapData.find(request.head.areaId, request.head.infoNo, request.head.suffix, request.head.name, request.head.version).isDefined) Ok("Already exists")
     else {
       db.MapData.bulkInsert(request)
       Res.success
@@ -191,7 +191,7 @@ class Post @Inject()(implicit val ec: ExecutionContext) extends Controller {
   }
 
   def cellPosition() = authAndParse[List[CellPosition]] { case (auth, request) =>
-    if(db.CellPosition2nd.find(request.head.areaId, request.head.infoNo, request.head.cell, request.head.version).isDefined) Ok("Already exists")
+    if(db.CellPosition2nd.find(request.head.areaId, request.head.infoNo, request.head.suffix, request.head.cell, request.head.version).isDefined) Ok("Already exists")
     else {
       db.CellPosition2nd.bulkInsert(request)
       Res.success

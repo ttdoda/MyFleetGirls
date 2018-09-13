@@ -49,9 +49,9 @@ class RestImage @Inject()(implicit val ec: ExecutionContext) extends Controller 
     }
   }
 
-  def map2ndHead(areaId: Int, infoNo: Int, version: Int) = actionAsync {
-    db.MapImage2nd.find(areaId, infoNo, version.toShort) match {
-      case None => NotFound(s"Not found map image (${areaId}-${infoNo} ver=${version})")
+  def map2ndHead(areaId: Int, infoNo: Int, suffix: Int, version: Int) = actionAsync {
+    db.MapImage2nd.find(areaId, infoNo, suffix, version.toShort) match {
+      case None => NotFound(s"Not found map image (${areaId}-${infoNo} suffix=${suffix} ver=${version})")
       case Some(img) => Ok(img.image).as("image/png")
     }
   }
