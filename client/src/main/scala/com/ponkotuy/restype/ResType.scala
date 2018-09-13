@@ -69,6 +69,9 @@ object ResType extends Log {
     SlotItem,
     MapStart,
     MapNext,
+    MapImageInfo,
+    MapImageSprite,
+    MapImage,
     //MapSWF,
     //ObfuscatedMapSWF, // 判定順序の問題で必ずMapSWFの後でないといけない
     SortieBattleResult,
