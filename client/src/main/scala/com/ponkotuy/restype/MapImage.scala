@@ -59,7 +59,7 @@ object MapImageSprite extends ResType with Resources with MapData {
     parseUrl(q.uri).map { case (areaId, infoNo, suffix) =>
       val json = parse(q.resCont)
       val result = master.MapFrame.fromJson(json \ "frames", areaId, infoNo, suffix, ver)
-      NormalPostable(s"/map_data", write(result), 2) :: Nil
+      NormalPostable(s"/map_frame", write(result), 2) :: Nil
     }.getOrElse(Nil)
   }
 }
