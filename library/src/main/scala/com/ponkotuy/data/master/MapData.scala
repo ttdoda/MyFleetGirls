@@ -8,7 +8,7 @@ import org.json4s._
  * Date: 18/09/13
  */
 case class MapFrame(
-  areaId: Int, infoNo: Int, suffix: Int, name: String, frameX: Int, frameY: Int, frameW: Int, frameH: Int, version: Int
+  areaId: Int, infoNo: Int, suffix: Int, name: String, posX: Int, posY: Int, width: Int, height: Int, version: Int
 )
 
 

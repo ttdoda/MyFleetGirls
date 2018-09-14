@@ -43,7 +43,7 @@ class PostFile @Inject()(implicit val ec: ExecutionContext) extends Controller {
    * 二期HTML5版海域画像
    *
    * 一期はswfファイルにCellPositionも含まれていたが二期では別のjsonなのでCellPositionに当たるものはcontroller.Post.cellPositionへ移動する
-   * また、ここで保存する画像はスプライトなので実際に使用する際にはMapDataを利用して描写すること
+   * また、ここで保存する画像はスプライトなので実際に使用する際にはMapFrameを利用して描写すること
    */
   def map(areaId: Int, infoNo: Int, suffix: Int, version: Int) = Action.async(parse.multipartFormData) { request =>
     val form = request.body.asFormUrlEncoded

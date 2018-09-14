@@ -5,141 +5,141 @@ import com.ponkotuy.data.master
 import scalikejdbc._
 import util.scalikejdbc.BulkInsert._
 
-case class MapData(
+case class MapFrame(
   areaId: Int,
   infoNo: Int,
   suffix: Int,
   name: String,
-  frameX: Int,
-  frameY: Int,
-  frameW: Int,
-  frameH: Int,
+  posX: Int,
+  posY: Int,
+  width: Int,
+  height: Int,
   version: Int) {
 
-  def save()(implicit session: DBSession = MapData.autoSession): MapData = MapData.save(this)(session)
+  def save()(implicit session: DBSession = MapFrame.autoSession): MapFrame = MapFrame.save(this)(session)
 
-  def destroy()(implicit session: DBSession = MapData.autoSession): Unit = MapData.destroy(this)(session)
+  def destroy()(implicit session: DBSession = MapFrame.autoSession): Unit = MapFrame.destroy(this)(session)
 
 }
 
 
-object MapData extends SQLSyntaxSupport[MapData] {
+object MapFrame extends SQLSyntaxSupport[MapFrame] {
 
-  override val tableName = "map_data"
+  override val tableName = "map_frame"
 
-  override val columns = Seq("area_id", "info_no", "suffix", "name", "frame_x", "frame_y", "frame_w", "frame_h", "version")
+  override val columns = Seq("area_id", "info_no", "suffix", "name", "pos_x", "pos_y", "width", "height", "version")
 
-  def apply(md: SyntaxProvider[MapData])(rs: WrappedResultSet): MapData = autoConstruct(rs, md)
-  def apply(md: ResultName[MapData])(rs: WrappedResultSet): MapData = autoConstruct(rs, md)
+  def apply(mf: SyntaxProvider[MapFrame])(rs: WrappedResultSet): MapFrame = autoConstruct(rs, mf)
+  def apply(mf: ResultName[MapFrame])(rs: WrappedResultSet): MapFrame = autoConstruct(rs, mf)
 
-  val md = MapData.syntax("md")
+  val mf = MapFrame.syntax("mf")
 
   override val autoSession = AutoSession
 
-  def find(areaId: Int, infoNo: Int, suffix: Int, name: String, version: Int = 0)(implicit session: DBSession = autoSession): Option[MapData] = {
+  def find(areaId: Int, infoNo: Int, suffix: Int, name: String, version: Int = 0)(implicit session: DBSession = autoSession): Option[MapFrame] = {
     if(version != 0) findWithVersion(areaId, infoNo, suffix, name, version)
     else {
       withSQL {
-        select.from(MapData as md)
-            .where.eq(md.areaId, areaId).and.eq(md.infoNo, infoNo).and.eq(md.suffix, suffix).and.eq(md.name, name)
-            .orderBy(md.version.desc).limit(1)
-      }.map(MapData(md.resultName)).single().apply()
+        select.from(MapFrame as mf)
+            .where.eq(mf.areaId, areaId).and.eq(mf.infoNo, infoNo).and.eq(mf.suffix, suffix).and.eq(mf.name, name)
+            .orderBy(mf.version.desc).limit(1)
+      }.map(MapFrame(mf.resultName)).single().apply()
     }
   }
 
-  private def findWithVersion(areaId: Int, infoNo: Int, suffix: Int, name: String, version: Int = 0)(implicit session: DBSession = autoSession): Option[MapData] = {
+  private def findWithVersion(areaId: Int, infoNo: Int, suffix: Int, name: String, version: Int = 0)(implicit session: DBSession = autoSession): Option[MapFrame] = {
     withSQL {
-      select.from(MapData as md)
-          .where.eq(md.areaId, areaId).and.eq(md.infoNo, infoNo).and.eq(md.suffix, suffix).and.eq(md.name, name).and.eq(md.version, version)
-    }.map(MapData(md.resultName)).single().apply()
+      select.from(MapFrame as mf)
+          .where.eq(mf.areaId, areaId).and.eq(mf.infoNo, infoNo).and.eq(mf.suffix, suffix).and.eq(mf.name, name).and.eq(mf.version, version)
+    }.map(MapFrame(mf.resultName)).single().apply()
   }
 
-  def findAll()(implicit session: DBSession = autoSession): List[MapData] = {
-    withSQL(select.from(MapData as md)).map(MapData(md.resultName)).list().apply()
+  def findAll()(implicit session: DBSession = autoSession): List[MapFrame] = {
+    withSQL(select.from(MapFrame as mf)).map(MapFrame(mf.resultName)).list().apply()
   }
 
   def countAll()(implicit session: DBSession = autoSession): Long = {
-    withSQL(select(sqls.count).from(MapData as md)).map(rs => rs.long(1)).single().apply().get
+    withSQL(select(sqls.count).from(MapFrame as mf)).map(rs => rs.long(1)).single().apply().get
   }
 
-  def findBy(where: SQLSyntax)(implicit session: DBSession = autoSession): Option[MapData] = {
+  def findBy(where: SQLSyntax)(implicit session: DBSession = autoSession): Option[MapFrame] = {
     withSQL {
-      select.from(MapData as md).where.append(where)
-    }.map(MapData(md.resultName)).single().apply()
+      select.from(MapFrame as mf).where.append(where)
+    }.map(MapFrame(mf.resultName)).single().apply()
   }
 
-  def findAllBy(where: SQLSyntax)(implicit session: DBSession = autoSession): List[MapData] = {
+  def findAllBy(where: SQLSyntax)(implicit session: DBSession = autoSession): List[MapFrame] = {
     withSQL {
-      select.from(MapData as md).where.append(where)
-    }.map(MapData(md.resultName)).list().apply()
+      select.from(MapFrame as mf).where.append(where)
+    }.map(MapFrame(mf.resultName)).list().apply()
   }
 
   def countBy(where: SQLSyntax)(implicit session: DBSession = autoSession): Long = {
     withSQL {
-      select(sqls.count).from(MapData as md).where.append(where)
+      select(sqls.count).from(MapFrame as mf).where.append(where)
     }.map(_.long(1)).single().apply().get
   }
 
-  def create(mf: master.MapFrame)(implicit session: DBSession = autoSession): MapData = {
+  def create(mf: master.MapFrame)(implicit session: DBSession = autoSession): MapFrame = {
     withSQL {
-      insert.into(MapData).namedValues(
+      insert.into(MapFrame).namedValues(
         column.areaId -> mf.areaId, column.infoNo -> mf.infoNo,
         column.suffix -> mf.suffix, column.name -> mf.name,
-        column.frameX -> mf.frameX, column.frameY -> mf.frameY,
-        column.frameW -> mf.frameW, column.frameH -> mf.frameH,
+        column.posX -> mf.posX, column.posY -> mf.posY,
+        column.width -> mf.width, column.height -> mf.height,
         column.version -> mf.version
       )
     }.update().apply()
-    MapData(
+    MapFrame(
       mf.areaId,
       mf.infoNo,
       mf.suffix,
       mf.name,
-      mf.frameX,
-      mf.frameY,
-      mf.frameW,
-      mf.frameH,
+      mf.posX,
+      mf.posY,
+      mf.width,
+      mf.height,
       mf.version)
   }
 
   def bulkInsert(mf: Seq[master.MapFrame])(implicit session: DBSession = autoSession): Unit = {
     applyUpdate {
-      insert.into(MapData).columns(
+      insert.into(MapFrame).columns(
         column.areaId, column.infoNo,
         column.suffix, column.name,
-        column.frameX, column.frameY,
-        column.frameW, column.frameH,
+        column.posX, column.posY,
+        column.width, column.height,
         column.version
       ).multiValues(
           mf.map(_.areaId), mf.map(_.infoNo),
           mf.map(_.suffix), mf.map(_.name),
-          mf.map(_.frameX), mf.map(_.frameY),
-          mf.map(_.frameW), mf.map(_.frameH),
+          mf.map(_.posX), mf.map(_.posY),
+          mf.map(_.width), mf.map(_.height),
           mf.map(_.version)
         )
     }
   }
 
-  def save(entity: MapData)(implicit session: DBSession = autoSession): MapData = {
+  def save(entity: MapFrame)(implicit session: DBSession = autoSession): MapFrame = {
     withSQL {
-      update(MapData).set(
+      update(MapFrame).set(
         column.areaId -> entity.areaId,
         column.infoNo -> entity.infoNo,
         column.suffix -> entity.suffix,
         column.name -> entity.name,
-        column.frameX -> entity.frameX,
-        column.frameY -> entity.frameY,
-        column.frameW -> entity.frameW,
-        column.frameH -> entity.frameH
+        column.posX -> entity.posX,
+        column.posY -> entity.posY,
+        column.width -> entity.width,
+        column.height -> entity.height
       ).where.eq(column.areaId, entity.areaId).and.eq(column.infoNo, entity.infoNo).and.eq(column.suffix, entity.suffix).and.eq(column.name, entity.name).and.eq(column.version, entity.version)
 
     }.update().apply()
     entity
   }
 
-  def destroy(entity: MapData)(implicit session: DBSession = autoSession): Unit = {
+  def destroy(entity: MapFrame)(implicit session: DBSession = autoSession): Unit = {
     withSQL {
-      delete.from(MapData).where.eq(column.areaId, entity.areaId).and.eq(column.infoNo, entity.infoNo).and.eq(column.suffix, entity.suffix).and.eq(column.name, entity.name).and.eq(column.version, entity.version)
+      delete.from(MapFrame).where.eq(column.areaId, entity.areaId).and.eq(column.infoNo, entity.infoNo).and.eq(column.suffix, entity.suffix).and.eq(column.name, entity.name).and.eq(column.version, entity.version)
     }.update().apply()
   }
 

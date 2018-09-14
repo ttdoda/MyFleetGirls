@@ -183,9 +183,9 @@ class Post @Inject()(implicit val ec: ExecutionContext) extends Controller {
   }
 
   def mapData() = authAndParse[List[MapFrame]] { case (auth, request) =>
-    if(db.MapData.find(request.head.areaId, request.head.infoNo, request.head.suffix, request.head.name, request.head.version).isDefined) Ok("Already exists")
+    if(db.MapFrame.find(request.head.areaId, request.head.infoNo, request.head.suffix, request.head.name, request.head.version).isDefined) Ok("Already exists")
     else {
-      db.MapData.bulkInsert(request)
+      db.MapFrame.bulkInsert(request)
       Res.success
     }
   }
