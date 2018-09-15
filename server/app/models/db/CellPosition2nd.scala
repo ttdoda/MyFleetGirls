@@ -12,6 +12,9 @@ case class CellPosition2nd(
   cell: Int,
   posX: Int,
   posY: Int,
+  routeX: Int,
+  routeY: Int,
+  routeName: String,
   version: Int) {
 
   def save()(implicit session: DBSession = CellPosition2nd.autoSession): CellPosition2nd = CellPosition2nd.save(this)(session)
@@ -25,7 +28,7 @@ object CellPosition2nd extends SQLSyntaxSupport[CellPosition2nd] {
 
   override val tableName = "cell_position_2nd"
 
-  override val columns = Seq("area_id", "info_no", "suffix", "cell", "pos_x", "pos_y", "version")
+  override val columns = Seq("area_id", "info_no", "suffix", "cell", "pos_x", "pos_y", "route_x", "route_y", "route_name", "version")
 
   def apply(cp: SyntaxProvider[CellPosition2nd])(rs: WrappedResultSet): CellPosition2nd = autoConstruct(rs, cp)
   def apply(cp: ResultName[CellPosition2nd])(rs: WrappedResultSet): CellPosition2nd = autoConstruct(rs, cp)
@@ -84,7 +87,8 @@ object CellPosition2nd extends SQLSyntaxSupport[CellPosition2nd] {
         column.areaId -> cp.areaId, column.infoNo -> cp.infoNo,
         column.suffix -> cp.suffix, column.cell -> cp.cell,
         column.posX -> cp.posX, column.posY -> cp.posY,
-        column.version -> cp.version
+        column.routeX -> cp.routeX, column.routeY -> cp.routeY,
+        column.routeName -> cp.routeName, column.version -> cp.version
       )
     }.update().apply()
     CellPosition2nd(
@@ -94,6 +98,9 @@ object CellPosition2nd extends SQLSyntaxSupport[CellPosition2nd] {
       cp.cell,
       cp.posX,
       cp.posY,
+      cp.routeX,
+      cp.routeY,
+      cp.routeName,
       cp.version)
   }
 
@@ -106,12 +113,16 @@ object CellPosition2nd extends SQLSyntaxSupport[CellPosition2nd] {
         column.cell,
         column.posX,
         column.posY,
+        column.routeX,
+        column.routeY,
+        column.routeName,
         column.version
       ).multiValues(
           cp.map(_.areaId), cp.map(_.infoNo),
           cp.map(_.suffix), cp.map(_.cell),
           cp.map(_.posX), cp.map(_.posY),
-          cp.map(_.version)
+          cp.map(_.routeX), cp.map(_.routeY),
+          cp.map(_.routeName), cp.map(_.version)
         )
     }
   }
@@ -125,7 +136,10 @@ object CellPosition2nd extends SQLSyntaxSupport[CellPosition2nd] {
         column.suffix -> entity.suffix,
         column.cell -> entity.cell,
         column.posX -> entity.posX,
-        column.posY -> entity.posY
+        column.posY -> entity.posY,
+        column.routeX -> entity.routeX,
+        column.routeY -> entity.routeY,
+        column.routeName -> entity.routeName
       ).where.eq(column.areaId, entity.areaId).and.eq(column.infoNo, entity.infoNo).and.eq(column.suffix, entity.suffix).and.eq(column.cell, entity.cell).and.eq(column.version, entity.version)
     }.update().apply()
     entity
