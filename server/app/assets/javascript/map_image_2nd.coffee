@@ -24,39 +24,41 @@ class @SeaMap
 
   load: (idTag) ->
     posUrl = @tag.attr('data-position')
+    labelUrl = @tag.attr('data-labelpos')
     infoUrl = @tag.attr('data-cellinfo')
     that = @
     @image.onload = () ->
       deferr = []
       d = new $.Deferred
-      $.getJSON posUrl, (data) ->
-        data.forEach (d) ->
+      $.when(
+        $.getJSON(posUrl),
+        if infoUrl then $.getJSON(infoUrl) else null
+      ).done (posData, infoData) ->
+        posData[0].forEach (d) ->
           that.positions[d.cell] = {x: d.posX, y: d.posY}
-        if infoUrl
-          $.getJSON infoUrl, (data) ->
-            data.forEach (d) ->
-              that.cellInfos[d.alphabet] = d.cell
-              that.toAlpha[d.cell] = d.alphabet
-            d.resolve
-        else
-          d.resolve
+        if infoData
+          infoData[0].forEach (d) ->
+            that.cellInfos[d.alphabet] = d.cell
+            that.toAlpha[d.cell] = d.alphabet
+        d.resolve
       deferr.push d.promise
+
       @layers.forEach (s) ->
         d = new $.Deferred
-        $.getJSON posUrl + '?suffix=' + s, (data) ->
-          data.forEach (d) ->
+        $.when(
+          $.getJSON(posUrl + '?suffix=' + s),
+          $.getJSON(labelUrl + '?suffix=' + s)
+        ).done (posData, labelData) ->
+          posData[0].forEach (d) ->
             that.positions[d.cell] = {x: d.posX, y: d.posY}
-            that.image.setLayerPoint(s, d.cell, {name: d.routeName, x: d.posX + d.routeX, y: d.posY + d.routeY})
-          that.image.setLayer(s)
-          if infoUrl
-            $.getJSON infoUrl + '?suffix=' + s, (data) ->
-              data.forEach (d) ->
-                that.cellInfos[d.alphabet] = d.cell
-                that.toAlpha[d.cell] = d.alphabet
-              d.resolve
-          else
-            d.resolve
+            frameName = d.routeName ? 'route_'+d.cell+'_1'
+            if d.routeX && d.routeY
+              that.image.setLayerPoint(s, frameName, {x: d.posX + d.routeX, y: d.posY + d.routeY})
+          labelData[0].forEach (d) ->
+            that.image.setLayerPoint(s, d.imageName, {x: d.posX, y: d.posY})
+          d.resolve
         deferr.push d.promise
+
       $.when.apply($,deferr).done ->
         that.onload()
 
@@ -137,11 +139,14 @@ class MapImage
     @bgImg.onload = () ->
       that.setImage()
       layerCount = 0
+      if layerCount == that.layers.length
+        return that.onload()
+
       that.layers.forEach (s) ->
         img = new Image()
         img.onload = ->
           layerCount++
-          if layerCount >= that.layers.length
+          if layerCount == that.layers.length
             that.onload()
         img.src = imageUrl + '?suffix=' + s
         that.layerImgs[s] = img
@@ -163,16 +168,14 @@ class MapImage
     @ctx.globalAlpha = 1.0
     that = @
     Object.keys(@layerFrames[s]).forEach (name) ->
-      console.log(name)
-      if name.match(/route_\d+_1/)
-        frame = that.layerFrames[s][name]
+      frame = that.layerFrames[s][name]
+      if frame.point
         that.ctx.drawImage(that.layerImgs[s], frame.pos.x, frame.pos.y, frame.width, frame.height, frame.point.x, frame.point.y, frame.width, frame.height)
       return
 
-  setLayerPoint: (s, cell, point) ->
-    frameName = point.name ? 'route_'+cell+'_1'
+  setLayerPoint: (s, frameName, point) ->
     if @layerFrames[s].hasOwnProperty frameName
-      Object.assign @layerFrames[s][frameName], {point: {x: point.x, y: point.y}}
+      @layerFrames[s][frameName].point = point
 
   setPoint: (x, y) ->
     @ctx.font = DefaultFont

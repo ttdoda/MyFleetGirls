@@ -151,13 +151,17 @@ class Rest @Inject()(implicit val ec: ExecutionContext) extends Controller {
     db.CellPosition2nd.findAllBy(sqls.eq(cp.areaId, area).and.eq(cp.infoNo, info).and.eq(cp.suffix, suffix))
   }
 
+  def labelPosition(area: Int, info: Int, suffix: Int) = returnJson {
+    val cp = db.LabelPosition.lp
+    db.LabelPosition.findAllBy(sqls.eq(cp.areaId, area).and.eq(cp.infoNo, info).and.eq(cp.suffix, suffix))
+  }
+
   def mapFrame(area: Int, info: Int, suffix: Int) = returnJson {
     val mf = db.MapFrame.mf
     db.MapFrame.findAllBy(sqls.eq(mf.areaId, area).and.eq(mf.infoNo, info).and.eq(mf.suffix, suffix))
   }
 
   def mapLayers(area: Int, info: Int) = returnJson {
-    val mf = db.MapFrame.mf
     db.MapFrame.getLayers(area, info)
   }
 

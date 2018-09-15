@@ -68,6 +68,7 @@ GET           /rest/v1/route/:area/:info                                    cont
 GET           /rest/v1/cell_info                                            controllers.Rest.cellInfo(area: Int ?= -1, info: Int ?= -1)
 GET           /rest/v2/cell_position/:area/:info                            controllers.Rest.cellPosition(area: Int, info: Int)
 GET           /rest/v2/cell_position_2nd/:area/:info                        controllers.Rest.cellPosition2nd(area: Int, info: Int, suffix: Int ?= 0)
+GET           /rest/v2/label_position/:area/:info                           controllers.Rest.labelPosition(area: Int, info: Int, suffix: Int ?= 0)
 GET           /rest/v2/map_frame/:area/:info                                controllers.Rest.mapFrame(area: Int, info: Int, suffix: Int ?= 0)
 GET           /rest/v2/map_layers/:area/:info                               controllers.Rest.mapLayers(area: Int, info: Int)
 GET           /rest/v1/maps                                                 controllers.Rest.maps()
