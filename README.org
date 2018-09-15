@@ -31,7 +31,6 @@ $ sbt proxy
 
 ** MyFleetGirls Server
    + sbt（sbt-extrasのインストールをお勧め）とMariaDBをインストール
-   + server/lib以下に [[https://www.free-decompiler.com/flash/download/]] からLibraryのjarを入れる(以下のdownLibでも可)
    + MariaDBにmyfleetという名前のdatabaseを作成。utf8を有効化する（いくらかのクエリがutf8です）
    + server/conf/local.confを適宜設定（.sampleをコピーして、DB設定を適宜すればいいでしょう）
    + server/public/message にテキストファイル置かないと弊害があるかも
@@ -42,9 +41,7 @@ $ sbt proxy
    - start :: 同上。ただし本番モード
    - proxy :: client立ち上げ
    - assembly :: MyFleetGirls ClientのダウンローダとClient本体をone-packageのjarに固める
-   - zip :: assemblyののちに、publicにそれらを配置する
    - prof :: profilerを立ち上げる（メンテされてないので動くか不明）
-   - downLib :: 非maven管理下にあるjarをdownloadし適切に配置する
    - runTester :: Localに対してAPIのテストをする
    - dumpLicenseReport :: 使用しているライブラリのLICENSE一覧を出す
    - scalikeJdbcGen :: ScalikeJDBCのclassファイルを生成する
