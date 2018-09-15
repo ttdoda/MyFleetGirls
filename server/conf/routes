@@ -30,7 +30,7 @@ POST          /post/v1/remodel_slot                controllers.Post.remodelSlot(
 POST          /post/v1/remodel                     controllers.Post.remodel()
 POST          /post/v1/master_remodel              controllers.Post.masterRemodel()
 POST          /post/v2/map_frame                   controllers.Post.mapFrame()
-POST          /post/v2/cell_position               controllers.Post.cellPosition()
+POST          /post/v2/map_positions               controllers.Post.mapPositions()
 # deprecated
 POST          /post/v1/ranking                     controllers.Post.ranking()
 POST          /post/v2/ranking                     controllers.Post.ranking2()

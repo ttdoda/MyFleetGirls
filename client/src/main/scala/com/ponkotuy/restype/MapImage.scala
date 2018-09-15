@@ -75,7 +75,7 @@ object MapImageInfo extends ResType with Resources with MapData {
     parseUrl(q.uri).map { case (areaId, infoNo, suffix) =>
       val json = parse(q.resCont)
       val result = master.MapInfo.fromJson(json, areaId, infoNo, suffix, ver)
-      NormalPostable(s"/cell_position", write(result.spots), 2) :: Nil
+      NormalPostable(s"/map_positions", write(result), 2) :: Nil
     }.getOrElse(Nil)
   }
 }
