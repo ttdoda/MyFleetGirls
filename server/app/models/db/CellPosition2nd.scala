@@ -12,9 +12,9 @@ case class CellPosition2nd(
   cell: Int,
   posX: Int,
   posY: Int,
-  routeX: Int,
-  routeY: Int,
-  routeName: String,
+  routeX: Option[Int],
+  routeY: Option[Int],
+  routeName: Option[String],
   version: Int) {
 
   def save()(implicit session: DBSession = CellPosition2nd.autoSession): CellPosition2nd = CellPosition2nd.save(this)(session)
@@ -38,7 +38,7 @@ object CellPosition2nd extends SQLSyntaxSupport[CellPosition2nd] {
   override val autoSession = AutoSession
 
   def find(areaId: Int, infoNo: Int, suffix: Int, cell: Int, version: Int = 0)(implicit session: DBSession = autoSession): Option[CellPosition2nd] = {
-    if(version != 0) findWithVersion(areaId, infoNo, cell, version)
+    if(version != 0) findWithVersion(areaId, infoNo, suffix, cell, version)
     else {
       withSQL {
         select.from(CellPosition2nd as cp)
