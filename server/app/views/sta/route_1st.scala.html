@@ -6,7 +6,7 @@
   <script src="@Js.Common"></script>
   <script src="@Js.MomentLocales"></script>
   <script src="@Js.Lodash"></script>
-  <script src="@Js.Coffee("map_image_2nd")"></script>
+  <script src="@Js.Coffee("map_image")"></script>
   <script src="@Js.Coffee("route")"></script>
 } {
   @statistics_head("drop") {
@@ -14,7 +14,7 @@
       <div class="page_header">
         <h1>@stage 羅針盤</h1>
         @if(stage.area <= 6) {
-          <p>一期の羅針盤は<a href="@routes.ViewSta.drop1st(stage.area, stage.info)">こちら</a></p>
+          <p>二期の羅針盤は<a href="@routes.ViewSta.drop(stage.area, stage.info)">こちら</a></p>
         }
       </div>
 
@@ -32,13 +32,9 @@
       <div>
         <canvas
           id="map_image"
-          data-src="@routes.RestImage.map2nd(stage.area, stage.info)"
-          data-area="@stage.area" data-info="@stage.info"
-          data-frame="@routes.Rest.mapFrame(stage.area, stage.info)"
-          data-layer="@routes.Rest.mapLayers(stage.area, stage.info)"
-          data-labelpos="@routes.Rest.labelPosition(stage.area, stage.info)"
-          data-position="@routes.Rest.cellPosition2nd(stage.area, stage.info)"
-          width="1200px" height="720px"
+          data-src="@routes.RestImage.map(stage.area, stage.info)"
+          data-position="@routes.Rest.cellPosition(stage.area, stage.info)"
+          width="768px" height="435px"
           class="img-rounded">
         </canvas>
       </div>

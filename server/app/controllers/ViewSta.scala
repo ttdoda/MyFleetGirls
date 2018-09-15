@@ -108,6 +108,7 @@ class ViewSta @Inject()(implicit val ec: ExecutionContext) extends Controller {
   }
 
   def route(area: Int, info: Int) = actionAsync { Ok(views.html.sta.route(Stage(area, info))) }
+  def route1st(area: Int, info: Int) = actionAsync { Ok(views.html.sta.route_1st(Stage(area, info))) }
 
   def routeFleet(area: Int, info: Int, dep: Int, dest: Int, from: String, to: String) = actionAsync {
     val period = Period.fromStr(from, to)
