@@ -33,21 +33,86 @@ object MapFrame {
   }
 }
 
+case class MapInfo(
+  spots: List[CellPosition], bg: List[String], enemies: List[EnemiesPosition], labels: List[LabelPosition]
+)
+
+object MapInfo {
+  implicit val formats = DefaultFormats
+
+  def fromJson(json: JValue, areaId: Int, infoNo: Int, suffix: Int, version: Int): MapInfo = {
+    val spots: List[CellPosition] = CellPosition.fromJson(json \ "spots", areaId, infoNo, suffix, version)
+    val bg: List[String] = (json \ "bg").extractOrElse[List[JValue]](Nil).map {
+      case JString(bg) => bg
+      case background => (background \ "img").extract[String]
+    }
+    val enemies: List[EnemiesPosition] = EnemiesPosition.fromJson(json \ "enemies", areaId, infoNo, suffix, version)
+    val labels: List[LabelPosition] = LabelPosition.fromJson(json \ "labels", areaId, infoNo, suffix, version)
+    MapInfo(spots, bg, enemies, labels)
+  }
+}
+
+case class RawImageName(
+  name: Option[String], img: String
+)
+
+case class RawPosition(
+  x: Int, y: Int
+)
+
 case class CellPosition(
-  areaId: Int, infoNo: Int, suffix: Int, cell: Int, posX: Int, posY: Int, version: Int
+  areaId: Int, infoNo: Int, suffix: Int, cell: Int, posX: Int, posY: Int, routeName: Option[String], routeX: Option[Int], routeY: Option[Int], version: Int
 )
 
 object CellPosition {
   implicit val formats = DefaultFormats
 
   def fromJson(json: JValue, areaId: Int, infoNo: Int, suffix: Int, version: Int): List[CellPosition] = {
-    json.extractOrElse[List[RawCellPosition]](Nil).map(_.build(areaId, infoNo, suffix, version))
+    json.extract[List[RawCellPosition]].map(_.build(areaId, infoNo, suffix, version))
   }
 
   private case class RawCellPosition(
-    no: Int, x: Int, y: Int
+    no: Int, x: Int, y: Int, route: Option[RawImageName], line: Option[RawPosition]
   ) {
     def build(areaId: Int, infoNo: Int, suffix: Int, version: Int): CellPosition =
-      CellPosition(areaId, infoNo, suffix, no, x, y, version)
+      CellPosition(areaId, infoNo, suffix, no, x, y, route.map(_.img), line.map(_.x), line.map(_.y), version)
+  }
+}
+
+case class EnemiesPosition(
+  areaId: Int, infoNo: Int, suffix: Int, cell: Int, imgName: String, posX: Int, posY: Int, version: Int
+)
+
+object EnemiesPosition {
+  implicit val formats = DefaultFormats
+
+  def fromJson(json: JValue, areaId: Int, infoNo: Int, suffix: Int, version: Int): List[EnemiesPosition] = {
+    json.extractOrElse[List[RawEnemiesPosition]](Nil).map(_.build(areaId, infoNo, suffix, version))
+  }
+
+  private case class RawEnemiesPosition(
+    no: Int, x: Int, y: Int, img: String
+  ) {
+    def build(areaId: Int, infoNo: Int, suffix: Int, version: Int): EnemiesPosition =
+      EnemiesPosition(areaId, infoNo, suffix, no, img, x, y, version)
+  }
+}
+
+case class LabelPosition(
+  areaId: Int, infoNo: Int, suffix: Int, imgName: String, posX: Int, posY: Int, version: Int
+)
+
+object LabelPosition {
+  implicit val formats = DefaultFormats
+
+  def fromJson(json: JValue, areaId: Int, infoNo: Int, suffix: Int, version: Int): List[LabelPosition] = {
+    json.extractOrElse[List[RawLabelPosition]](Nil).map(_.build(areaId, infoNo, suffix, version))
+  }
+
+  private case class RawLabelPosition(
+    x: Int, y: Int, img: String
+  ) {
+    def build(areaId: Int, infoNo: Int, suffix: Int, version: Int): LabelPosition =
+      LabelPosition(areaId, infoNo, suffix, img, x, y, version)
   }
 }
