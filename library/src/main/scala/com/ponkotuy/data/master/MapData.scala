@@ -80,7 +80,7 @@ object CellPosition {
 }
 
 case class EnemiesPosition(
-  areaId: Int, infoNo: Int, suffix: Int, cell: Int, imgName: String, posX: Int, posY: Int, version: Int
+  areaId: Int, infoNo: Int, suffix: Int, cell: Int, imageName: String, posX: Int, posY: Int, version: Int
 )
 
 object EnemiesPosition {
@@ -99,7 +99,7 @@ object EnemiesPosition {
 }
 
 case class LabelPosition(
-  areaId: Int, infoNo: Int, suffix: Int, imgName: String, posX: Int, posY: Int, version: Int
+  areaId: Int, infoNo: Int, suffix: Int, imageName: String, posX: Int, posY: Int, version: Int
 )
 
 object LabelPosition {
