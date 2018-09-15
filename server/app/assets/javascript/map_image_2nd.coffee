@@ -46,7 +46,7 @@ class @SeaMap
         $.getJSON posUrl + '?suffix=' + s, (data) ->
           data.forEach (d) ->
             that.positions[d.cell] = {x: d.posX, y: d.posY}
-            that.image.setLayerPoint(s, d.cell, that.positions[d.cell])
+            that.image.setLayerPoint(s, d.cell, {name: d.routeName, x: d.posX + d.routeX, y: d.posY + d.routeY})
           that.image.setLayer(s)
           if infoUrl
             $.getJSON infoUrl + '?suffix=' + s, (data) ->
@@ -170,7 +170,7 @@ class MapImage
       return
 
   setLayerPoint: (s, cell, point) ->
-    frameName = 'route_'+cell+'_1'
+    frameName = point.name ? 'route_'+cell+'_1'
     if @layerFrames[s].hasOwnProperty frameName
       Object.assign @layerFrames[s][frameName], {point: {x: point.x, y: point.y}}
 
