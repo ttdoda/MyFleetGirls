@@ -22,7 +22,6 @@ case class MapFrame(
 
 }
 
-
 object MapFrame extends SQLSyntaxSupport[MapFrame] {
 
   override val tableName = "map_frame"
@@ -52,6 +51,14 @@ object MapFrame extends SQLSyntaxSupport[MapFrame] {
       select.from(MapFrame as mf)
           .where.eq(mf.areaId, areaId).and.eq(mf.infoNo, infoNo).and.eq(mf.suffix, suffix).and.eq(mf.name, name).and.eq(mf.version, version)
     }.map(MapFrame(mf.resultName)).single().apply()
+  }
+
+  def getLayers(areaId: Int, infoNo: Int)(implicit session: DBSession = autoSession): List[Int] = {
+    withSQL {
+      select(sqls.distinct(mf.suffix)).from(MapFrame as mf)
+          .where.eq(mf.areaId, areaId).and.eq(mf.infoNo, infoNo).and.gt(mf.suffix, 0)
+          .orderBy(mf.suffix.asc)
+    }.map(_.int(1)).list().apply()
   }
 
   def findAll()(implicit session: DBSession = autoSession): List[MapFrame] = {

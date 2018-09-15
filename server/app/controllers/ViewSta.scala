@@ -97,6 +97,11 @@ class ViewSta @Inject()(implicit val ec: ExecutionContext) extends Controller {
     Ok(views.html.sta.drop_alpha(Stage(area, info), cells))
   }
 
+  def drop1st(area: Int, info: Int) = actionAsync {
+    val cells = db.BattleResult.dropedCells(area, info)
+    Ok(views.html.sta.drop_1st(Stage(area, info), cells))
+  }
+
   def route(area: Int, info: Int) = actionAsync { Ok(views.html.sta.route(Stage(area, info))) }
 
   def routeFleet(area: Int, info: Int, dep: Int, dest: Int, from: String, to: String) = actionAsync {
