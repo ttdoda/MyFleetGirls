@@ -95,7 +95,7 @@
           <tbody>
             <tr v-repeat="drop: data">
               <td>
-                <a v-attr="href: jsRoutes.controllers.View.modalMap(drop.areaId, drop.infoNo, drop.cell).url" data-toggle="modal" data-target="#modal">
+                <a v-attr="href: jsRoutes.controllers.View[drop.created < 1534388400000 ? 'modalMap1st' : 'modalMap'](drop.areaId, drop.infoNo, drop.cell).url" data-toggle="modal" data-target="#modal">
                   {{drop.point}}<small v-if="drop.start">Start</small> <small v-if="drop.boss">BOSS</small>
                 </a>
               </td>
@@ -166,7 +166,7 @@
           <tbody>
             <tr v-repeat="r: routes">
               <th>
-                <a v-attr="href: jsRoutes.controllers.View.modalMapLine(r.areaId, r.infoNo, r.dep, r.dest).url" data-toggle="modal" data-target="#modal">
+                <a v-attr="href: jsRoutes.controllers.View[r.created < 1534388400000 ? 'modalMapLine1st' : 'modalMapLine'](r.areaId, r.infoNo, r.dep, r.dest).url" data-toggle="modal" data-target="#modal">
                   {{r.area}}
                 </a>
               </th>

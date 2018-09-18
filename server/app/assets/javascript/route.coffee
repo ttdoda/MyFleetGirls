@@ -66,6 +66,10 @@ vueConf = (id) ->
       @area = parseInt($(el).attr('data-area'))
       @info = parseInt($(el).attr('data-info'))
       @is1st = $(el).attr('data-1st') ? false
+      if @is1st
+        @to = moment({year: 2018, month: 7, day: 16}).format('YYYY-MM-DD')
+      else
+        @from = moment({year: 2018, month: 7, day: 16}).format('YYYY-MM-DD')
     setHash: ->
       param = if @modal then {modal: @modal, dep: @dep, dest: @dest} else {}
       location.hash = toURLParameter($.extend(param, @periodObj()))

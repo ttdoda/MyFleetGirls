@@ -27,6 +27,8 @@ class Application @Inject()() extends Controller {
           )
         case "naval_battle" =>
           JavaScriptReverseRouter("jsRoutes")(
+            routes.javascript.View.modalMap1st,
+            routes.javascript.View.modalMapLine1st,
             routes.javascript.View.modalMap,
             routes.javascript.View.modalMapLine,
             routes.javascript.RestUser.battleResultCount,
