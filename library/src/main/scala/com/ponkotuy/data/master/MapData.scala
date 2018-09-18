@@ -34,7 +34,7 @@ object MapFrame {
 }
 
 case class MapInfo(
-  spots: List[CellPosition], bg: List[String], enemies: List[EnemiesPosition], labels: List[LabelPosition]
+  spots: List[CellPosition], bg: List[BackgroundName], enemies: List[EnemiesPosition], labels: List[LabelPosition]
 )
 
 object MapInfo {
@@ -46,9 +46,12 @@ object MapInfo {
       case JString(bg) => bg
       case background => (background \ "img").extract[String]
     }
+    val bgName: List[BackgroundName] = bg.zipWithIndex.map { case (nane, priority) =>
+      BackgroundName(areaId, infoNo, suffix, priority, nane, version)
+    }
     val enemies: List[EnemiesPosition] = EnemiesPosition.fromJson(json \ "enemies", areaId, infoNo, suffix, version)
     val labels: List[LabelPosition] = LabelPosition.fromJson(json \ "labels", areaId, infoNo, suffix, version)
-    MapInfo(spots, bg, enemies, labels)
+    MapInfo(spots, bgName, enemies, labels)
   }
 }
 
@@ -78,6 +81,10 @@ object CellPosition {
       CellPosition(areaId, infoNo, suffix, no, x, y, route.map(_.img), line.map(_.x), line.map(_.y), version)
   }
 }
+
+case class BackgroundName(
+  areaId: Int, infoNo: Int, suffix: Int, priority: Int, imageName: String, version: Int
+)
 
 case class EnemiesPosition(
   areaId: Int, infoNo: Int, suffix: Int, cell: Int, imageName: String, posX: Int, posY: Int, version: Int

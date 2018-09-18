@@ -199,6 +199,10 @@ class Post @Inject()(implicit val ec: ExecutionContext) extends Controller {
     if(db.LabelPosition.find(labelPositions.head.areaId, labelPositions.head.infoNo, labelPositions.head.suffix, labelPositions.head.imageName, labelPositions.head.version).isEmpty)
       db.LabelPosition.bulkInsert(labelPositions)
 
+    val bgNames = request.bg
+    if(db.MapBackgroundName.find(bgNames.head.areaId, bgNames.head.infoNo, bgNames.head.suffix, bgNames.head.imageName, bgNames.head.version).isEmpty)
+      db.MapBackgroundName.bulkInsert(bgNames)
+
     Res.success
   }
 
