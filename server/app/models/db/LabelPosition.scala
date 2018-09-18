@@ -33,18 +33,7 @@ object LabelPosition extends SQLSyntaxSupport[LabelPosition] {
 
   override val autoSession = AutoSession
 
-  def find(areaId: Int, infoNo: Int, suffix: Int, imageName: String, version: Int = 0)(implicit session: DBSession = autoSession): Option[LabelPosition] = {
-    if(version != 0) findWithVersion(areaId, infoNo, suffix, imageName, version)
-    else {
-      withSQL {
-        select.from(LabelPosition as lp)
-            .where.eq(lp.areaId, areaId).and.eq(lp.infoNo, infoNo).and.eq(lp.suffix, suffix).and.eq(lp.imageName, imageName)
-            .orderBy(lp.version.desc).limit(1)
-      }.map(LabelPosition(lp.resultName)).single().apply()
-    }
-  }
-
-  private def findWithVersion(areaId: Int, infoNo: Int, suffix: Int, imageName: String, version: Int = 0)(implicit session: DBSession = autoSession): Option[LabelPosition] = {
+  def find(areaId: Int, infoNo: Int, suffix: Int, imageName: String, version: Int)(implicit session: DBSession = autoSession): Option[LabelPosition] = {
     withSQL {
       select.from(LabelPosition as lp)
           .where.eq(lp.areaId, areaId).and.eq(lp.infoNo, infoNo).and.eq(lp.suffix, suffix).and.eq(lp.imageName, imageName).and.eq(lp.version, version)

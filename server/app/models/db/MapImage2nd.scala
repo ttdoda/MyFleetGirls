@@ -29,7 +29,18 @@ object MapImage2nd extends SQLSyntaxSupport[MapImage2nd] {
 
   override val autoSession = AutoSession
 
-  def find(areaId: Int, infoNo: Int, suffix: Int, version: Short)(implicit session: DBSession = autoSession): Option[MapImage2nd] = {
+  def find(areaId: Int, infoNo: Int, suffix: Int, version: Short = 0)(implicit session: DBSession = autoSession): Option[MapImage2nd] = {
+    if(version != 0) findWithVersion(areaId, infoNo, suffix, version)
+    else {
+      withSQL {
+        select.from(MapImage2nd as mi)
+            .where.eq(mi.areaId, areaId).and.eq(mi.infoNo, infoNo).and.eq(mi.suffix, suffix)
+            .orderBy(mi.version.desc).limit(1)
+      }.map(MapImage2nd(mi.resultName)).single().apply()
+    }
+  }
+
+  private def findWithVersion(areaId: Int, infoNo: Int, suffix: Int, version: Short)(implicit session: DBSession = autoSession): Option[MapImage2nd] = {
     withSQL {
       select.from(MapImage2nd as mi).where.eq(mi.areaId, areaId).and.eq(mi.infoNo, infoNo).and.eq(mi.suffix, suffix).and.eq(mi.version, version)
     }.map(MapImage2nd(mi.resultName)).single().apply()

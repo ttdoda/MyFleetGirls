@@ -37,18 +37,7 @@ object CellPosition2nd extends SQLSyntaxSupport[CellPosition2nd] {
 
   override val autoSession = AutoSession
 
-  def find(areaId: Int, infoNo: Int, suffix: Int, cell: Int, version: Int = 0)(implicit session: DBSession = autoSession): Option[CellPosition2nd] = {
-    if(version != 0) findWithVersion(areaId, infoNo, suffix, cell, version)
-    else {
-      withSQL {
-        select.from(CellPosition2nd as cp)
-            .where.eq(cp.areaId, areaId).and.eq(cp.infoNo, infoNo).and.eq(cp.suffix, suffix).and.eq(cp.cell, cell)
-            .orderBy(cp.version.desc).limit(1)
-      }.map(CellPosition2nd(cp.resultName)).single().apply()
-    }
-  }
-
-  private def findWithVersion(areaId: Int, infoNo: Int, suffix: Int, cell: Int, version: Int = 0)(implicit session: DBSession = autoSession): Option[CellPosition2nd] = {
+  def find(areaId: Int, infoNo: Int, suffix: Int, cell: Int, version: Int)(implicit session: DBSession = autoSession): Option[CellPosition2nd] = {
     withSQL {
       select.from(CellPosition2nd as cp)
           .where.eq(cp.areaId, areaId).and.eq(cp.infoNo, infoNo).and.eq(cp.suffix, suffix).and.eq(cp.cell, cell).and.eq(cp.version, version)

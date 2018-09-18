@@ -35,18 +35,7 @@ object MapFrame extends SQLSyntaxSupport[MapFrame] {
 
   override val autoSession = AutoSession
 
-  def find(areaId: Int, infoNo: Int, suffix: Int, name: String, version: Int = 0)(implicit session: DBSession = autoSession): Option[MapFrame] = {
-    if(version != 0) findWithVersion(areaId, infoNo, suffix, name, version)
-    else {
-      withSQL {
-        select.from(MapFrame as mf)
-            .where.eq(mf.areaId, areaId).and.eq(mf.infoNo, infoNo).and.eq(mf.suffix, suffix).and.eq(mf.name, name)
-            .orderBy(mf.version.desc).limit(1)
-      }.map(MapFrame(mf.resultName)).single().apply()
-    }
-  }
-
-  private def findWithVersion(areaId: Int, infoNo: Int, suffix: Int, name: String, version: Int = 0)(implicit session: DBSession = autoSession): Option[MapFrame] = {
+  def find(areaId: Int, infoNo: Int, suffix: Int, name: String, version: Int)(implicit session: DBSession = autoSession): Option[MapFrame] = {
     withSQL {
       select.from(MapFrame as mf)
           .where.eq(mf.areaId, areaId).and.eq(mf.infoNo, infoNo).and.eq(mf.suffix, suffix).and.eq(mf.name, name).and.eq(mf.version, version)

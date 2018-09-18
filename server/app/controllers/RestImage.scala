@@ -39,9 +39,9 @@ class RestImage @Inject()(implicit val ec: ExecutionContext) extends Controller 
 
   def map2nd(areaId: Int, infoNo: Int, suffix: Int) = actionAsync {
     val mi = db.MapImage2nd.mi
-    db.MapImage2nd.findAllBy(sqls.eq(mi.areaId, areaId).and.eq(mi.infoNo, infoNo).and.eq(mi.suffix, suffix)).sortBy(-_.version).headOption match {
+    db.MapImage2nd.find(areaId, infoNo, suffix) match {
       case None => NotFound(s"Not found map image (${areaId}-${infoNo}) suffix=${suffix}")
-      case Some(img) => Ok(img.image).as("image/jpeg")
+      case Some(img) => Ok(img.image).as("image/png")
     }
   }
 
