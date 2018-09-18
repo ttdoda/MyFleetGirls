@@ -59,6 +59,7 @@ class @SeaMap
               that.image.setLayerPoint(s, d.imageName, {x: d.posX, y: d.posY})
             layerCount++
             if that.layers.length == layerCount
+              that.image.setLayers()
               that.onload()
 
   setPoint: (cell, fixed) ->
@@ -127,15 +128,19 @@ class MapImage
         that.loadLayerImages()
 
     @frameUrl = @tag.attr('data-frame')
+    @bgLayers = []
     if @frameUrl
-      bgName = 'map'+@tag.attr('data-area')+'-'+@tag.attr('data-info')
-      @bgLayers = [bgName, bgName+'_point']
-      $.getJSON @frameUrl, (data) ->
-        data.forEach (d) ->
+      @bgUrl = @tag.attr('data-background')
+      that = @
+      $.when(
+        $.getJSON(@frameUrl),
+        $.getJSON(@bgUrl)
+      ).done (frameData, bgData) ->
+        frameData[0].forEach (d) ->
           that.frames[d.name] = {pos: {x: d.posX, y: d.posY}, width: d.width, height: d.height}
+        that.bgLayers = bgData[0].map (bg) -> bg.imageName
         that.bgImg.src = that.imageUrl
     else
-      @bgLayers = []
       @bgImg.src = @imageUrl
 
   loadLayerImages: () ->
@@ -147,7 +152,7 @@ class MapImage
       img.onload = () ->
         layerCount++
         if that.layers.length == layerCount
-          that.setLayers()
+          that.setImage()
           that.onload()
 
       that.layerFrames[s] = {}

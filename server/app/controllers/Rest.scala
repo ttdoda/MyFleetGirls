@@ -165,6 +165,11 @@ class Rest @Inject()(implicit val ec: ExecutionContext) extends Controller {
     db.MapFrame.getLayers(area, info)
   }
 
+  def mapBackground(area: Int, info: Int, suffix: Int) = returnJson {
+    val mbn = db.MapBackgroundName.mbn
+    db.MapBackgroundName.findAllBy(sqls.eq(mbn.areaId, area).and.eq(mbn.infoNo, info).and.eq(mbn.suffix, suffix))
+  }
+
   def maps() = returnJson {
     db.MapRoute.findStageUnique()
   }

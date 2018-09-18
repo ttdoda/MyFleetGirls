@@ -56,6 +56,7 @@ object MapBackgroundName extends SQLSyntaxSupport[MapBackgroundName] {
   def findAllBy(where: SQLSyntax)(implicit session: DBSession = autoSession): List[MapBackgroundName] = {
     withSQL {
       select.from(MapBackgroundName as mbn).where.append(where)
+          .orderBy(mbn.priority.asc)
     }.map(MapBackgroundName(mbn.resultName)).list.apply()
   }
 
