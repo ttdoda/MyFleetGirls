@@ -13,6 +13,13 @@ import play.api.routing._
 class Application @Inject()() extends Controller {
   def javascriptRoutes(page: String) = Action { implicit request =>
     val jsRoutes = page match {
+        case "route" =>
+          JavaScriptReverseRouter("jsRoutes")(
+            routes.javascript.Rest.route,
+            routes.javascript.Rest.cellInfo,
+            routes.javascript.ViewSta.routeFleet1st,
+            routes.javascript.ViewSta.routeFleet2nd
+          )
         case "ship_image_book" =>
           JavaScriptReverseRouter("jsRoutes")(
             routes.javascript.RestImage.ship2nd,

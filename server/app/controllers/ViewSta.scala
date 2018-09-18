@@ -97,7 +97,7 @@ class ViewSta @Inject()(implicit val ec: ExecutionContext) extends Controller {
   }
   def drop1st(area: Int, info: Int) = actionAsync {
     area match {
-      case id if 21 until 42 contains id || id <= 6 =>
+      case id if (21 until 42 contains id) || id <= 6 =>
         val cells = db.BattleResult.dropedCells(area, info)
         Ok(views.html.sta.drop_1st(Stage(area, info), cells))
       case _ => Redirect(routes.ViewSta.drop(area, info))
@@ -114,7 +114,7 @@ class ViewSta @Inject()(implicit val ec: ExecutionContext) extends Controller {
   }
   def dropAlpha1st(area: Int, info: Int) = actionAsync {
     area match {
-      case id if 21 until 42 contains id || id <= 6 =>
+      case id if (21 until 42 contains id) || id <= 6 =>
         val cells = db.BattleResult.dropedCells(area, info)
         Ok(views.html.sta.drop_alpha_1st(Stage(area, info), cells))
       case _ => Redirect(routes.ViewSta.dropAlpha(area, info))
@@ -129,7 +129,7 @@ class ViewSta @Inject()(implicit val ec: ExecutionContext) extends Controller {
   }
   def route1st(area: Int, info: Int) = actionAsync {
     area match {
-      case id if 21 until 42 contains id || id <= 6 => Ok(views.html.sta.route_1st(Stage(area, info)))
+      case id if (21 until 42 contains id) || id <= 6 => Ok(views.html.sta.route_1st(Stage(area, info)))
       case _ => Redirect(routes.ViewSta.route(area, info))
     }
   }
