@@ -195,7 +195,7 @@ GET           /rest/v1/is_faved/:url                      controllers.Fav.isFave
 DELETE        /passwd/delete/v1/fav/:id                   controllers.Fav.delete(id: Long)
 
 # javascript routes
-GET           /javascriptRoutes                           controllers.Application.javascriptRoutes()
+GET           /javascriptRoutes                           controllers.Application.javascriptRoutes(for: String ?= "")
 
 # access to  proxy.pac by template
 GET           /assets/proxy.pac                           controllers.MyAssets.pacDynamicScript(port: Int = 8080)

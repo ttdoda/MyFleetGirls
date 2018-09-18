@@ -11,12 +11,25 @@ import play.api.routing._
  * Date: 18/09/16.
  */
 class Application @Inject()() extends Controller {
-  def javascriptRoutes = Action { implicit request =>
-    Ok(
-      JavaScriptReverseRouter("jsRoutes")(
-        routes.javascript.RestImage.ship2nd,
-        routes.javascript.RestUser.bookShips
-      )
-    ).as("text/javascript")
+  def javascriptRoutes(page: String) = Action { implicit request =>
+    val jsRoutes = page match {
+        case "ship_image_book" =>
+          JavaScriptReverseRouter("jsRoutes")(
+            routes.javascript.RestImage.ship2nd,
+            routes.javascript.RestUser.bookShips
+          )
+        case "naval_battle" =>
+          JavaScriptReverseRouter("jsRoutes")(
+            routes.javascript.View.modalMap,
+            routes.javascript.View.modalMapLine,
+            routes.javascript.RestUser.battleResultCount,
+            routes.javascript.RestUser.battleResult,
+            routes.javascript.RestUser.routeLogCount,
+            routes.javascript.RestUser.routeLog
+          )
+        case _ =>
+          JavaScriptReverseRouter("jsRoutes")()
+      }
+    Ok(jsRoutes).as("text/javascript")
   }
 }
