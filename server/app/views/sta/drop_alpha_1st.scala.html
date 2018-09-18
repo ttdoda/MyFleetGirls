@@ -16,7 +16,7 @@
   @statistics_head("drop") {
     <input type="hidden" id="stage" data-area="@stage.area" data-info="@stage.info" />
     <div class="page-header">
-      <h1>@stage 艦娘ドロップ<small><a href="@routes.ViewSta.drop(stage.area, stage.info)">ID版</a></small></h1>
+      <h1>@stage 艦娘ドロップ<small><a href="@routes.ViewSta.drop1st(stage.area, stage.info)">ID版</a></small></h1>
       @if(stage.area <= 6) {
           <p>二期のドロップは<a href="@routes.ViewSta.dropAlpha(stage.area, stage.info)">こちら</a></p>
       }
