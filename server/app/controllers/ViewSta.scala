@@ -201,13 +201,15 @@ class ViewSta @Inject()(implicit val ec: ExecutionContext) extends Controller {
   def shipBook(sid: Int) = actionAsync {
     db.MasterShipBase.findAllInOneBy(sqls.eq(db.MasterShipBase.ms.id, sid)).headOption.map { master =>
       val ships = db.Ship.findByWithAdmiral(sid)
-      val admiral = db.ShipImage.findAdmiral(sid)
+      val admiral1st = db.ShipImage.findAdmiral(sid)
+      val admiral = db.ShipImage2nd.findAdmiralOfCard(sid).orElse(admiral1st)
+      val admiralDmg = db.ShipImage2nd.findAdmiralOfCardDmg(sid).orElse(admiral1st)
       val yomes = db.YomeShip.findAllByWithAdmiral(sqls.eq(db.Ship.s.shipId, sid), 50)
       val admiralCount = db.Admiral.countAll()
       val heldRate = db.Ship.countAdmiral(sqls.eq(db.Ship.s.shipId, sid)).toDouble / admiralCount
       val bookCount = db.ShipBook.countBy(sqls.eq(db.ShipBook.sb.id, sid))
       val bookRate = if(bookCount >= 5) bookCount.toDouble / admiralCount else 0.0
-      Ok(views.html.sta.ship_book(master, ships, admiral, yomes, heldRate, bookRate))
+      Ok(views.html.sta.ship_book(master, ships, admiral, admiralDmg, yomes, heldRate, bookRate))
     }.getOrElse(NotFound(s"Not Found ShipID: $sid"))
   }
 

@@ -2,6 +2,7 @@
     master: MasterShipAll,
     ships: Seq[ShipWithAdmiral],
     admiral: Option[Admiral],
+    admiralDmg: Option[Admiral],
     yomes: Seq[ShipWithAdmiral],
     heldRate: Double,
     bookRate: Double)
@@ -18,9 +19,18 @@
       <div v-on:click="change" class="clickable">
         <img v-bind:src="damaged ? '@routes.RestImage.ship2nd(master.id, "card_dmg")' : '@routes.RestImage.ship2nd(master.id, "card")'" style="margin-top:25px;width:100%;max-width:300px;" />
       </div>
-      @admiral.map { ad =>
-        <small>画像提供： <a href="@routes.UserView.user(ad.id)">@ad.nickname</a></small>
-      }
+      <small>画像提供：
+        <span v-if="damaged">
+        @admiralDmg.map { ad =>
+          <a href="@routes.UserView.user(ad.id)">@ad.nickname</a>
+        }.getOrElse("なし")
+        </span>
+        <span v-else>
+        @admiral.map { ad =>
+          <a href="@routes.UserView.user(ad.id)">@ad.nickname</a>
+        }.getOrElse("なし")
+        </span>
+      </small>
     </div>
 
     <div class="row" id="from_name" data-ship-id="@master.id">

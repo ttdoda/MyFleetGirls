@@ -46,11 +46,18 @@ object ShipImage2nd extends SQLSyntaxSupport[ShipImage2nd] {
     }.map(ShipImage2nd(si.resultName)).single().apply()
   }
 
-  def findAdmiral(sid: Int)(implicit session: DBSession = autoSession): Option[Admiral] = withSQL {
+  def findAdmiralOfCard(sid: Int)(implicit session: DBSession = autoSession): Option[Admiral] = withSQL {
     select(a.resultAll).from(ShipImage2nd as si)
         .innerJoin(Admiral as a).on(si.memberId, a.id)
-        .where.eq(si.id, sid)
-        .orderBy(si.kind.asc, si.version.desc).limit(1)
+        .where.eq(si.id, sid).and.eq(si.kind, "card")
+        .orderBy(si.version.desc).limit(1)
+  }.map(Admiral(a)).single().apply()
+
+  def findAdmiralOfCardDmg(sid: Int)(implicit session: DBSession = autoSession): Option[Admiral] = withSQL {
+    select(a.resultAll).from(ShipImage2nd as si)
+        .innerJoin(Admiral as a).on(si.memberId, a.id)
+        .where.eq(si.id, sid).and.eq(si.kind, "card_dmg")
+        .orderBy(si.version.desc).limit(1)
   }.map(Admiral(a)).single().apply()
 
   def findAll()(implicit session: DBSession = autoSession): List[ShipImage2nd] = {
