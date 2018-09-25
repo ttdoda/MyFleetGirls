@@ -23,7 +23,7 @@
           <div class="col-lg-2 col-sm-3" v-for="ship in ships">
             <div class="thumbnail">
               <img v-bind:src="imageUrl(ship.id)" v-bind:alt="ship.name" />
-              <h5 v-bind:class="{text-danger: ship.isMarried, damaged: ship.isDameged}">No.{{ship.indexNo}} {{ship.name}}</h5>
+              <h5 v-bind:class="{'text-danger': ship.isMarried, damaged: ship.isDameged}">No.{{ship.indexNo}} {{ship.name}}</h5>
             </div>
           </div>
         </div>
