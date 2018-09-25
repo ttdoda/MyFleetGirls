@@ -57,7 +57,7 @@ class PostFile @Inject()(implicit val ec: ExecutionContext) extends Controller {
             MapImage2nd.create(areaId, infoNo, suffix, image, version.toShort)
             Ok("Success")
           }
-        case _ => BadRequest("Need ship image")
+        case _ => BadRequest("Need map image")
       }
     }
   }
