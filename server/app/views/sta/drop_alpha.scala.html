@@ -17,6 +17,9 @@
     <input type="hidden" id="stage" data-area="@stage.area" data-info="@stage.info" />
     <div class="page-header">
       <h1>@stage 艦娘ドロップ<small><a href="@routes.ViewSta.drop(stage.area, stage.info)">ID版</a></small></h1>
+      @if(stage.area <= 6) {
+          <p>一期のドロップは<a href="@routes.ViewSta.dropAlpha1st(stage.area, stage.info)">こちら</a></p>
+      }
     </div>
 
     <div>
@@ -26,10 +29,14 @@
     <div>
       <canvas
         id="map_image"
-        data-src="@routes.RestImage.map(stage.area, stage.info)"
-        data-position="@routes.Rest.cellPosition(stage.area, stage.info)"
+        data-src="@routes.RestImage.map2nd(stage.area, stage.info)"
+        data-frame="@routes.Rest.mapFrame(stage.area, stage.info)"
+        data-background="@routes.Rest.mapBackground(stage.area, stage.info)"
+        data-layer="@routes.Rest.mapLayers(stage.area, stage.info)"
+        data-labelpos="@routes.Rest.labelPosition(stage.area, stage.info)"
+        data-position="@routes.Rest.cellPosition2nd(stage.area, stage.info)"
         data-cellinfo="@routes.Rest.cellInfo(stage.area, stage.info)"
-        width="768px" height="435px"
+        width="1200px" height="720px"
         class="img-rounded">
       </canvas>
     </div>

@@ -2,6 +2,7 @@
 
 @main {
   <title>海戦履歴 -@{user.admiral.nickname}提督-</title>
+  <script src="@routes.Application.javascriptRoutes("naval_battle")"></script>
   <script src="@Js.MomentLocales"></script>
   <script src="@Js.Vue"></script>
   <script src="@Js.Lodash"></script>
@@ -94,7 +95,7 @@
           <tbody>
             <tr v-repeat="drop: data">
               <td>
-                <a v-attr="href: '/common/seamap/' + drop.areaId + '/' + drop.infoNo + '/' + drop.cell" data-toggle="modal" data-target="#modal">
+                <a v-attr="href: jsRoutes.controllers.View[drop.created < 1534388400000 ? 'modalMap1st' : 'modalMap'](drop.areaId, drop.infoNo, drop.cell).url" data-toggle="modal" data-target="#modal">
                   {{drop.point}}<small v-if="drop.start">Start</small> <small v-if="drop.boss">BOSS</small>
                 </a>
               </td>
@@ -165,7 +166,7 @@
           <tbody>
             <tr v-repeat="r: routes">
               <th>
-                <a v-attr="href: '/common/seamap_line/' + r.areaId + '/' + r.infoNo + '?dep=' + r.dep + '&dest=' + r.dest" data-toggle="modal" data-target="#modal">
+                <a v-attr="href: jsRoutes.controllers.View[r.created < 1534388400000 ? 'modalMapLine1st' : 'modalMapLine'](r.areaId, r.infoNo, r.dep, r.dest).url" data-toggle="modal" data-target="#modal">
                   {{r.area}}
                 </a>
               </th>
@@ -173,7 +174,7 @@
               <td v-html="viewCell(r.areaId, r.infoNo, r.dest)"></td>
               <td>{{timeToStr(r.created)}}</td>
               <td v-if="fleetType === 'name'">
-                <a v-repeat="s: r.ships" href="/user/@user.admiral.id/ship#modal=true&id={{s.id}}">{{s.name}} </a>
+                <a v-repeat="s: r.ships" v-attr="href: '@routes.UserView.ship(user.admiral.id)' + '#modal=true&id=' + s.id">{{s.name}} </a>
               </td>
               <td v-if="fleetType === 'stype'">
                 <span v-repeat="s: r.ships | orderBy 'stype'">{{s.stype}} </span>
@@ -197,8 +198,8 @@
     }
 
     <!-- Modal -->
-    <div class="modal fade bs-example-modal-lg" aria-hidden="true" role="dialog" aria-labelledby="modalLabel" id="modal">
-      <div class="modal-dialog modal-lg">
+    <div class="modal fade" aria-hidden="true" role="dialog" aria-labelledby="modalLabel" id="modal">
+      <div class="modal-dialog modal-fluid">
         <div class="modal-content"></div>
       </div>
     </div>

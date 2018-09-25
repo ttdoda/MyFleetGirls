@@ -24,6 +24,7 @@ vueConf = (id) ->
     sum: 0
     area: 0
     info: 0
+    is1st: false
     period: false
     from: moment({year: 2014, month: 0, day: 1}).format('YYYY-MM-DD')
     to: moment().format('YYYY-MM-DD')
@@ -31,11 +32,11 @@ vueConf = (id) ->
     dep: 0
     dest: 0
     seaMap: new SeaMap('map_image')
-
+    jsRoutes: jsRoutes
 
   methods:
     getJSON: () ->
-      $.getJSON "/rest/v1/route/#{@area}/#{@info}", @periodObj(), (data) =>
+      $.getJSON jsRoutes.controllers.Rest.route(@area, @info).url, @periodObj(), (data) =>
         sum = 0
         sumCounts = []
         data.forEach (d) ->
@@ -46,7 +47,7 @@ vueConf = (id) ->
         @sum = sum
         @routes = data.filter (d) =>
           (d.count * 1000) > @sum
-      $.getJSON "/rest/v1/cell_info", {area: @area, info: @info}, (data) =>
+      $.getJSON jsRoutes.controllers.Rest.cellInfo(@area, @info).url, (data) =>
         @cellInfo = data
       @setHash({})
     viewCell: (cell) ->
@@ -64,6 +65,11 @@ vueConf = (id) ->
     loadAttr: (el) ->
       @area = parseInt($(el).attr('data-area'))
       @info = parseInt($(el).attr('data-info'))
+      @is1st = $(el).attr('data-1st') ? false
+      if @is1st
+        @to = moment({year: 2018, month: 7, day: 16}).format('YYYY-MM-DD')
+      else
+        @from = moment({year: 2018, month: 7, day: 16}).format('YYYY-MM-DD')
     setHash: ->
       param = if @modal then {modal: @modal, dep: @dep, dest: @dest} else {}
       location.hash = toURLParameter($.extend(param, @periodObj()))
@@ -87,7 +93,7 @@ vueConf = (id) ->
       @dest = route.dest
       @setHash()
     modalURL: (route) ->
-      base = "/entire/sta/route_fleet/#{@area}/#{@info}/#{route.dep}/#{route.dest}"
+      base = if @is1st then jsRoutes.controllers.ViewSta.routeFleet1st(@area, @info, route.dep, route.dest).url else jsRoutes.controllers.ViewSta.routeFleet2nd(@area, @info, route.dep, route.dest).url
       result = base + if @period then "?from=#{@from}&to=#{@to}" else ""
       result
     change: ->

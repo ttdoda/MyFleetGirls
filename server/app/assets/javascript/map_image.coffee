@@ -5,28 +5,62 @@ DefaultColor = '#006400'
 
 class @SeaMap
   constructor: (idTag) ->
-    @image = new MapImage(idTag)
-    @image.onclick = @runClick
+    @tag = $('#' + idTag)
     @positions = []
     @cellInfos = {}
     @toAlpha = []
-    @load(idTag)
+    @layers = []
+    layerUrl = @tag.attr('data-layer')
+    if layerUrl
+      that = @
+      $.getJSON layerUrl, (data) ->
+        that.layers = data
+        image = new MapImage(idTag, that.layers)
+        image.onclick = that.runClick
+        that.image = image
+        that.load()
+    else
+      @image = new MapImage(idTag, @layers)
+      @image.onclick = @runClick
+      @load()
 
-  load: (idTag) ->
-    posUrl = $('#' + idTag).attr('data-position')
-    infoUrl = $('#' + idTag).attr('data-cellinfo')
-    @image.onload = =>
-      $.getJSON posUrl, (data) =>
-        data.forEach (d) =>
-          @positions[d.cell] = {x: d.posX, y: d.posY}
-        if infoUrl
-          $.getJSON infoUrl, (data) =>
-            data.forEach (d) =>
-              @cellInfos[d.alphabet] = d.cell
-              @toAlpha[d.cell] = d.alphabet
-            @onload()
-        else
-          @onload()
+  load: () ->
+    posUrl = @tag.attr('data-position')
+    infoUrl = @tag.attr('data-cellinfo')
+    that = @
+    @image.onload = () ->
+      $.when(
+        $.getJSON(posUrl),
+        if infoUrl then $.getJSON(infoUrl) else null
+      ).done (posData, infoData) ->
+        posData[0].forEach (d) ->
+          that.positions[d.cell] = {x: d.posX, y: d.posY}
+        if infoData
+          infoData[0].forEach (d) ->
+            that.cellInfos[d.alphabet] = d.cell
+            that.toAlpha[d.cell] = d.alphabet
+
+        if that.layers.length == 0
+          return that.onload()
+
+        labelUrl = that.tag.attr('data-labelpos')
+        layerCount = 0
+        that.layers.forEach (s) ->
+          $.when(
+            $.getJSON(posUrl, {suffix: s}),
+            $.getJSON(labelUrl, {suffix: s})
+          ).done (posData, labelData) ->
+            posData[0].forEach (d) ->
+              that.positions[d.cell] = {x: d.posX, y: d.posY}
+              frameName = d.routeName ? 'route_'+d.cell+'_1'
+              if d.routeX && d.routeY
+                that.image.setLayerPoint(s, frameName, {x: d.posX + d.routeX, y: d.posY + d.routeY})
+            labelData[0].forEach (d) ->
+              that.image.setLayerPoint(s, d.imageName, {x: d.posX, y: d.posY})
+            layerCount++
+            if that.layers.length == layerCount
+              that.image.setLayers()
+              that.onload()
 
   setPoint: (cell, fixed) ->
     if fixed
@@ -66,11 +100,14 @@ class @SeaMap
 
 
 class MapImage
-  constructor: (idTag) ->
+  constructor: (idTag, layers) ->
     @tag = $('#' + idTag)
+    @layers = layers
+    @layerFrames = []
+    @layerImgs = []
     @ctx = @tag[0].getContext('2d')
+    @frames = []
     @loadImage()
-    @setImage()
     that = @
     @tag.click (event) ->
       dElm = document.documentElement
@@ -80,15 +117,77 @@ class MapImage
       that.onclick(event.clientX - @offsetLeft + nX, event.clientY - @offsetTop + nY)
 
   loadImage: () ->
-    @img = new Image()
-    @img.src = @tag.attr('data-src')
-    @img.onload = =>
-      @setImage()
-      @onload()
+    @imageUrl = @tag.attr('data-src')
+    @bgImg = new Image()
+    that = @
+    @bgImg.onload = () ->
+      if that.layers.length == 0
+        that.setImage()
+        that.onload()
+      else
+        that.loadLayerImages()
+
+    @frameUrl = @tag.attr('data-frame')
+    @bgLayers = []
+    if @frameUrl
+      @bgUrl = @tag.attr('data-background')
+      that = @
+      $.when(
+        $.getJSON(@frameUrl),
+        $.getJSON(@bgUrl)
+      ).done (frameData, bgData) ->
+        frameData[0].forEach (d) ->
+          that.frames[d.name] = {pos: {x: d.posX, y: d.posY}, width: d.width, height: d.height}
+        that.bgLayers = bgData[0].map (bg) -> bg.imageName
+        that.bgImg.src = that.imageUrl
+    else
+      @bgImg.src = @imageUrl
+
+  loadLayerImages: () ->
+    @layerImgs = []
+    layerCount = 0
+    that = @
+    @layers.forEach (s) ->
+      img = new Image()
+      img.onload = () ->
+        layerCount++
+        if that.layers.length == layerCount
+          that.setImage()
+          that.onload()
+
+      that.layerFrames[s] = {}
+      that.layerImgs[s] = img
+      $.getJSON that.frameUrl, {suffix: s}, (data) ->
+        data.forEach (d) ->
+          that.layerFrames[s][d.name] = {pos: {x: d.posX, y: d.posY}, width: d.width, height: d.height}
+        img.src = that.imageUrl + '?suffix=' + s
 
   setImage: () ->
     @ctx.globalAlpha = 1.0
-    @ctx.drawImage(@img, 0, 0, @img.width, @img.height)
+    that = @
+    if @bgLayers.length != 0
+      @bgLayers.forEach (name) ->
+        frame = that.frames[name]
+        that.ctx.drawImage(that.bgImg, frame.pos.x, frame.pos.y, frame.width, frame.height, 0, 0, frame.width, frame.height)
+    else
+      @ctx.drawImage(@bgImg, 0, 0, @bgImg.width, @bgImg.height, 0, 0, @bgImg.width, @bgImg.height)
+
+  setLayers: () ->
+    that = @
+    @layers.forEach (s) ->
+      that.setLayer(s)
+
+  setLayer: (s) ->
+    @ctx.globalAlpha = 1.0
+    that = @
+    Object.keys(@layerFrames[s]).forEach (name) ->
+      frame = that.layerFrames[s][name]
+      if frame.point
+        that.ctx.drawImage(that.layerImgs[s], frame.pos.x, frame.pos.y, frame.width, frame.height, frame.point.x, frame.point.y, frame.width, frame.height)
+
+  setLayerPoint: (s, frameName, point) ->
+    if @layerFrames[s].hasOwnProperty frameName
+      @layerFrames[s][frameName].point = point
 
   setPoint: (x, y) ->
     @ctx.font = DefaultFont
@@ -101,9 +200,13 @@ class MapImage
     @ctx.strokeStyle = DefaultColor
     arrow(@ctx, x1, y1, x2, y2, 20, 40, 30, 7)
 
-  clear: () -> @setImage()
+  clear: () ->
+    @setImage()
+    @setLayers()
 
-  onload: () -> @setImage()
+  onload: () ->
+    @setImage()
+    @setLayers()
 
   onclick: (x, y) ->
 

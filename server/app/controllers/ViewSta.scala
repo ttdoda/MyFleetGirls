@@ -88,18 +88,65 @@ class ViewSta @Inject()(implicit val ec: ExecutionContext) extends Controller {
   }
 
   def drop(area: Int, info: Int) = actionAsync {
-    val cells = db.BattleResult.dropedCells(area, info)
-    Ok(views.html.sta.drop(Stage(area, info), cells))
+    area match {
+      case id if 21 until 42 contains id => Redirect(routes.ViewSta.drop1st(area, info))
+      case _ =>
+        val cells = db.BattleResult.dropedCells(area, info)
+        Ok(views.html.sta.drop(Stage(area, info), cells))
+    }
+  }
+  def drop1st(area: Int, info: Int) = actionAsync {
+    area match {
+      case id if (21 until 42 contains id) || id <= 6 =>
+        val cells = db.BattleResult.dropedCells(area, info)
+        Ok(views.html.sta.drop_1st(Stage(area, info), cells))
+      case _ => Redirect(routes.ViewSta.drop(area, info))
+    }
   }
 
   def dropAlpha(area: Int, info: Int) = actionAsync {
-    val cells = db.BattleResult.dropedCellsAlpha(area, info)
-    Ok(views.html.sta.drop_alpha(Stage(area, info), cells))
+    area match {
+      case id if 21 until 42 contains id => Redirect(routes.ViewSta.dropAlpha1st(area, info))
+      case _ =>
+        val cells = db.BattleResult.dropedCells(area, info)
+        Ok(views.html.sta.drop_alpha(Stage(area, info), cells))
+    }
+  }
+  def dropAlpha1st(area: Int, info: Int) = actionAsync {
+    area match {
+      case id if (21 until 42 contains id) || id <= 6 =>
+        val cells = db.BattleResult.dropedCells(area, info)
+        Ok(views.html.sta.drop_alpha_1st(Stage(area, info), cells))
+      case _ => Redirect(routes.ViewSta.dropAlpha(area, info))
+    }
   }
 
-  def route(area: Int, info: Int) = actionAsync { Ok(views.html.sta.route(Stage(area, info))) }
+  def route(area: Int, info: Int) = actionAsync {
+    area match {
+      case id if 21 until 42 contains id => Redirect(routes.ViewSta.route1st(area, info))
+      case _ => Ok(views.html.sta.route(Stage(area, info)))
+    }
+  }
+  def route1st(area: Int, info: Int) = actionAsync {
+    area match {
+      case id if (21 until 42 contains id) || id <= 6 => Ok(views.html.sta.route_1st(Stage(area, info)))
+      case _ => Redirect(routes.ViewSta.route(area, info))
+    }
+  }
 
-  def routeFleet(area: Int, info: Int, dep: Int, dest: Int, from: String, to: String) = actionAsync {
+  def routeFleet2nd(area: Int, info: Int, dep: Int, dest: Int, from: String, to: String) = actionAsync {
+    routeFleet(area, info, dep, dest, from, to) { (stage, cDep, cDest, counts) =>
+      views.html.sta.modal_route(stage, cDep, cDest, counts)
+    }
+  }
+
+  def routeFleet1st(area: Int, info: Int, dep: Int, dest: Int, from: String, to: String) = actionAsync {
+    routeFleet(area, info, dep, dest, from, to) { (stage, cDep, cDest, counts) =>
+      views.html.sta.modal_route_1st(stage, cDep, cDest, counts)
+    }
+  }
+
+  private def routeFleet(area: Int, info: Int, dep: Int, dest: Int, from: String, to: String)(view: (Stage, db.CellInfo, db.CellInfo, Seq[(Seq[String], Int)]) => play.twirl.api.Html): Result = {
     val period = Period.fromStr(from, to)
     val mr = db.MapRoute.mr
     val fleets = db.MapRoute.findFleetBy(
@@ -112,7 +159,7 @@ class ViewSta @Inject()(implicit val ec: ExecutionContext) extends Controller {
     val counts = fleetCounts(fleets)
     val cDep = db.CellInfo.findOrDefault(area, info, dep)
     val cDest = db.CellInfo.findOrDefault(area, info, dest)
-    Ok(views.html.sta.modal_route(Stage(area, info), cDep, cDest, counts))
+    Ok(view(Stage(area, info), cDep, cDest, counts))
   }
 
   private def fleetCounts(fleets: Seq[Seq[ShipWithName]]): Seq[(Seq[String], Int)] = {
@@ -154,13 +201,15 @@ class ViewSta @Inject()(implicit val ec: ExecutionContext) extends Controller {
   def shipBook(sid: Int) = actionAsync {
     db.MasterShipBase.findAllInOneBy(sqls.eq(db.MasterShipBase.ms.id, sid)).headOption.map { master =>
       val ships = db.Ship.findByWithAdmiral(sid)
-      val admiral = db.ShipImage.findAdmiral(sid)
+      val admiral1st = db.ShipImage.findAdmiral(sid)
+      val admiral = db.ShipImage2nd.findAdmiralOfCard(sid).orElse(admiral1st)
+      val admiralDmg = db.ShipImage2nd.findAdmiralOfCardDmg(sid).orElse(admiral1st)
       val yomes = db.YomeShip.findAllByWithAdmiral(sqls.eq(db.Ship.s.shipId, sid), 50)
       val admiralCount = db.Admiral.countAll()
       val heldRate = db.Ship.countAdmiral(sqls.eq(db.Ship.s.shipId, sid)).toDouble / admiralCount
       val bookCount = db.ShipBook.countBy(sqls.eq(db.ShipBook.sb.id, sid))
       val bookRate = if(bookCount >= 5) bookCount.toDouble / admiralCount else 0.0
-      Ok(views.html.sta.ship_book(master, ships, admiral, yomes, heldRate, bookRate))
+      Ok(views.html.sta.ship_book(master, ships, admiral, admiralDmg, yomes, heldRate, bookRate))
     }.getOrElse(NotFound(s"Not Found ShipID: $sid"))
   }
 

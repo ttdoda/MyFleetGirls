@@ -4,55 +4,53 @@
   <title>@stage -艦娘ドロップ一覧-</title>
   <script src="@Js.Vue"></script>
   <script src="@Js.D3"></script>
-    <script src="@Js.Lodash"></script>
+  <script src="@Js.Lodash"></script>
   <script src="@Js.MomentLocales"></script>
   <script src="@Js.Lib("sunburst")"></script>
+  <script src="@Js.Lodash"></script>
   <script src="@Js.Common"></script>
   <script src="@Js.Coffee("map_image")"></script>
   <script src="@Js.Coffee("drop")"></script>
   <link rel="stylesheet" href="@routes.Assets.at("stylesheet/sunburst.css")" />
 } {
   @statistics_head("drop") {
+    <input type="hidden" id="stage" data-area="@stage.area" data-info="@stage.info" />
     <div class="page-header">
-      <h1>@stage 艦娘ドロップ<small><a href="@routes.ViewSta.dropAlpha(stage.area, stage.info)">Wiki版</a></small></h1>
+      <h1>@stage 艦娘ドロップ<small><a href="@routes.ViewSta.drop1st(stage.area, stage.info)">ID版</a></small></h1>
       @if(stage.area <= 6) {
-        <p>一期のドロップは<a href="@routes.ViewSta.drop1st(stage.area, stage.info)">こちら</a></p>
+          <p>二期のドロップは<a href="@routes.ViewSta.dropAlpha(stage.area, stage.info)">こちら</a></p>
       }
     </div>
 
     <div>
-      <p>ステージ後ろのアルファベットは<a target="_blank" href="http://wikiwiki.jp/kancolle/?%BD%D0%B7%E2#maps">艦これWiki出撃一覧</a>のアルファベットと対応しています</p>
-      <p>アルファベットの無い海域は情報提供募集中です。<a target="_blank" href="https://docs.google.com/spreadsheets/d/1iAFrEpw64nc8YnVcyNb9hjG0jb1UMy_29zKhRlKc7Ig/edit?usp=sharing">こちら</a>から情報提供できます</p>
+      <p>ステージのアルファベットは<a target="_blank" href="http://wikiwiki.jp/kancolle/?%BD%D0%B7%E2#maps">艦これWiki出撃一覧</a>のアルファベットと対応しています</p>
     </div>
 
     <div>
       <canvas
         id="map_image"
-        data-src="@routes.RestImage.map2nd(stage.area, stage.info)"
-        data-frame="@routes.Rest.mapFrame(stage.area, stage.info)"
-        data-background="@routes.Rest.mapBackground(stage.area, stage.info)"
-        data-layer="@routes.Rest.mapLayers(stage.area, stage.info)"
-        data-labelpos="@routes.Rest.labelPosition(stage.area, stage.info)"
-        data-position="@routes.Rest.cellPosition2nd(stage.area, stage.info)"
-        width="1200px" height="720px"
+        data-src="@routes.RestImage.map(stage.area, stage.info)"
+        data-position="@routes.Rest.cellPosition(stage.area, stage.info)"
+        data-cellinfo="@routes.Rest.cellInfo(stage.area, stage.info)"
+        width="768px" height="435px"
         class="img-rounded">
       </canvas>
     </div>
 
     <div class="panel-group" id="accordion">
       @cells.map { cell =>
-        <div class="panel panel-default" id="panel@cell.rawPointStr" data-cell="@cell.rawPointStr">
-          <div class="panel-heading" data-cell="@cell.cell">
+        <div class="panel panel-default" id="panel@cell.rawPointAlpha" data-cell="@cell.rawPointAlpha">
+          <div class="panel-heading" data-cell="@cell.alphabet">
             <h2 class="panel-title">
-              <a data-toggle="collapse" data-parent="#accordion" href="#collapse@cell.rawPointStr">
-                @cell.pointStr @if(cell.alphabet.nonEmpty){(@cell.alphabet)}
+              <a data-toggle="collapse" data-parent="#accordion" href="#collapse@cell.rawPointAlpha">
+                @cell.pointAlpha
                 <small>@if(cell.start){Start} @if(cell.boss){BOSS}</small>
               </a>
             </h2>
           </div>
-          <div id="collapse@cell.rawPointStr" class="panel-collapse collapse" data-url="@routes.Rest.dropCell(cell.areaId, cell.infoNo, cell.cell, "(rank)", "(from)", "(to)", "(mapRank)")">
-            <div class="panel-body">
-              <form class="form-inline">
+          <div id="collapse@cell.rawPointAlpha" class="panel-collapse collapse" data-url="@routes.Rest.dropCellAlpha(cell.areaId, cell.infoNo, cell.alphabet, "(rank)", "(from)", "(to)", "(mapRank)")">
+            <form class="form-inline">
+              <div class="panel-body">
                 <div>
                   <label class="checkbox-inline">
                     <input type="checkbox" v-model="rank_s" />S勝利
@@ -92,9 +90,9 @@
                   〜
                   <input type="text" class="datepicker form-control" v-model="to" />
                 </div>
-                <div style="width:900px;height:600px;margin:auto;" id="sunburst@cell.rawPointStr" class="sunburst"></div>
-              </form>
-            </div>
+                <div style="width:900px;height:600px;margin:auto;" id="sunburst@cell.rawPointAlpha" class="sunburst"></div>
+              </div>
+            </form>
             <table class="table table-condensed table-hover">
               <thead>
                 <tr><th>艦種</th><th>名前</th><th>Count</th><th>Rate</th></tr>

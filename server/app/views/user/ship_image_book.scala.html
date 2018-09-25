@@ -2,7 +2,8 @@
 
 @main {
   <title>艦娘図鑑（画像） -@{user.admiral.nickname}提督-</title>
-  <script src="@Js.Vue"></script>
+  <script src="@routes.Application.javascriptRoutes("ship_image_book")"></script>
+  <script src="@Js.Vue1"></script>
   <script src="@Js.Coffee("ship_image_book")"></script>
   <style>
     .damaged {
@@ -19,10 +20,10 @@
         </div>
 
         <div class="row">
-          <div class="col-lg-2 col-sm-3" v-repeat="ship: ships">
+          <div class="col-lg-2 col-sm-3" v-for="ship in ships">
             <div class="thumbnail">
-              <img src="/rest/v1/image/ship/{{ship.id}}/5.jpg" alt="{{ship.name}}" />
-              <h5 v-class="text-danger: ship.isMarried, damaged: ship.isDameged">No.{{ship.indexNo}} {{ship.name}}</h5>
+              <img v-bind:src="imageUrl(ship.id)" v-bind:alt="ship.name" />
+              <h5 v-bind:class="{'text-danger': ship.isMarried, damaged: ship.isDameged}">No.{{ship.indexNo}} {{ship.name}}</h5>
             </div>
           </div>
         </div>

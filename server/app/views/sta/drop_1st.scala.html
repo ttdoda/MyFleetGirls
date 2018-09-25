@@ -4,7 +4,7 @@
   <title>@stage -艦娘ドロップ一覧-</title>
   <script src="@Js.Vue"></script>
   <script src="@Js.D3"></script>
-    <script src="@Js.Lodash"></script>
+  <script src="@Js.Lodash"></script>
   <script src="@Js.MomentLocales"></script>
   <script src="@Js.Lib("sunburst")"></script>
   <script src="@Js.Common"></script>
@@ -14,9 +14,9 @@
 } {
   @statistics_head("drop") {
     <div class="page-header">
-      <h1>@stage 艦娘ドロップ<small><a href="@routes.ViewSta.dropAlpha(stage.area, stage.info)">Wiki版</a></small></h1>
+      <h1>@stage 艦娘ドロップ<small><a href="@routes.ViewSta.dropAlpha1st(stage.area, stage.info)">Wiki版</a></small></h1>
       @if(stage.area <= 6) {
-        <p>一期のドロップは<a href="@routes.ViewSta.drop1st(stage.area, stage.info)">こちら</a></p>
+          <p>二期のドロップは<a href="@routes.ViewSta.drop(stage.area, stage.info)">こちら</a></p>
       }
     </div>
 
@@ -28,13 +28,9 @@
     <div>
       <canvas
         id="map_image"
-        data-src="@routes.RestImage.map2nd(stage.area, stage.info)"
-        data-frame="@routes.Rest.mapFrame(stage.area, stage.info)"
-        data-background="@routes.Rest.mapBackground(stage.area, stage.info)"
-        data-layer="@routes.Rest.mapLayers(stage.area, stage.info)"
-        data-labelpos="@routes.Rest.labelPosition(stage.area, stage.info)"
-        data-position="@routes.Rest.cellPosition2nd(stage.area, stage.info)"
-        width="1200px" height="720px"
+        data-src="@routes.RestImage.map(stage.area, stage.info)"
+        data-position="@routes.Rest.cellPosition(stage.area, stage.info)"
+        width="768px" height="435px"
         class="img-rounded">
       </canvas>
     </div>
