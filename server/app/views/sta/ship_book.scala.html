@@ -2,30 +2,39 @@
     master: MasterShipAll,
     ships: Seq[ShipWithAdmiral],
     admiral: Option[Admiral],
+    admiralDmg: Option[Admiral],
     yomes: Seq[ShipWithAdmiral],
     heldRate: Double,
     bookRate: Double)
 
 @main {
   <title>@master.name -艦娘図鑑-</title>
-  <script src="@Js.Vue"></script>
+  <script src="@Js.Vue1"></script>
   <script src="@Js.Coffee("st_ship_book")"></script>
 } {
   @statistics_head("ship_book") {
     <h1>@master.stName @master.name<small>@master.yomi</small></h1>
 
     <div class="col-lg-3 col-md-4 col-sm-5" id="ship_image">
-      <div v-on="click: change" class="clickable">
-        <img v-if="!damaged" src="@routes.RestImage.ship(master.id, 5)" style="margin: 25px;" />
-        <img v-if="damaged" src="@routes.RestImage.ship(master.id, 7)" style="margin: 25px;" />
+      <div v-on:click="change" class="clickable">
+        <img v-bind:src="damaged ? '@routes.RestImage.ship2nd(master.id, "card_dmg")' : '@routes.RestImage.ship2nd(master.id, "card")'" style="margin-top:25px;width:100%;max-width:300px;" />
       </div>
-      @admiral.map { ad =>
-        <small>画像提供： <a href="@routes.UserView.user(ad.id)">@ad.nickname</a></small>
-      }
+      <small>画像提供：
+        <span v-if="damaged">
+        @admiralDmg.map { ad =>
+          <a href="@routes.UserView.user(ad.id)">@ad.nickname</a>
+        }.getOrElse("なし")
+        </span>
+        <span v-else>
+        @admiral.map { ad =>
+          <a href="@routes.UserView.user(ad.id)">@ad.nickname</a>
+        }.getOrElse("なし")
+        </span>
+      </small>
     </div>
 
     <div class="row" id="from_name" data-ship-id="@master.id">
-      <div class="col-md-3 col-sm-5">
+      <div class="col-md-3 col-sm-5 col-xs-12">
         <h3>艦娘ステータス</h3>
         <table class="table table-condensed table-striped">
           <tbody>
@@ -62,7 +71,7 @@
       </div>
 
       @if(yomes.nonEmpty) {
-        <div class="col-md-4 col-sm-5">
+        <div class="col-md-4 col-sm-5 col-xs-12">
           <h3>嫁にしている提督</h3>
           <table class="table table-condensed table-striped">
             @yomes.zipWithIndex.map { case (ship, i) =>
@@ -100,7 +109,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-repeat="c: sCounts" onclick="location.href='/entire/sta/cship/{{c.mat.fuel}}/{{c.mat.ammo}}/{{c.mat.steel}}/{{c.mat.bauxite}}/{{c.mat.develop}}'" class="clickable">
+            <tr v-for="c in sCounts" onclick="location.href='/entire/sta/cship/{{c.mat.fuel}}/{{c.mat.ammo}}/{{c.mat.steel}}/{{c.mat.bauxite}}/{{c.mat.develop}}'" class="clickable">
               <td>{{c.mat.fuel}}</td>
               <td>{{c.mat.ammo}}</td>
               <td>{{c.mat.steel}}</td>
@@ -122,7 +131,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-repeat="c: dropCounts" class="clickable" onclick="location.href='/entire/sta/drop/{{c.cell.area}}/{{c.cell.info}}#cell={{c.cell.area}}-{{c.cell.info}}-{{c.cell.cell}}&rank={{c.cell.rank}}'">
+            <tr v-for="c in dropCounts" class="clickable" onclick="location.href='/entire/sta/drop/{{c.cell.area}}/{{c.cell.info}}#cell={{c.cell.area}}-{{c.cell.info}}-{{c.cell.cell}}&rank={{c.cell.rank}}'">
               <td v-if="c.cell.alpha">{{c.cell.viewName}}-{{c.cell.alpha}} ({{c.cell.cell}})</td>
               <td v-if="!c.cell.alpha">{{c.cell.viewName}}-{{c.cell.cell}}</td>
               <td>{{c.cell.rank}}</td>

@@ -3,7 +3,7 @@ package controllers
 import javax.inject.Inject
 
 import com.ponkotuy.data._
-import com.ponkotuy.data.master.MasterRemodel
+import com.ponkotuy.data.master.{MasterRemodel, MapFrame, MapInfo => MapPositions}
 import com.ponkotuy.value.KCServer
 import controllers.Common._
 import models.db
@@ -179,6 +179,32 @@ class Post @Inject()(implicit val ec: ExecutionContext) extends Controller {
 
   def masterRemodel() = authAndParse[MasterRemodel] { case (auth, request) =>
     db.MasterRemodel.createFromData(request, auth.id)
+    Res.success
+  }
+
+  def mapFrame() = authAndParse[List[MapFrame]] { case (auth, request) =>
+    if(db.MapFrame.find(request.head.areaId, request.head.infoNo, request.head.suffix, request.head.name, request.head.version).isDefined) Ok("Already exists")
+    else {
+      db.MapFrame.bulkInsert(request)
+      Res.success
+    }
+  }
+
+  def mapPositions() = authAndParse[MapPositions] { case (auth, request) =>
+    val cellPositions = request.spots
+    if(db.CellPosition2nd.find(cellPositions.head.areaId, cellPositions.head.infoNo, cellPositions.head.suffix, cellPositions.head.cell, cellPositions.head.version).isEmpty)
+      db.CellPosition2nd.bulkInsert(cellPositions)
+
+    val labelPositions = request.labels
+    if(labelPositions.isEmpty) None
+    else if(db.LabelPosition.find(labelPositions.head.areaId, labelPositions.head.infoNo, labelPositions.head.suffix, labelPositions.head.imageName, labelPositions.head.version).isEmpty)
+      db.LabelPosition.bulkInsert(labelPositions)
+
+    val bgNames = request.bg
+    if(bgNames.isEmpty) None
+    else if(db.MapBackgroundName.find(bgNames.head.areaId, bgNames.head.infoNo, bgNames.head.suffix, bgNames.head.imageName, bgNames.head.version).isEmpty)
+      db.MapBackgroundName.bulkInsert(bgNames)
+
     Res.success
   }
 

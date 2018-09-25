@@ -1,15 +1,13 @@
 package controllers
 
-import java.io.FileInputStream
+import java.io._
 import javax.inject.Inject
 
 import com.ponkotuy.value.ShipIds
 import controllers.Common._
-import models.db
-import models.db.{CellPosition, MapImage}
+import models.db.{ShipImage2nd, MapImage2nd, ShipSound, MasterShipBase}
 import play.api.mvc._
 import scalikejdbc._
-import tool.swf.{MapData, WrappedSWF}
 
 import scala.concurrent.ExecutionContext
 import scala.util.Try
@@ -20,54 +18,46 @@ import scala.util.Try
  * Date: 14/03/22.
  */
 class PostFile @Inject()(implicit val ec: ExecutionContext) extends Controller {
-  def ship(shipKey: String, version: Int) = Action.async(parse.multipartFormData) { request =>
+  /**
+   * 二期HTML5版艦娘画像
+   */
+  def ship(shipId: Int, kind: String, version: Int) = Action.async(parse.multipartFormData) { request =>
     val form = request.body.asFormUrlEncoded
     authentication(form) { auth =>
       request.body.file("image") match {
         case Some(ref) =>
-          findKey(shipKey) { ship =>
-            val si = db.ShipImage.si
-            if(ShipIds.isEnemy(ship.id)) { Ok("Unnecessary Enemy") }
-            else if(db.ShipImage.countBy(sqls.eq(si.id, ship.id).and.eq(si.version, version)) > 0) Ok("Already Exists")
-            else {
-              val swfFile = ref.ref.file
-              val swf = WrappedSWF.fromFile(swfFile)
-              val isExec = swf.getImages.flatMap { case (id, imgTag) =>
-                Try {
-                  val image = WrappedSWF.imageToBytes(imgTag).get
-                  db.ShipImage.create(ship.id, image, shipKey, auth.id, id, version)
-                }.toOption
-              }.nonEmpty
-              if(isExec) Ok("Success") else BadRequest("Not found image")
-            }
+          if(ShipIds.isEnemy(shipId)) Ok("Unnecessary Enemy")
+          else if(ShipImage2nd.find(shipId, kind, version).isDefined) Ok("Already exists")
+          else {
+            val pngFile = ref.ref.file
+            val image = readAll(new FileInputStream(pngFile))
+            ShipImage2nd.create(shipId, image, auth.id, kind, version)
+            Ok("Success")
           }
-        case None => BadRequest("Need image")
+        case _ => BadRequest("Need ship image")
       }
     }
   }
 
-  def map(areaId: Int, infoNo: Int, version: Int) = Action.async(parse.multipartFormData) { request =>
+  /**
+   * 二期HTML5版海域画像
+   *
+   * 一期はswfファイルにCellPositionも含まれていたが二期では別のjsonなのでCellPositionに当たるものはcontroller.Post.cellPositionへ移動する
+   * また、ここで保存する画像はスプライトなので実際に使用する際にはMapFrameを利用して描写すること
+   */
+  def map(areaId: Int, infoNo: Int, suffix: Int, version: Int) = Action.async(parse.multipartFormData) { request =>
     val form = request.body.asFormUrlEncoded
     authentication(form) { auth =>
       request.body.file("map") match {
         case Some(ref) =>
-          if(db.MapImage.find(areaId, infoNo, version.toShort).isDefined) Ok("Already exists")
+          if(MapImage2nd.find(areaId, infoNo, suffix, version.toShort).isDefined) Ok("Already exists")
           else {
-            val swfFile = ref.ref.file
-            MapData.fromFile(swfFile) match {
-              case Some(mapData) =>
-                MapImage.create(areaId, infoNo, mapData.bytes, version.toShort)
-                val cp = CellPosition.cp
-                if(CellPosition.countBy(sqls.eq(cp.areaId, areaId).and.eq(cp.infoNo, infoNo)) == 0) {
-                  mapData.cells.map { cell =>
-                    CellPosition.create(areaId, infoNo, cell.cell, cell.posX, cell.posY)
-                  }
-                }
-                Ok("Success")
-              case None => BadRequest("SWF parse error")
-            }
+            val pngFile = ref.ref.file
+            val image = readAll(new FileInputStream(pngFile))
+            MapImage2nd.create(areaId, infoNo, suffix, image, version.toShort)
+            Ok("Success")
           }
-        case None => BadRequest("Need swf file")
+        case _ => BadRequest("Need ship image")
       }
     }
   }
@@ -79,9 +69,9 @@ class PostFile @Inject()(implicit val ec: ExecutionContext) extends Controller {
         case Some(ref) =>
           findKey(shipKey) { ship =>
             val mp3File = ref.ref.file
-            val sound = WrappedSWF.readAll(new FileInputStream(mp3File))
+            val sound = readAll(new FileInputStream(mp3File))
             try {
-              db.ShipSound.create(ship.id, soundId, version, sound)
+              ShipSound.create(ship.id, soundId, version, sound)
               Ok("Success")
             } catch {
               case e: Exception => Ok("Already exists")
@@ -92,10 +82,21 @@ class PostFile @Inject()(implicit val ec: ExecutionContext) extends Controller {
     }
   }
 
-  private def findKey(key: String)(f: db.MasterShipBase => Result) = {
-    db.MasterShipBase.findByFilename(key) match {
+  private def findKey(key: String)(f: MasterShipBase => Result) = {
+    MasterShipBase.findByFilename(key) match {
       case Some(ship) => f(ship)
       case None => Ok("Is enemy, wrong filename or Not found master data")
     }
+  }
+
+  private def readAll(is: InputStream): Array[Byte] = {
+    val bout = new ByteArrayOutputStream()
+    val buffer = new Array[Byte](1024)
+    var len = is.read(buffer)
+    while(len >= 0) {
+      bout.write(buffer, 0, len)
+      len = is.read(buffer)
+    }
+    bout.toByteArray
   }
 }

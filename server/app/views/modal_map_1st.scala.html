@@ -7,13 +7,9 @@
 
 <div class="modal-body">
   <canvas id="modal_map_image"
-    data-src="@routes.RestImage.map2nd(area, info)"
-    data-frame="@routes.Rest.mapFrame(area, info)"
-    data-background="@routes.Rest.mapBackground(area, info)"
-    data-layer="@routes.Rest.mapLayers(area, info)"
-    data-labelpos="@routes.Rest.labelPosition(area, info)"
-    data-position="@routes.Rest.cellPosition2nd(area, info)"
-    width="1200px" height="720px"
+    data-src="@routes.RestImage.map(area, info)"
+    data-position="@routes.Rest.cellPosition(area, info)"
+    width="768px" height="435px"
     class="image-rounded">
   </canvas>
 </div>

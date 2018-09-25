@@ -24,6 +24,7 @@ $(document).ready ->
       dropOnly: false
       stage: 'ALL'
       ranks: {S: true, A: true, B: true, C: false, D: false, E: false, N: false}
+      jsRoutes: jsRoutes
     methods:
       setPage: (page) ->
         @page = page
@@ -31,9 +32,9 @@ $(document).ready ->
         @data = []
         @setHash()
         dat = $.extend(@whereObj(), @areainfo())
-        $.getJSON "/rest/v1/#{userid}/battle_result_count", dat, (ret) =>
+        $.getJSON jsRoutes.controllers.RestUser.battleResultCount(userid).url, dat, (ret) =>
           @allCount = ret
-        $.getJSON "/rest/v1/#{userid}/battle_result", dat, (ret) =>
+        $.getJSON jsRoutes.controllers.RestUser.battleResult(userid).url, dat, (ret) =>
           @data = ret
       timeToStr: (millis) ->
         moment(millis).format('YYYY-MM-DD HH:mm')
@@ -97,6 +98,7 @@ $(document).ready ->
       cellInfo: []
       stage: 'ALL'
       fleetType: 'name'
+      jsRoutes: jsRoutes
     methods:
       getInitData: () ->
         @restoreHash()
@@ -106,9 +108,9 @@ $(document).ready ->
       getData: () ->
         @setHash()
         cond = $.extend({}, {limit: @count, offset: @page*@count}, @areainfo())
-        $.getJSON "/rest/v1/#{@userid}/route_log_count", cond, (data) =>
+        $.getJSON jsRoutes.controllers.RestUser.routeLogCount(@userid).url, cond, (data) =>
           @allCount = data
-        $.getJSON "/rest/v1/#{@userid}/route_log", cond, (data) =>
+        $.getJSON jsRoutes.controllers.RestUser.routeLog(@userid).url, cond, (data) =>
           @routes = []
           data.forEach (d) => @routes.push(d)
       viewCell: (area, info, cell) ->

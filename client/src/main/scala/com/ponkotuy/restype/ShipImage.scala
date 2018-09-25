@@ -8,17 +8,17 @@ import scala.util.Try
 import scala.util.matching.Regex
 
 /**
- * @author ponkotuy
- * DAte: 15/04/12.
+ * @author kPherox
+ * Date: 18/09/10.
  */
-case object SoundMP3 extends ResType with Resources with Media {
-  def regexp: Regex = """\A/kcs/sound/kc([a-z]+)/(\d+).mp3""".r
+case object ShipImage extends ResType with Resources with Media {
+  def regexp: Regex = """\A/kcs2/resources/ship/(.*)/(\d+)_\d+.png\z""".r
 
   def postables(q: Query): Seq[Result] = {
     val ver = q.uri.query.param("version").map(_.toInt).getOrElse(DefaultVer)
-    parse(q.uri).filterNot { case (soundId, shipKey) => MFGHttp.existsSound(shipKey, soundId, ver) }.map { case (soundId, shipKey) =>
-      val sound = allRead(q.responseContent)
-      FilePostable(s"/mp3/kc/${shipKey}/${soundId}/${ver}", "sound", 2, sound, "mp3")
+    parse(q.uri).filterNot { case (shipId, kind) => MFGHttp.existsImage(shipId, kind, ver) }.map { case (shipId, kind) =>
+      val png = allRead(q.responseContent)
+      FilePostable(s"/image/ship/${shipId}/${kind}/${ver}", "image", 2, png, "png")
     }.toList
   }
 

@@ -11,11 +11,11 @@
   <script src="@Js.Coffee("route")"></script>
 } {
   @statistics_head("drop") {
-    <div id="route_table" data-area="@stage.area" data-info="@stage.info">
+    <div id="route_table" data-area="@stage.area" data-info="@stage.info" data-1st="true">
       <div class="page_header">
         <h1>@stage 羅針盤</h1>
         @if(stage.area <= 6) {
-          <p>一期の羅針盤は<a href="@routes.ViewSta.route1st(stage.area, stage.info)">こちら</a></p>
+          <p>二期の羅針盤は<a href="@routes.ViewSta.route(stage.area, stage.info)">こちら</a></p>
         }
       </div>
 
@@ -33,13 +33,9 @@
       <div>
         <canvas
           id="map_image"
-          data-src="@routes.RestImage.map2nd(stage.area, stage.info)"
-          data-frame="@routes.Rest.mapFrame(stage.area, stage.info)"
-          data-background="@routes.Rest.mapBackground(stage.area, stage.info)"
-          data-layer="@routes.Rest.mapLayers(stage.area, stage.info)"
-          data-labelpos="@routes.Rest.labelPosition(stage.area, stage.info)"
-          data-position="@routes.Rest.cellPosition2nd(stage.area, stage.info)"
-          width="1200px" height="720px"
+          data-src="@routes.RestImage.map(stage.area, stage.info)"
+          data-position="@routes.Rest.cellPosition(stage.area, stage.info)"
+          width="768px" height="435px"
           class="img-rounded">
         </canvas>
       </div>
@@ -63,7 +59,7 @@
 
     <!-- Modal -->
     <div class="modal fade" aria-hidden="true" role="dialog" aria-labelledby="modalLabel" id="modal">
-      <div class="modal-dialog modal-fluid">
+      <div class="modal-dialog modal-lg">
         <div class="modal-content"></div>
       </div>
     </div>

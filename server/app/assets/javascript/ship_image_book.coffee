@@ -8,8 +8,12 @@ vueConf =
     ships: []
 
   methods:
+    imageUrl: (id) ->
+      shipImage = jsRoutes.controllers.RestImage.ship2nd(id, "card")
+      shipImage.url
     getShips: ->
-      $.get "/rest/v2/user/#{@userId}/book/ships", (data) =>
+      bookShipsUrl = jsRoutes.controllers.RestUser.bookShips(@userId).url
+      $.get bookShipsUrl, (data) =>
         @ships = data
 
   watch:

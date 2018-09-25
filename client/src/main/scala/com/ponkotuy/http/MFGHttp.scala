@@ -163,14 +163,14 @@ object MFGHttp extends Log {
     stCode
   }
 
-  def existsImage(key: String, version: Int): Boolean =
-    head(s"/image/ship_obf/$key/$version.jpg", ver = 2).getStatusLine.getStatusCode == 200
+  def existsImage(shipId: Int, kind: String, version: Int): Boolean =
+    head(s"/image/ship_obf/${shipId}/${kind}/${version}.png", ver = 2).getStatusLine.getStatusCode == 200
 
-  def existsSound(s: SoundUrlId): Boolean =
-    head(s"/sound/ship_obf/${s.shipKey}/${s.soundId}/${s.version}.mp3", ver = 2).getStatusLine.getStatusCode == 200
+  def existsSound(shipKey: String, soundId: Int, version: Int): Boolean =
+    head(s"/sound/ship_obf/${shipKey}/${soundId}/${version}.mp3", ver = 2).getStatusLine.getStatusCode == 200
 
-  def existsMap(area: Int, info: Int, version: Int): Boolean =
-    head(s"/map/${area}/${info}${version}.jpg", ver = 2).getStatusLine.getStatusCode == 200
+  def existsMap(area: Int, info: Int, suffix: Int, version: Int): Boolean =
+    head(s"/image/map/${area}/${info}/${suffix}/${version}.png", ver = 2).getStatusLine.getStatusCode == 200
 
   private def head(uStr: String, ver: Int = 1) = {
     val head = new HttpHead(ClientConfig.getUrl(ver) + uStr)
