@@ -11,7 +11,7 @@ addSbtPlugin("com.typesafe.sbt" % "sbt-gzip" % "1.0.2")
 addSbtPlugin("net.virtual-void" % "sbt-dependency-graph" % "0.9.2")
 addSbtPlugin("com.eed3si9n" % "sbt-assembly" % "0.14.7")
 addSbtPlugin("com.eed3si9n" % "sbt-buildinfo" % "0.9.0")
-libraryDependencies += "mysql" % "mysql-connector-java" % "5.1.39"
+libraryDependencies += "org.mariadb.jdbc" % "mariadb-java-client" % "2.3.0"
 addSbtPlugin("org.scalikejdbc" %% "scalikejdbc-mapper-generator" % "3.1.0")
 addSbtPlugin("com.typesafe.sbt" % "sbt-license-report" % "1.2.0")
 addSbtPlugin("com.scalapenos" % "sbt-prompt" % "1.0.2")
