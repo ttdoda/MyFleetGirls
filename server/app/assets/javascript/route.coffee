@@ -25,7 +25,7 @@ vueConf = (id) ->
     area: 0
     info: 0
     is1st: false
-    period: false
+    period: true
     from: moment({year: 2014, month: 0, day: 1}).format('YYYY-MM-DD')
     to: moment().format('YYYY-MM-DD')
     modal: false

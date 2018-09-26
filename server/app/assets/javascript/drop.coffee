@@ -7,7 +7,8 @@ $(document).ready ->
     elem = $(this)
     id = elem.attr('id')
     cell = elem.attr('data-cell')
-    new Vue(vueConf(elem, id, cell))
+    is1st = elem.attr('data-1st') ? false
+    new Vue(vueConf(elem, id, cell, is1st))
   $('.panel-heading').each ->
     elem = $(this)
     cell = elem.attr('data-cell')
@@ -32,7 +33,7 @@ setPoint = (seaMap, cell) ->
 
 timeout = 0
 
-vueConf = (elem, id, cell) ->
+vueConf = (elem, id, cell, is1st) ->
   el: '#' + id
 
   data:
@@ -47,7 +48,7 @@ vueConf = (elem, id, cell) ->
     map_rank_otsu: true
     map_rank_hei: true
     url: ''
-    period: false
+    period: true
     from: moment({year: 2014, month: 0, day: 1}).format('YYYY-MM-DD')
     to: moment().format('YYYY-MM-DD')
 
@@ -123,6 +124,10 @@ vueConf = (elem, id, cell) ->
 
 
   created: ->
+    if is1st
+      @to = moment({year: 2018, month: 7, day: 16}).format('YYYY-MM-DD')
+    else
+      @from = moment({year: 2018, month: 7, day: 16}).format('YYYY-MM-DD')
     i = this
     elem.find('.panel-collapse').on 'show.bs.collapse', ->
       i.restoreHash()
