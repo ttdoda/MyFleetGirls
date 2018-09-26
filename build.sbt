@@ -3,9 +3,8 @@ val ver = "1.5.25"
 
 val scalaVer = "2.11.11"
 
-//name := "my-fleet-girls"
-//lazy val root = (project in file(".")).settings(rootSettings)
-lazy val root = Project(id = "my-fleet-girls", base = file("."), settings = rootSettings)
+lazy val root = (project in file("."))
+  .settings(rootSettings)
   .aggregate(server, client, library)
 
 val proxy = inputKey[Unit]("run proxy")
@@ -14,6 +13,7 @@ val runTester = inputKey[Unit]("run tester")
 val runTesterEarth = taskKey[Unit]("run tester")
 
 lazy val rootSettings = settings ++ disableAggregates ++ Seq(
+  name := "my-fleet-girls",
   commands ++= Seq(start),
   proxy := (run in (client, Compile)).evaluated,
   assembly := {
@@ -38,9 +38,7 @@ lazy val disableAggregates = Seq(
 lazy val server = project
   .settings(settings)
   .dependsOn(library)
-  .enablePlugins(PlayScala)
-  .enablePlugins(SbtWeb, ScalikejdbcPlugin, BuildInfoPlugin)
-  //.enablePlugins(PlayScala, ScalikejdbcPlugin, SbtWeb, BuildInfoPlugin)
+  .enablePlugins(PlayScala, ScalikejdbcPlugin, SbtWeb, BuildInfoPlugin)
 
 lazy val client = project
   .settings(
