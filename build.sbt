@@ -53,7 +53,7 @@ lazy val library = project
 
 lazy val update = project
   .settings(
-    scalaVersion := scalaVer,
+    settings,
     assemblyJarName in assembly := "update.jar"
   )
   .enablePlugins(AssemblyPlugin)
