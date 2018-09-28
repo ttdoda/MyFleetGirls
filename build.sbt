@@ -1,7 +1,7 @@
 
 val ver = "1.5.25"
 
-val scalaVer = "2.11.11"
+val scalaVer = "2.12.7"
 
 lazy val root = (project in file("."))
   .withId("my-fleet-girls")

@@ -183,7 +183,7 @@ object Ship extends SQLSyntaxSupport[Ship] {
     select(s.shipId, sqls"count(1) as cnt").from(Ship as s)
       .where(where)
       .groupBy(s.shipId)
-  }.map { rs => rs.int(1) -> rs.long("cnt") }.toTraversable().apply().toMap
+  }.map { rs => rs.int(1) -> rs.long("cnt") }.toIterable().apply().toMap
 
   def countBy(where: SQLSyntax)(implicit session: DBSession = autoSession): Long = withSQL {
     select(sqls.count).from(Ship as s).where(where)

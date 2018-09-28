@@ -1,19 +1,20 @@
 
 name := "MyFleetGirlsServer"
 
-val scalikeJdbcVer = "3.1.0"
+val scalikeJdbcVer = "3.3.1"
 
 libraryDependencies ++= Seq(
   "org.scalikejdbc" %% "scalikejdbc" % scalikeJdbcVer,
   "org.scalikejdbc" %% "scalikejdbc-config" % scalikeJdbcVer,
-  "org.scalikejdbc" %% "scalikejdbc-play-initializer" % "2.5.3",
+  "org.scalikejdbc" %% "scalikejdbc-play-initializer" % "2.6.0-scalikejdbc-3.3",
   "org.scalikejdbc" %% "scalikejdbc-syntax-support-macro" % scalikeJdbcVer,
-  "com.github.nscala-time" %% "nscala-time" % "2.12.0",
-  "mysql" % "mysql-connector-java" % "5.1.39",
-  "org.scalatest" %% "scalatest" % "2.2.6" % "test",
+  "com.github.nscala-time" %% "nscala-time" % "2.20.0",
+  "mysql" % "mysql-connector-java" % "5.1.47",
+  "org.scalatest" %% "scalatest" % "3.0.5" % "test",
   "org.apache.abdera" % "abdera-parser" % "1.1.3",
   "net.sf.ehcache" % "ehcache" % "2.10.5",
-  "org.flywaydb" %% "flyway-play" % "3.0.0"
+  "org.flywaydb" %% "flyway-play" % "5.0.0",
+  guice
 )
 
 routesGenerator := InjectedRoutesGenerator
