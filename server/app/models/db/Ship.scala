@@ -193,7 +193,7 @@ object Ship extends SQLSyntaxSupport[Ship] {
     select(sqls.count).from(Ship as s)
         .where(where)
         .groupBy(s.memberId)
-  }.map(_.long(1)).traversable().apply().size
+  }.map(_.long(1)).iterable().apply().size
 
   def create(s: data.Ship, memberId: Long)(implicit session: DBSession = Ship.autoSession): Unit = {
     val created = System.currentTimeMillis()

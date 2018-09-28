@@ -1,6 +1,6 @@
 package com.ponkotuy.value
 
-import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
 import com.typesafe.config.{Config, ConfigFactory}
 import org.slf4j.{Logger, LoggerFactory}
 
@@ -19,7 +19,7 @@ object KCServer {
 
   lazy val values = {
     logger.info("load servers list")
-    val configList = config.getConfigList("servers").toList
+    val configList = config.getConfigList("servers").asScala.toList
     val serverList = configList.map { config =>
       val number = config.getInt("number")
       val ip = config.getString("ip")
