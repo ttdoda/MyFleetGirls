@@ -33,7 +33,7 @@ $ sbt proxy
    + sbt（sbt-extrasのインストールをお勧め）とMariaDBをインストール
    + MariaDBにmyfleetという名前のdatabaseを作成。utf8を有効化する（いくらかのクエリがutf8です）
    + server/conf/local.confを適宜設定（.sampleをコピーして、DB設定を適宜すればいいでしょう）
-   + server/public/message にテキストファイル置かないと弊害があるかも
+   + server/public/message にクライアントに通知するメッセージを書いたテキストファイルを置く。クライアントは起動時にこのファイルを取得して表示します。通知する内容が無い場合でも空ファイルを作る必要があります。
 
    sbtには以下のコマンドがあります。
 
@@ -52,7 +52,7 @@ $ sbt proxy
    - server/public/MFGsTitle.pngにTitle画像を置く
    - server/public/feed-icon-28x28.pngを [[http://www.feedicons.com/]] から落として置く
    - server/public/clientディレクトリ以下にclientの自動ダウンロードに必要なファイルを置く
-   - server/public/zip/MyFleetGirls.zipにDownloaderのzipファイルを置く（さきほどのzipコマンドで生成されます）
+   - server/public/zip/MyFleetGirls.zipにDownloaderのzipファイルを置く。作り方は Git フックスクリプト maintenance/hooks/post-receive が参考になるでしょう
 
 ** プロジェクト構成
    MyFleetGirlsは複数のサブプロジェクトで構成されています。トッププロジェクトはソースコードを殆ど持ちません。
