@@ -3,7 +3,7 @@ package com.ponkotuy.parser
 import java.nio.charset.StandardCharsets
 import java.util.zip.GZIPInputStream
 
-import com.netaporter.uri.Uri
+import io.lemonlabs.uri.Uri
 import com.ponkotuy.restype.ResType
 import com.ponkotuy.tool.PostQueryParser
 import com.ponkotuy.util.Log
@@ -18,7 +18,7 @@ import scala.io.{Codec, Source}
  * Date: 14/03/21.
  */
 case class Query(uri: Uri, requestContent: ByteBuf, responseContent: ByteBuf) {
-  def host = uri.host
+  def host = uri.toUrl.hostOption
   lazy val resType = ResType.fromUri(uri.toString())
   def resCont: String = Query.toString(responseContent)
   def resJson: Either[Exception, JValue] = KCJson.toAst(resCont)

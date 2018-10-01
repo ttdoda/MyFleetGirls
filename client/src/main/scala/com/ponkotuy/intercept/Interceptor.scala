@@ -1,6 +1,6 @@
 package com.ponkotuy.intercept
 
-import com.netaporter.uri.Uri
+import io.lemonlabs.uri.Uri
 import io.netty.buffer.ByteBuf
 
 /**

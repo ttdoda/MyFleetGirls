@@ -1,6 +1,6 @@
 package com.ponkotuy.restype
 
-import com.netaporter.uri.Uri
+import io.lemonlabs.uri.Uri
 import com.ponkotuy.config.ClientConfig
 import com.ponkotuy.data
 import com.ponkotuy.data.{Auth, MyFleetAuth}
@@ -48,8 +48,8 @@ case object Basic extends ResType with Log {
 
   private def postAdmiralSettings(uri: Uri)(implicit auth: Option[Auth], auth2: Option[MyFleetAuth]): Unit = {
     for {
-      host <- uri.host
-      kcServer <- KCServer.fromIP(host)
+      host <- uri.toUrl.hostOption
+      kcServer <- KCServer.fromIP(host.value)
     } {
       MFGHttp.post("/admiral_settings", write(kcServer))(auth, auth2)
       println(s"所属： ${kcServer.name}")
