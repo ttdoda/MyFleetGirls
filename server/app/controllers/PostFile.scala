@@ -30,7 +30,7 @@ class PostFile @Inject()(val controllerComponents: ControllerComponents, implici
           if(ShipIds.isEnemy(shipId)) Ok("Unnecessary Enemy")
           else if(ShipImage2nd.find(shipId, kind, version).isDefined) Ok("Already exists")
           else {
-            val pngFile = ref.ref.file
+            val pngFile = ref.ref.path.toFile
             val image = readAll(new FileInputStream(pngFile))
             ShipImage2nd.create(shipId, image, auth.id, kind, version)
             Ok("Success")
@@ -53,7 +53,7 @@ class PostFile @Inject()(val controllerComponents: ControllerComponents, implici
         case Some(ref) =>
           if(MapImage2nd.find(areaId, infoNo, suffix, version.toShort).isDefined) Ok("Already exists")
           else {
-            val pngFile = ref.ref.file
+            val pngFile = ref.ref.path.toFile
             val image = readAll(new FileInputStream(pngFile))
             MapImage2nd.create(areaId, infoNo, suffix, image, version.toShort)
             Ok("Success")
@@ -69,7 +69,7 @@ class PostFile @Inject()(val controllerComponents: ControllerComponents, implici
       request.body.file("sound") match {
         case Some(ref) =>
           findKey(shipKey) { ship =>
-            val mp3File = ref.ref.file
+            val mp3File = ref.ref.path.toFile
             val sound = readAll(new FileInputStream(mp3File))
             try {
               ShipSound.create(ship.id, soundId, version, sound)
