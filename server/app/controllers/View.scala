@@ -13,8 +13,8 @@ import scala.concurrent.{ExecutionContext, Future}
  * @author ponkotuy
  * Date 14/02/24
  */
-class View @Inject()(implicit val ec: ExecutionContext) extends Controller {
-  import Common._
+class View @Inject()(val controllerComponents: ControllerComponents, implicit val ec: ExecutionContext) extends BaseController {
+  import controllers.Common._
 
   def index = Action.async {
     Future {

@@ -11,7 +11,7 @@ import models.query.Period
 import models.response.DropRate
 import org.json4s.JsonDSL._
 import org.json4s._
-import play.api.mvc.Controller
+import play.api.mvc.{BaseController, ControllerComponents}
 import scalikejdbc._
 
 import scala.collection.{breakOut, mutable}
@@ -22,7 +22,7 @@ import scala.concurrent.ExecutionContext
  * @author ponkotuy
  * Date: 14/02/23
  */
-class Rest @Inject()(implicit val ec: ExecutionContext) extends Controller {
+class Rest @Inject()(val controllerComponents: ControllerComponents, implicit val ec: ExecutionContext) extends BaseController {
   import controllers.Common._
 
   def searchUser(q: String) = {

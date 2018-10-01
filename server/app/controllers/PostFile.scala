@@ -4,7 +4,6 @@ import java.io._
 import javax.inject.Inject
 
 import com.ponkotuy.value.ShipIds
-import controllers.Common._
 import models.db.{ShipImage2nd, MapImage2nd, ShipSound, MasterShipBase}
 import play.api.mvc._
 import scalikejdbc._
@@ -17,7 +16,9 @@ import scala.util.Try
  * @author ponkotuy
  * Date: 14/03/22.
  */
-class PostFile @Inject()(implicit val ec: ExecutionContext) extends Controller {
+class PostFile @Inject()(val controllerComponents: ControllerComponents, implicit val ec: ExecutionContext) extends BaseController {
+  import controllers.Common._
+
   /**
    * 二期HTML5版艦娘画像
    */

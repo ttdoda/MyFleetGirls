@@ -5,7 +5,6 @@ import javax.inject.Inject
 import com.ponkotuy.data._
 import com.ponkotuy.data.master.{MasterRemodel, MapFrame, MapInfo => MapPositions}
 import com.ponkotuy.value.KCServer
-import controllers.Common._
 import models.db
 import play.api.mvc._
 import scalikejdbc.{AutoSession, DBSession}
@@ -17,7 +16,9 @@ import scala.concurrent.ExecutionContext
  * @author ponkotuy
  * Date: 14/02/21.
  */
-class Post @Inject()(implicit val ec: ExecutionContext) extends Controller {
+class Post @Inject()(val controllerComponents: ControllerComponents, implicit val ec: ExecutionContext) extends BaseController {
+  import controllers.Common._
+
   def basic = authAndParse[Basic] { case (auth, basic) =>
     val isChange = !db.Basic.findByUser(auth.id).exists(_.diff(basic) < 0.01)
     if(isChange) {

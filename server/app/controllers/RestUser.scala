@@ -12,7 +12,7 @@ import models.response.{Exp, ShipExps}
 import org.json4s.native.Serialization.write
 import org.json4s.JsonDSL._
 import org.json4s._
-import play.api.mvc.{Action, Controller}
+import play.api.mvc.{Action, BaseController, ControllerComponents}
 import scalikejdbc._
 import tool.BattleScore
 
@@ -20,7 +20,7 @@ import scala.concurrent.duration._
 import scala.collection.breakOut
 import scala.concurrent.ExecutionContext
 
-class RestUser @Inject()(implicit val ec: ExecutionContext) extends Controller {
+class RestUser @Inject()(val controllerComponents: ControllerComponents, implicit val ec: ExecutionContext) extends BaseController {
   import controllers.Common._
 
   def show(memberId: Long) = Action {

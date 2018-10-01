@@ -2,10 +2,9 @@ package controllers
 
 import javax.inject.Inject
 
-import controllers.Common._
 import models.db
 import models.req.FavPut
-import play.api.mvc.Controller
+import play.api.mvc.{BaseController, ControllerComponents}
 import scalikejdbc._
 
 import scala.concurrent.ExecutionContext
@@ -14,7 +13,9 @@ import scala.util.Try
 /**
  * Date: 14/11/07.
  */
-class Fav @Inject()(implicit val ec: ExecutionContext) extends Controller {
+class Fav @Inject()(val controllerComponents: ControllerComponents, implicit val ec: ExecutionContext) extends BaseController {
+  import controllers.Common._
+
   def put() = formAsync { implicit request =>
     val favput = FavPut.form.bindFromRequest.get
     val memberIdOpt = request.session.get("memberId").map(_.toLong)

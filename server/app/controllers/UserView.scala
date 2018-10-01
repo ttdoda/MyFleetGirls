@@ -9,7 +9,7 @@ import models.db.{AGOProgress, CalcScore, DeckPort, ItemSnapshot}
 import models.join.User
 import models.req.{MaterialDays, ScoreDays}
 import org.json4s.native.Serialization.write
-import play.api.mvc.{Action, Controller}
+import play.api.mvc.{Action, BaseController, ControllerComponents}
 import scalikejdbc._
 import tool.{BattleScore, BestShipExp, HistgramShipLv, STypeExp}
 import util.Ymdh
@@ -21,7 +21,7 @@ import scala.concurrent.{ExecutionContext, Future}
  * @author ponkotuy
  * Date: 14/04/01.
  */
-class UserView @Inject()(implicit val ec: ExecutionContext) extends Controller {
+class UserView @Inject()(val controllerComponents: ControllerComponents, implicit val ec: ExecutionContext) extends BaseController {
   import controllers.Common._
   import util.MFGDateUtil._
 

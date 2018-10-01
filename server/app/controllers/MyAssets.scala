@@ -2,7 +2,7 @@ package controllers
 
 import javax.inject.Inject
 
-import play.api.mvc.{Action, Controller}
+import play.api.mvc.{Action, BaseController, ControllerComponents}
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -12,7 +12,7 @@ import com.ponkotuy.value.KCServer
  * @author ponkotuy
  * Date: 15/03/10.
  */
-class MyAssets @Inject()(implicit val ec: ExecutionContext) extends Controller {
+class MyAssets @Inject()(val controllerComponents: ControllerComponents, implicit val ec: ExecutionContext) extends BaseController {
   val pacDefaultPort = 8080
 
 

@@ -19,7 +19,7 @@ import scala.concurrent.ExecutionContext
  * @author ponkotuy
  * Date: 15/02/04.
  */
-class WebPost @Inject()(val messagesApi: MessagesApi, implicit val ec: ExecutionContext) extends Controller with I18nSupport {
+class WebPost @Inject()(val controllerComponents: ControllerComponents, implicit val ec: ExecutionContext) extends BaseController with I18nSupport {
   import controllers.Common._
 
   def registerSnap() = formAsync { request =>
