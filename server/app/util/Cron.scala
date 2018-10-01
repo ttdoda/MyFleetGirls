@@ -101,9 +101,8 @@ object CronScheduler {
     * val cron = CronScheduler.create(system, "name")
     * cron ! CronSchedule(Cron(0, 5, aster, aster, aster), func)
     * }}}
-    *
-    * @throws InvalidActorNameException : if you use invalid actor name.
     */
+  @throws[InvalidActorNameException]("if you use invalid actor name.")
   def create(system: ActorSystem, name: String)(implicit ec: ExecutionContext): ActorRef = {
     val cron = system.actorOf(Props[CronScheduler], name)
     system.scheduler.schedule(45.seconds, 45.seconds, cron, "minutes")
