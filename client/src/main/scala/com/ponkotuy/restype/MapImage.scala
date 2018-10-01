@@ -21,7 +21,7 @@ trait MapData {
 
   def parseUrl(uri: Uri): Option[(Int, Int, Int)] = {
     Try {
-      uri.path match {
+      uri.path.toStringRaw match {
         case this.regexp(id, no, null) => (id.toInt, no.toInt, 0)
         case this.regexp(id, no, suffix) => (id.toInt, no.toInt, suffix.toInt)
       }

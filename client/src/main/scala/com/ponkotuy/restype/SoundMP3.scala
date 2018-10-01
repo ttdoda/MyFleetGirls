@@ -24,7 +24,7 @@ case object SoundMP3 extends ResType with Resources with Media {
 
   private def parse(uri: Uri): Option[(Int, String)] = {
     Try {
-      uri.path match {
+      uri.path.toStringRaw match {
         case this.regexp(name, id) => (id.toInt, name)
       }
     }.toOption
