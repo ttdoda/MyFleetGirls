@@ -22,7 +22,7 @@ object Common extends Controller {
   implicit val formats = DefaultFormats
 
   def authAndParse[T](f: (db.Admiral, T) => Result)(implicit mf: Manifest[T], ec: ExecutionContext): Action[Req] = {
-    Action.async(parse.urlFormEncoded) { request =>
+    Action.async(parse.formUrlEncoded) { request =>
       authentication(request.body) { auth =>
         withData[T](request.body) { data =>
           f(auth, data)
@@ -39,7 +39,7 @@ object Common extends Controller {
 
   /** 実際はCheckしてないです */
   def checkPonkotuAndParse[T](f: (T) => Result)(implicit mf: Manifest[T], ec: ExecutionContext): Action[Req] = {
-    Action.async(parse.urlFormEncoded(1024*1024*2)) { request =>
+    Action.async(parse.formUrlEncoded(1024*1024*2)) { request =>
       checkPonkotu(request.body) {
         withData[T](request.body) { data =>
           f(data)
@@ -168,7 +168,7 @@ object Common extends Controller {
     }
   }
 
-  def formAsync(f: Request[Map[String, Seq[String]]] => Result)(implicit ec: ExecutionContext) = Action.async(parse.urlFormEncoded) { request =>
+  def formAsync(f: Request[Map[String, Seq[String]]] => Result)(implicit ec: ExecutionContext) = Action.async(parse.formUrlEncoded) { request =>
     Future {
       try {
         f(request)

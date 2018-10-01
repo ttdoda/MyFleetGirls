@@ -79,7 +79,7 @@ lazy val settings = Seq(
 
 def start = Command.command("start") { state =>
   val subState = Command.process("project server", state)
-  Command.process("testProd", subState)
+  Command.process("runProd", subState)
   state
 }
 
