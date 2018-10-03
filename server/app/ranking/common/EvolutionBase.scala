@@ -37,5 +37,5 @@ object EvolutionBase {
         .groupBy(_._1)
         .mapValues { xs => xs.map(_._2).min }
 
-  val Afters = new PeriodicalCache(60.minutes, createCache)
+  val Afters = new PeriodicalCache(60.minutes, () => createCache())
 }

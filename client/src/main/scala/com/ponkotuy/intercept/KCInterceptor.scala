@@ -1,7 +1,7 @@
 package com.ponkotuy.intercept
 
 import akka.actor.{ActorSystem, Props}
-import com.netaporter.uri.Uri
+import io.lemonlabs.uri.Uri
 import com.ponkotuy.http.ControllerActor
 import com.ponkotuy.parser.Query
 import com.ponkotuy.util.Log

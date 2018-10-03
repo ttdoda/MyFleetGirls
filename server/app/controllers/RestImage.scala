@@ -14,7 +14,7 @@ import scala.concurrent.ExecutionContext
  * @author ponkotuy
  * Date: 14/03/22.
  */
-class RestImage @Inject()(implicit val ec: ExecutionContext) extends Controller {
+class RestImage @Inject()(val controllerComponents: ControllerComponents, implicit val ec: ExecutionContext) extends BaseController {
   import controllers.Common._
 
   def ship2nd(shipId: Int, _kind: String) = actionAsync {

@@ -1,6 +1,6 @@
 package com.ponkotuy.proxy
 
-import com.netaporter.uri.Uri
+import io.lemonlabs.uri.Uri
 import com.ponkotuy.intercept.Interceptor
 import io.netty.buffer.ByteBuf
 import io.netty.channel.ChannelHandlerContext

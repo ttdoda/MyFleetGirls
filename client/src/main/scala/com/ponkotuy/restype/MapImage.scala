@@ -2,7 +2,7 @@ package com.ponkotuy.restype
 
 import com.ponkotuy.data.master
 
-import com.netaporter.uri.Uri
+import io.lemonlabs.uri.Uri
 import com.ponkotuy.http.MFGHttp
 import com.ponkotuy.parser.Query
 
@@ -21,7 +21,7 @@ trait MapData {
 
   def parseUrl(uri: Uri): Option[(Int, Int, Int)] = {
     Try {
-      uri.path match {
+      uri.path.toStringRaw match {
         case this.regexp(id, no, null) => (id.toInt, no.toInt, 0)
         case this.regexp(id, no, suffix) => (id.toInt, no.toInt, suffix.toInt)
       }
@@ -40,7 +40,7 @@ object MapImage extends ResType with Resources with Media with MapData {
   def regexp: Regex = """\A/kcs2/resources/map/(\d+)/(\d+)_image(\d+)?.png\z""".r
 
   def postables(q: Query): Seq[Result] = {
-    val ver = q.uri.query.param("version").flatMap(extractNumber).getOrElse(DefaultVer)
+    val ver = q.uri.toUrl.query.param("version").flatMap(extractNumber(_)).getOrElse(DefaultVer)
     parseUrl(q.uri).filterNot { case (areaId, infoNo, suffix) => MFGHttp.existsMap(areaId, infoNo, suffix, ver) }.map { case (areaId, infoNo, suffix) =>
       val png = allRead(q.responseContent)
       FilePostable(s"/image/map/${areaId}/${infoNo}/${suffix}/${ver}", "map", 2, png, "png")
@@ -55,7 +55,7 @@ object MapImageSprite extends ResType with Resources with MapData {
   def regexp: Regex = """\A/kcs2/resources/map/(\d+)/(\d+)_image(\d+)?.json\z""".r
 
   def postables(q: Query): Seq[Result] = {
-    val ver = q.uri.query.param("version").flatMap(extractNumber).getOrElse(DefaultVer)
+    val ver = q.uri.toUrl.query.param("version").flatMap(extractNumber(_)).getOrElse(DefaultVer)
     parseUrl(q.uri).map { case (areaId, infoNo, suffix) =>
       val json = parse(q.resCont)
       val result = master.MapFrame.fromJson(json \ "frames", areaId, infoNo, suffix, ver)
@@ -71,7 +71,7 @@ object MapImageInfo extends ResType with Resources with MapData {
   def regexp: Regex = """\A/kcs2/resources/map/(\d+)/(\d+)_info(\d+)?.json\z""".r
 
   def postables(q: Query): Seq[Result] = {
-    val ver = q.uri.query.param("version").flatMap(extractNumber).getOrElse(DefaultVer)
+    val ver = q.uri.toUrl.query.param("version").flatMap(extractNumber(_)).getOrElse(DefaultVer)
     parseUrl(q.uri).map { case (areaId, infoNo, suffix) =>
       val json = parse(q.resCont)
       val result = master.MapInfo.fromJson(json, areaId, infoNo, suffix, ver)
