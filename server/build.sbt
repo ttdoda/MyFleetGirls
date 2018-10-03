@@ -19,11 +19,13 @@ libraryDependencies ++= Seq(
 
 routesGenerator := InjectedRoutesGenerator
 
-pipelineStages := Seq(gzip)
+pipelineStages := Seq(gzip, digest)
 
 includeFilter in (Assets, LessKeys.less) := "*.less"
 
 LessKeys.compress := true
+
+DigestKeys.algorithms += "sha1"
 
 buildInfoKeys := Seq[BuildInfoKey](name, version, scalaVersion, sbtVersion)
 
