@@ -46,7 +46,7 @@ vueConf = (id) ->
         @counts = sumCounts
         @sum = sum
         @routes = data.filter (d) =>
-          (d.count * 1000) > @sum
+          (d.count * 1000) > @counts[d.dep]
       $.getJSON jsRoutes.controllers.Rest.cellInfo(@area, @info).url, (data) =>
         @cellInfo = data
       @setHash({})
