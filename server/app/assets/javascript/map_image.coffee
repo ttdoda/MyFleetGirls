@@ -201,6 +201,7 @@ class MapImage
     arrow(@ctx, x1, y1, x2, y2, 20, 40, 30, 7)
 
   clear: () ->
+    @ctx.clearRect(0, 0, @tag[0].width, @tag[0].height)
     @setImage()
     @setLayers()
 
