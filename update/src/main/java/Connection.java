@@ -10,7 +10,6 @@ import java.nio.file.attribute.FileTime;
 import java.util.jar.JarOutputStream;
 import java.util.jar.Pack200;
 import java.util.zip.GZIPInputStream;
-import java.security.GeneralSecurityException;
 
 import static java.net.HttpURLConnection.HTTP_NOT_MODIFIED;
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
@@ -27,7 +26,7 @@ public class Connection {
         USER_AGENT = String.format("MyFleetGirls Updater w/%s (%s)", System.getProperty("java.vm.version"), System.getProperty("os.name"));
     }
 
-    static URLConnection withRedirect(URL url, long lastModified) throws IOException,GeneralSecurityException {
+    static URLConnection withRedirect(URL url, long lastModified) throws IOException {
         URLConnection conn = url.openConnection();
         conn.setRequestProperty("Accept-Encoding", "pack200-gzip, gzip");
         conn.setRequestProperty("User-Agent", USER_AGENT);
