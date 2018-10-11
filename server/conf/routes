@@ -206,7 +206,7 @@ GET           /assets/proxy.pac                           controllers.MyAssets.p
 GET           /assets/:port/proxy.pac                     controllers.MyAssets.pacDynamicScript(port: Int)
 
 # Map static resources from the /public folder to the /assets URL path
-GET           /assets/*file                               controllers.MyAssets.at(path="/public", file)
+GET           /assets/*file                                                 controllers.Assets.at(file)
 # To reverse routing
-GET           /assets/*file                                                 controllers.Assets.at(path="/public", file)
+GET           /assets/*file                                                 controllers.Assets.versioned(file)
 

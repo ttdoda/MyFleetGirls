@@ -4,7 +4,6 @@ import javax.inject.Inject
 
 import models.atom.{ActivitiesFeed, UserFeed}
 import play.api.mvc._
-import Common._
 import models.db
 
 import scala.concurrent.ExecutionContext
@@ -14,9 +13,11 @@ import scala.concurrent.ExecutionContext
  * @author ponkotuy
  * Date: 14/12/08.
  */
-class Atom @Inject()(implicit val ec: ExecutionContext) extends Controller {
+class Atom @Inject()(val controllerComponents: ControllerComponents, implicit val ec: ExecutionContext) extends BaseController {
+  import controllers.Common._
+
   def activities() = actionAsync {
-    val xs = Common.readActivities(0, 20, 0)
+    val xs = readActivities(0, 20, 0)
     val feed = ActivitiesFeed(xs).buildFeed()
     Ok(feed.toString).as("application/atom+xml")
   }

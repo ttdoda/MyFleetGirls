@@ -3,7 +3,6 @@ package controllers
 import javax.inject.Inject
 
 import com.ponkotuy.data.master._
-import controllers.Common._
 import models.db
 import play.api.mvc._
 
@@ -14,7 +13,9 @@ import scala.concurrent.ExecutionContext
  * @author ponkotuy
  * Date: 14/02/25
  */
-class PostMaster @Inject()(implicit val ec: ExecutionContext) extends Controller {
+class PostMaster @Inject()(val controllerComponents: ControllerComponents, implicit val ec: ExecutionContext) extends BaseController {
+  import controllers.Common._
+
   def ship = checkPonkotuAndParse[List[MasterShip]] { case ships =>
     db.MasterShipBase.deleteAll()
     ships.map(_.base).foreach { b => db.MasterShipBase.create(b) }

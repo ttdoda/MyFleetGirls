@@ -20,9 +20,9 @@ import scala.util.Try
 /**
  * Date: 14/06/11.
  */
-class ViewSta @Inject()(implicit val ec: ExecutionContext) extends Controller {
-  import ViewSta._
+class ViewSta @Inject()(val controllerComponents: ControllerComponents, implicit val ec: ExecutionContext) extends BaseController {
   import controllers.Common._
+  import ViewSta._
 
   def activities = actionAsync { Ok(views.html.sta.activities()) }
 

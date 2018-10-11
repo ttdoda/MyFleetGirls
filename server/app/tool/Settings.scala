@@ -10,6 +10,6 @@ import play.api.Configuration
  */
 object Settings {
   val config = Configuration(ConfigFactory.load())
-  val atomCommonKey = config.getString("atom.common_key").getOrElse("")
-  val googleAnalyticsId = config.getString("analytics.google.id")
+  val atomCommonKey = config.getOptional[String]("atom.common_key").getOrElse("")
+  val googleAnalyticsId = config.getOptional[String]("analytics.google.id")
 }

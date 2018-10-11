@@ -18,7 +18,7 @@ port1=9003
 port2=9004
 nice='nice -n 19 ionice -c 3'
 myfleet_base=$HOME/service/MyFleetGirls
-orig_jar=client/target/scala-2.11/MyFleetGirls.jar
+orig_jar="client/target/scala-*/MyFleetGirls.jar"
 pub_dir=server/public
 pub_client=$pub_dir/client
 pub_zip=$pub_dir/zip
@@ -55,6 +55,7 @@ if ! cmp -s $pub_jar $orig_jar ; then
     mv $pub_zip/MyFleetGirls.zip $pub_zip/MyFleetGirls.zip.old
     eval $nice zip -j $pub_zip/MyFleetGirls.zip $pub_files
     eval cp $orig_jar $pub_files $pub_client/
+    eval pack200 -J-Xms128M -J-Xmx512M --gzip server/public/client/MyFleetGirls.jar.pack.gz server/public/client/MyFleetGirls.jar
 fi
 
 $nice $sbt -java-home $JAVA_HOME clean

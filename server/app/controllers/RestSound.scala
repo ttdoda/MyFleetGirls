@@ -12,8 +12,9 @@ import models.db
  * @author ponkotuy
  * Date: 14/03/22.
  */
-class RestSound @Inject()(implicit val ec: ExecutionContext) extends Controller {
-  import Common._
+class RestSound @Inject()(val controllerComponents: ControllerComponents, implicit val ec: ExecutionContext) extends BaseController {
+  import controllers.Common._
+
   def ship(shipId: Int, soundId: Int) = Action.async {
     Future {
       db.ShipSound.findRandomBy(shipId, soundId) match {

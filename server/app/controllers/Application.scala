@@ -1,16 +1,15 @@
 package controllers
 
-import javax.inject.Inject
+import com.google.inject.Inject
 
-import play.api.mvc._
-import play.api.routing._
-
+import play.api.mvc.{Action, BaseController, ControllerComponents}
+import play.api.routing.JavaScriptReverseRouter
 /**
  *
  * @author kPherox
  * Date: 18/09/16.
  */
-class Application @Inject()() extends Controller {
+class Application @Inject()(val controllerComponents: ControllerComponents) extends BaseController {
   def javascriptRoutes(page: String) = Action { implicit request =>
     val jsRoutes = page match {
         case "route" =>

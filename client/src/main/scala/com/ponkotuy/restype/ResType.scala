@@ -1,6 +1,6 @@
 package com.ponkotuy.restype
 
-import com.netaporter.uri.Uri
+import io.lemonlabs.uri.Uri
 import com.ponkotuy.parser.Query
 import com.ponkotuy.util.Log
 import org.json4s._
@@ -78,7 +78,7 @@ object ResType extends Log {
   )
 
   def fromUri(uri: String): Option[ResType] = {
-    val path = Uri.parse(uri).pathRaw
+    val path = Uri.parse(uri).path.toStringRaw
     logger.info("Parse KC Request. path:{}", path)
     values.find(_.regexp.findFirstIn(path).isDefined)
   }

@@ -1,6 +1,6 @@
 package com.ponkotuy.http
 
-import com.netaporter.uri.Uri
+import io.lemonlabs.uri.Uri
 import com.ponkotuy.value.KCServer
 
 /**
@@ -13,8 +13,8 @@ object Host {
   def set(uri: Uri): Unit = {
     if(kcServer.isEmpty) {
       val opt = for {
-        host <- uri.host
-        server <- KCServer.fromIP(host)
+        host <- uri.toUrl.hostOption
+        server <- KCServer.fromIP(host.value)
       } yield server
       kcServer = opt
     }

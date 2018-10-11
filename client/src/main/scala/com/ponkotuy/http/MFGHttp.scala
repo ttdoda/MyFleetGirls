@@ -18,6 +18,7 @@ import org.apache.http.entity.ContentType
 import org.apache.http.entity.mime.MultipartEntityBuilder
 import org.apache.http.entity.mime.content.FileBody
 import org.apache.http.impl.client.HttpClientBuilder
+import org.apache.http.impl.conn.PoolingHttpClientConnectionManager
 import org.apache.http.message.BasicNameValuePair
 import org.json4s._
 import org.json4s.native.Serialization
@@ -38,13 +39,14 @@ object MFGHttp extends Log {
   val config = RequestConfig.custom()
       .setConnectTimeout(60*1000)
       .setRedirectsEnabled(true)
-      .setStaleConnectionCheckEnabled(true)
       .build()
+  val manager = new PoolingHttpClientConnectionManager(5 * 60, TimeUnit.SECONDS)
+  manager.setValidateAfterInactivity(60*1000)
+  manager.setDefaultMaxPerRoute(1)
   val httpBuilder = HttpClientBuilder.create()
       .setUserAgent(userAgent)
+      .setConnectionManager(manager)
       .setDefaultRequestConfig(config)
-      .setConnectionTimeToLive(5 * 60 , TimeUnit.SECONDS)
-      .setMaxConnPerRoute(1)
       .setRetryHandler(new RetryWithWait(10, 10000L))
   ClientConfig.clientProxyHost.foreach(httpBuilder.setProxy)
   val http = httpBuilder.build()
