@@ -6,7 +6,6 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.attribute.FileTime;
 import java.util.jar.JarOutputStream;
 import java.util.jar.Pack200;
 import java.util.zip.GZIPInputStream;
@@ -26,12 +25,12 @@ public class Connection {
         USER_AGENT = String.format("MyFleetGirls Updater w/%s (%s)", System.getProperty("java.vm.version"), System.getProperty("os.name"));
     }
 
-    static URLConnection withRedirect(URL url, long lastModified) throws IOException {
+    static URLConnection withRedirect(URL url, String hash) throws IOException {
         URLConnection conn = url.openConnection();
         conn.setRequestProperty("Accept-Encoding", "pack200-gzip, gzip");
         conn.setRequestProperty("User-Agent", USER_AGENT);
         conn.setUseCaches(false);
-        conn.setIfModifiedSince(lastModified);
+        conn.setRequestProperty("If-None-Match", hash);
         HttpURLConnection http = (HttpURLConnection) conn;
 
         http.connect();
@@ -40,7 +39,7 @@ public class Connection {
             return null;
         } else if(300 <= code && code < 400) { // Redirect
             URL newUrl = new URL(http.getHeaderField("Location"));
-            return withRedirect(newUrl, lastModified);
+            return withRedirect(newUrl, hash);
         } else if(200 <= code && code < 300) {
             return http;
         } else {
@@ -73,11 +72,6 @@ public class Connection {
             }
         }finally{
             Files.deleteIfExists(tempFile);
-        }
-
-        long requestModified = conn.getLastModified();
-        if(requestModified != 0) {
-            Files.setLastModifiedTime(dst, FileTime.fromMillis(requestModified)); // サーバー側の最終更新時刻に合わせる
         }
     }
 

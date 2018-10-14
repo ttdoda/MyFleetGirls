@@ -1,15 +1,20 @@
 import java.io.IOException;
-import java.io.InputStream;
+import java.io.BufferedReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
-import java.nio.file.*;
-import java.nio.file.attribute.FileTime;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
+import java.security.MessageDigest;
+import java.security.DigestInputStream;
+import java.security.NoSuchAlgorithmException;
 
 import static java.nio.file.LinkOption.NOFOLLOW_LINKS;
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
  *
@@ -19,14 +24,14 @@ import static java.nio.file.LinkOption.NOFOLLOW_LINKS;
 public class Main {
     public static void main(String[] args) throws Exception {
         try {
-            List<String> urls = getProperties("update.properties");
+            List<String> urls = getProperties(Paths.get("update.properties"));
             for(String uStr : urls) {
                 URL url = new URL(uStr);
                 Path dst = Paths.get(url.getPath()).getFileName();
                 if(!Files.exists(dst)) {
                     System.out.println(dst.getFileName() + "は存在しません。ダウンロードします。");
                 }
-                URLConnection conn = Connection.withRedirect(url, getLastModified(dst));
+                URLConnection conn = Connection.withRedirect(url, sha1sum(dst));
                 if(conn == null) {
                     System.out.println(dst.getFileName() + "に変更はありません");
                 } else {
@@ -44,12 +49,10 @@ public class Main {
         }
     }
 
-    private static List<String> getProperties(String fName) throws IOException {
-        FileSystem fs = FileSystems.getDefault();
-        Path path = fs.getPath(fName);
+    private static List<String> getProperties(Path path) throws IOException {
         Properties p = new Properties();
-        try(InputStream is = Files.newInputStream(path, StandardOpenOption.READ)) {
-            p.load(is);
+        try(BufferedReader br = Files.newBufferedReader(path, UTF_8)) {
+            p.load(br);
         }
         List<String> result = new ArrayList<>(p.size());
         for(Object prop : p.keySet()) {
@@ -59,13 +62,21 @@ public class Main {
         return result;
     }
 
-    private static long getLastModified(Path dst) {
-        FileTime fTime;
+    private static String sha1sum(Path dst) {
         try {
-            fTime = Files.getLastModifiedTime(dst, NOFOLLOW_LINKS);
-            return fTime.toMillis();
-        } catch(IOException | NullPointerException e) {
-            return 0L;
+            MessageDigest md = MessageDigest.getInstance("SHA-1");
+            try(DigestInputStream is = new DigestInputStream(Files.newInputStream(dst), md)) {
+                while (is.read() != -1);
+            }
+
+            StringBuilder hash = new StringBuilder();
+            for (byte b : md.digest()) {
+                hash.append(String.format("%02x", b));
+            }
+
+            return hash.toString();
+        } catch (NoSuchAlgorithmException | IOException | NullPointerException e) {
+            return "";
         }
     }
 }
