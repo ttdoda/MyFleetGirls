@@ -32,13 +32,14 @@ case class DeckShipSnapshot(
     lucky: Short,
     locked: Boolean,
     created: Long,
-    maxhp: Short) {
+    maxhp: Short,
+    kyouka: Seq[Int]) {
   def save()(implicit session: DBSession = DeckShipSnapshot.autoSession): DeckShipSnapshot = DeckShipSnapshot.save(this)(session)
 
   def destroy()(implicit session: DBSession = DeckShipSnapshot.autoSession): Unit = DeckShipSnapshot.destroy(this)(session)
 
   def toShip: Ship = {
-    Ship(id.toInt, shipId, memberId, lv, exp, nowhp, slot, fuel, bull, dockTime, cond, karyoku, raisou, taiku, soukou, kaihi, taisen, sakuteki, lucky, locked, created, maxhp)
+    Ship(id.toInt, shipId, memberId, lv, exp, nowhp, slot, fuel, bull, dockTime, cond, karyoku, raisou, taiku, soukou, kaihi, taisen, sakuteki, lucky, locked, created, maxhp, kyouka)
   }
 
 }
@@ -48,7 +49,7 @@ object DeckShipSnapshot extends SQLSyntaxSupport[DeckShipSnapshot] {
 
   override val tableName = "deck_ship_snapshot"
 
-  override val columns = Seq("id", "member_id", "deck_id", "num", "ship_id", "lv", "exp", "nowhp", "slot", "fuel", "bull", "dock_time", "cond", "karyoku", "raisou", "taiku", "soukou", "kaihi", "taisen", "sakuteki", "lucky", "locked", "created", "maxhp")
+  override val columns = Seq("id", "member_id", "deck_id", "num", "ship_id", "lv", "exp", "nowhp", "slot", "fuel", "bull", "dock_time", "cond", "karyoku", "raisou", "taiku", "soukou", "kaihi", "taisen", "sakuteki", "lucky", "locked", "created", "maxhp", "kyouka")
 
   def apply(dss: SyntaxProvider[DeckShipSnapshot])(rs: WrappedResultSet): DeckShipSnapshot = apply(dss.resultName)(rs)
   def apply(dss: ResultName[DeckShipSnapshot])(rs: WrappedResultSet): DeckShipSnapshot = new DeckShipSnapshot(
@@ -75,7 +76,8 @@ object DeckShipSnapshot extends SQLSyntaxSupport[DeckShipSnapshot] {
     lucky = rs.get(dss.lucky),
     locked = rs.get(dss.locked),
     created = rs.get(dss.created),
-    maxhp = rs.get(dss.maxhp)
+    maxhp = rs.get(dss.maxhp),
+    kyouka = rs.string(dss.kyouka).split(',').toList.filter(_.nonEmpty).map(_.toInt)
   )
 
   val dss = DeckShipSnapshot.syntax("dss")
@@ -167,7 +169,8 @@ object DeckShipSnapshot extends SQLSyntaxSupport[DeckShipSnapshot] {
     lucky: Short,
     locked: Boolean,
     created: Long,
-    maxhp: Short)(implicit session: DBSession = autoSession): DeckShipSnapshot = {
+    maxhp: Short,
+    kyouka: Seq[Int])(implicit session: DBSession = autoSession): DeckShipSnapshot = {
     val generatedKey = withSQL {
       insert.into(DeckShipSnapshot).columns(
         column.memberId,
@@ -192,7 +195,8 @@ object DeckShipSnapshot extends SQLSyntaxSupport[DeckShipSnapshot] {
         column.lucky,
         column.locked,
         column.created,
-        column.maxhp
+        column.maxhp,
+        column.kyouka
       ).values(
           memberId,
           deckId,
@@ -216,7 +220,8 @@ object DeckShipSnapshot extends SQLSyntaxSupport[DeckShipSnapshot] {
           lucky,
           locked,
           created,
-          maxhp
+          maxhp,
+          kyouka.mkString(","),
         )
     }.updateAndReturnGeneratedKey().apply()
 
@@ -244,7 +249,8 @@ object DeckShipSnapshot extends SQLSyntaxSupport[DeckShipSnapshot] {
       lucky = lucky,
       locked = locked,
       created = created,
-      maxhp = maxhp)
+      maxhp = maxhp,
+      kyouka = kyouka)
   }
 
   def createFromShip(ship: Ship, deckId: Long, num: Short)(implicit session: DBSession = autoSession): DeckShipSnapshot = {
@@ -272,7 +278,8 @@ object DeckShipSnapshot extends SQLSyntaxSupport[DeckShipSnapshot] {
       lucky = ship.lucky.toShort,
       locked = ship.locked,
       created = System.currentTimeMillis(),
-      maxhp = ship.maxhp.toShort
+      maxhp = ship.maxhp.toShort,
+      kyouka = ship.kyouka
     )
   }
 
@@ -293,14 +300,14 @@ object DeckShipSnapshot extends SQLSyntaxSupport[DeckShipSnapshot] {
         column.fuel, column.bull, column.dockTime, column.cond,
         column.karyoku, column.raisou, column.taiku, column.soukou,
         column.kaihi, column.taisen, column.sakuteki, column.lucky,
-        column.locked, column.created, column.maxhp
+        column.locked, column.created, column.maxhp, column.kyouka
       ).multiValues(
           Seq.fill(ss.size)(memberId), Seq.fill(ss.size)(deckId), (1 to ss.size).toSeq, ss.map(_.shipId),
           ss.map(_.lv), ss.map(_.exp), ss.map(_.nowhp), slots,
           ss.map(_.fuel), ss.map(_.bull), ss.map(_.dockTime), ss.map(_.cond),
           ss.map(_.karyoku), ss.map(_.raisou), ss.map(_.taiku), ss.map(_.soukou),
           ss.map(_.kaihi), ss.map(_.taisen), ss.map(_.sakuteki), ss.map(_.lucky),
-          ss.map(_.locked), Seq.fill(ss.size)(created), ss.map(_.maxhp)
+          ss.map(_.locked), Seq.fill(ss.size)(created), ss.map(_.maxhp), ss.map(_.kyouka.mkString(","))
         )
     }
   }
@@ -331,7 +338,8 @@ object DeckShipSnapshot extends SQLSyntaxSupport[DeckShipSnapshot] {
         column.lucky -> entity.lucky,
         column.locked -> entity.locked,
         column.created -> entity.created,
-        column.maxhp -> entity.maxhp
+        column.maxhp -> entity.maxhp,
+        column.kyouka -> entity.kyouka.mkString(",")
       ).where.eq(column.id, entity.id)
     }.update().apply()
     entity
