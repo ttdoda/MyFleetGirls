@@ -1,12 +1,8 @@
 @(user: User, snaps: Seq[DeckSnapshotWithShip])
 @import com.github.nscala_time.time.Imports.DateTime
-@import scala.math.floor
+@import models.join.ShipParameter.Rate
 
 @ships = @{snaps.zipWithIndex.flatMap{case (snap ,i) => snap.ships}}
-
-@rateFormat(double: Double) = @{
-    floor(double*100)/100
-}
 
 @backColors = @{
   ships.flatMap { ship =>
@@ -15,7 +11,7 @@
 }
 @rates = @{
   ships.flatMap { ship =>
-    Seq( ship.expRate*100, ship.entireExpRate*100, ship.hpRate*100, ship.cond*1.0, ship.karyokuRate*100, ship.raisouRate*100, ship.taikuRate*100, ship.soukouRate*100, ship.luckyRate*100 ).filterNot(_.isNaN).map(rateFormat(_))
+    Seq( ship.expRate, ship.entireExpRate, ship.hpRate, ship.karyokuRate, ship.raisouRate, ship.taikuRate, ship.soukouRate, ship.luckyRate ).filterNot(_.isNaN).map(_.percentage) :+ ship.cond.toDouble
   }.distinct
 }
 
@@ -126,8 +122,8 @@
                     <a data-toggle="modal" href="@routes.UserView.snapAship(user.admiral.id, ship.id)" class="modal_link" data-target="#modal">@ship.name</a>
                     @ship.antiAirCutinOpt.map { cutin => <span class="label label-default">対空@cutin</span> }
                   </td>
-                  <td class="table-cell-progress" data-rate="@{rateFormat(ship.expRate*100)}">@ship.lv</td>
-                  <td class="table-cell-progress" data-rate="@{rateFormat(ship.hpRate*100)}" @if(ship.damage){data-damage="@ship.damage.map(_.name)" }data-background-color="@ship.hpRGB.toString">@ship.nowhp/@ship.maxhp</td>
+                  <td class="table-cell-progress" data-rate="@{ship.expRate.percentage}">@ship.lv</td>
+                  <td class="table-cell-progress" data-rate="@{ship.hpRate.percentage}" @if(ship.damage){data-damage="@ship.damage.map(_.name)" }data-background-color="@ship.hpRGB.toString">@ship.nowhp/@ship.maxhp</td>
                   @ship.slotNames.map { slot => <td>@slot</td> }
                   @{(0 until (5 - ship.slotNames.size)).map { _ => <td></td> }}
                 </tr>

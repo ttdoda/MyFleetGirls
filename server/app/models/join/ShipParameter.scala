@@ -2,6 +2,7 @@ package models.join
 
 import models.db._
 import tool.{AntiAirCutin, ShipExperience}
+import scala.math.floor
 
 /**
  * Date: 14/06/16.
@@ -78,6 +79,10 @@ trait ShipParameter extends GraphData with AntiAirCutin {
 }
 
 object ShipParameter {
+  implicit class Rate(d: Double) {
+    def percentage: Double = floor(d * 10000) / 100
+  }
+
   val stAbbNames = Map(
     "重雷装巡洋艦" -> "雷巡", "重巡洋艦" -> "重巡", "軽巡洋艦" -> "軽巡",
     "航空巡洋艦" -> "航巡", "航空戦艦" -> "航戦",
