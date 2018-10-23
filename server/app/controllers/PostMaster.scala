@@ -16,7 +16,7 @@ import scala.concurrent.ExecutionContext
 class PostMaster @Inject()(val controllerComponents: ControllerComponents, implicit val ec: ExecutionContext) extends BaseController {
   import controllers.Common._
 
-  def ship = checkPonkotuAndParse[List[MasterShip]] { case ships =>
+  def ship = masterParse[List[MasterShip]] { case ships =>
     db.MasterShipBase.deleteAll()
     ships.map(_.base).foreach { b => db.MasterShipBase.create(b) }
     db.MasterShipSpecs.deleteAll()
@@ -28,19 +28,19 @@ class PostMaster @Inject()(val controllerComponents: ControllerComponents, impli
     Ok("Master Ship All Replaced")
   }
 
-  def mission = checkPonkotuAndParse[List[MasterMission]] { missions =>
+  def mission = masterParse[List[MasterMission]] { missions =>
     db.MasterMission.deleteAll()
     db.MasterMission.bulkInsert(missions)
     Ok("Master Mission All Replaced")
   }
 
-  def slotitem = checkPonkotuAndParse[List[MasterSlotItem]] { items =>
+  def slotitem = masterParse[List[MasterSlotItem]] { items =>
     db.MasterSlotItem.deleteAll()
     db.MasterSlotItem.bulkInsert(items)
     Ok("Master SlotItem All Replaced")
   }
 
-  def stype = checkPonkotuAndParse[List[MasterSType]] { stype =>
+  def stype = masterParse[List[MasterSType]] { stype =>
     db.MasterStype.deleteAll()
     db.MasterStype.bulkInsert(stype)
     Ok("Master SType All Replaced")
