@@ -64,6 +64,15 @@ trait ShipParameter extends GraphData with AntiAirCutin {
   def upSoukou: Int = if(kyouka isDefinedAt 3) kyouka(3) else rawSoukou - spec.soukoMin
   /** 運の上昇値 */
   def upLucky: Int = if(kyouka isDefinedAt 4) kyouka(4) else lucky - spec.luckyMin
+  /** 耐久の上昇値 */
+  def upTaikyu: Int = {
+    if(kyouka isDefinedAt 5) kyouka(5)
+    else {
+      var up: Int = maxhp - spec.hp
+      if(lv > 99) up -= kakkokariTaikyu(spec.hp)
+      if(up <= 0) 0 else up
+    }
+  }
 
   /** 改修度 */
   def calcRate(up: Double, upLimit: Double) = if(up >= upLimit) 1.0 else up/upLimit
@@ -127,6 +136,24 @@ object ShipParameter {
   def hpRGB(rate: Double): RGB = {
     if(rate > 0.5) Yellow.blend(Blue, (rate - 0.5) * 2.0)
     else Red.blend(Yellow, rate * 2.0)
+  }
+
+  def kakkokariTaikyu(min: Int): Int = {
+    if(min <= 7) 3
+    else if(min <= 29) 4
+    else if(min <= 39) 5
+    else if(min <= 49) 6
+    else if(min <= 69) 7
+    else if(min <= 90) 8
+    else 9
+  }
+
+  def upTaikyuLimit(lv: Int, hpMix: Int, hpMax: Int): Int = {
+    val hpLimit: Int = hpMax - hpMix
+    val limit: Int = if(lv <= 99) hpLimit else hpLimit - kakkokariTaikyu(hpMix)
+    if(limit >= 2) 2
+    else if(limit <= 0) 0
+    else limit
   }
 }
 
