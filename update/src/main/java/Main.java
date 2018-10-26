@@ -31,7 +31,7 @@ public class Main {
                 if(!Files.exists(dst)) {
                     System.out.println(dst.getFileName() + "は存在しません。ダウンロードします。");
                 }
-                URLConnection conn = Connection.withRedirect(url, sha1sum(dst));
+                URLConnection conn = Connection.withRedirect(url, sha1sum(dst, true));
                 if(conn == null) {
                     System.out.println(dst.getFileName() + "に変更はありません");
                 } else {
@@ -62,17 +62,19 @@ public class Main {
         return result;
     }
 
-    private static String sha1sum(Path dst) {
+    private static String sha1sum(Path dst, Boolean isEnclosed) {
         try {
             MessageDigest md = MessageDigest.getInstance("SHA-1");
             try(DigestInputStream is = new DigestInputStream(Files.newInputStream(dst), md)) {
                 while (is.read() != -1);
             }
 
+
             StringBuilder hash = new StringBuilder();
             for (byte b : md.digest()) {
                 hash.append(String.format("%02x", b));
             }
+            if(isEnclosed) { hash.insert(0, "\"").append("\""); }
 
             return hash.toString();
         } catch (NoSuchAlgorithmException | IOException | NullPointerException e) {

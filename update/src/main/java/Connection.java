@@ -25,12 +25,12 @@ public class Connection {
         USER_AGENT = String.format("MyFleetGirls Updater w/%s (%s)", System.getProperty("java.vm.version"), System.getProperty("os.name"));
     }
 
-    static URLConnection withRedirect(URL url, String hash) throws IOException {
+    static URLConnection withRedirect(URL url, String etag) throws IOException {
         URLConnection conn = url.openConnection();
         conn.setRequestProperty("Accept-Encoding", "pack200-gzip, gzip");
         conn.setRequestProperty("User-Agent", USER_AGENT);
         conn.setUseCaches(false);
-        conn.setRequestProperty("If-None-Match", hash);
+        conn.setRequestProperty("If-None-Match", etag);
         HttpURLConnection http = (HttpURLConnection) conn;
 
         http.connect();
@@ -39,7 +39,7 @@ public class Connection {
             return null;
         } else if(300 <= code && code < 400) { // Redirect
             URL newUrl = new URL(http.getHeaderField("Location"));
-            return withRedirect(newUrl, hash);
+            return withRedirect(newUrl, etag);
         } else if(200 <= code && code < 300) {
             return http;
         } else {
