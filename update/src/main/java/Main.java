@@ -66,9 +66,9 @@ public class Main {
         try {
             MessageDigest md = MessageDigest.getInstance("SHA-1");
             try(DigestInputStream is = new DigestInputStream(Files.newInputStream(dst), md)) {
-                while (is.read() != -1);
+                byte[] buf = new byte[1024];
+                while (is.read(buf) != -1);
             }
-
 
             StringBuilder hash = new StringBuilder();
             for (byte b : md.digest()) {
