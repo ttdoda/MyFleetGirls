@@ -37,7 +37,7 @@ object MapInfo extends SQLSyntaxSupport[MapInfo] {
 
   override val tableName = "map_info"
 
-  override val columns = Seq("member_id", "id", "cleared", "defeat_count", "required_defeat_count", "gauge_type", "gauge_num", "air_base_decks", "now_hp", "max_hp", "state", "rank", "created")
+  override val columns = Seq("member_id", "id", "cleared", "defeat_count", "required_defeated_count", "gauge_type", "gauge_num", "air_base_decks", "now_hp", "max_hp", "state", "rank", "created")
 
   def apply(mi: ResultName[MapInfo])(rs: WrappedResultSet): MapInfo = new MapInfo(
     memberId = rs.get(mi.memberId),
