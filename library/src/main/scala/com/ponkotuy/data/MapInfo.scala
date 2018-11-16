@@ -7,7 +7,7 @@ import org.json4s._
  * @author ponkotuy
  * Date: 14/03/24.
  */
-case class MapInfo(id: Int, cleared: Boolean, exbossFlag: Boolean, defeatedCount: Option[Int], eventMap: Option[EventMap])
+case class MapInfo(id: Int, cleared: Boolean, defeatedCount: Option[Int], requiredDefeatedCount: Option[Int], gaugeType: Option[Int], gaugeNum: Option[Int], airBaseDecks: Option[Int], eventMap: Option[EventMap])
 
 object MapInfo {
   implicit val formats = DefaultFormats
@@ -22,11 +22,14 @@ object MapInfo {
 case class RawMapInfo(
     api_id: Int,
     api_cleared: Int,
-    api_exboss_flag: Int,
     api_defeat_count: Option[Int],
+    api_required_defeat_count: Option[Int],
+    api_gauge_type: Option[Int],
+    api_gauge_num: Option[Int],
+    api_air_base_decks: Option[Int],
     api_eventmap: Option[RawEventMap]) {
   def build: MapInfo =
-    MapInfo(api_id, api_cleared != 0, api_exboss_flag != 0, api_defeat_count, api_eventmap.map(_.build))
+    MapInfo(api_id, api_cleared != 0, api_defeat_count, api_required_defeat_count, api_gauge_type, api_gauge_num, api_air_base_decks, api_eventmap.map(_.build))
 }
 
 case class EventMap(hp: Option[Hp], state: Int, rank: Option[Int])
