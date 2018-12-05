@@ -8,7 +8,7 @@
 }
 @rates = @{
   ships.flatMap { ship =>
-    Seq( ship.expRate, ship.entireExpRate, ship.hpRate, ship.karyokuRate, ship.raisouRate, ship.taikuRate, ship.soukouRate, ship.luckyRate ).filterNot(_.isNaN).map(_.percentage) :+ ship.cond.toDouble
+    Seq( ship.expRate, ship.entireExpRate, ship.hpRate, ship.karyokuRate, ship.raisouRate, ship.taikuRate, ship.soukouRate, ship.taisenRate, ship.luckyRate ).filterNot(_.isNaN).map(_.percentage) :+ ship.cond.toDouble
   }.distinct
 }
 
@@ -111,7 +111,7 @@
               <td class="table-cell-progress" data-rate="@{ship.taikuRate.percentage}">@ship.taiku</td>
               <td class="table-cell-progress" data-rate="@{ship.soukouRate.percentage}">@ship.soukou</td>
               <td>@ship.kaihi</td>
-              <td>@ship.taisen</td>
+              <td class="table-cell-progress" data-rate="@{ship.taisenRate.percentage}">@ship.taisen</td>
               <td>@ship.sakuteki</td>
               <td class="table-cell-progress" data-rate="@{ship.luckyRate.percentage}">@ship.lucky</td>
             </tr>

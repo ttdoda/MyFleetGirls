@@ -82,6 +82,9 @@ trait ShipParameter extends GraphData with AntiAirCutin {
     val limit: Int = if(lv <= 99) hpLimit else hpLimit - upTaikyuByKakkokari
     if(limit >= 2) 2 else limit
   }
+  /** 素の対潜と上昇値 */
+  def upTaisen: Int = if(kyouka isDefinedAt 6) kyouka(6) else 0
+  def rawTaisen: Int = taisen - slotMaster.map(_.antisub).sum - upTaisen
 
   /** 改修度 */
   def calcRate(up: Double, upLimit: Double) = if(up >= upLimit) 1.0 else up/upLimit
@@ -90,6 +93,7 @@ trait ShipParameter extends GraphData with AntiAirCutin {
   def taikuRate: Double = calcRate(upTaiku, spec.taikuMax - spec.taikuMin)
   def soukouRate: Double = calcRate(upSoukou, spec.soukoMax - spec.soukoMin)
   def luckyRate: Double = calcRate(upLucky, spec.luckyMax - spec.luckyMin)
+  def taisenRate: Double = calcRate(upTaisen, 9)
 
   /** Condition値による色の変化 */
   def rgb: RGB = ShipParameter.rgb(cond)
