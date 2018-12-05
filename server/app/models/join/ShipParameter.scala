@@ -65,13 +65,22 @@ trait ShipParameter extends GraphData with AntiAirCutin {
   /** 運の上昇値 */
   def upLucky: Int = if(kyouka isDefinedAt 4) kyouka(4) else lucky - spec.luckyMin
   /** 耐久の上昇値 */
-  def upTaikyu: Int = {
-    if(kyouka isDefinedAt 5) kyouka(5)
-    else {
-      var up: Int = maxhp - spec.hp
-      if(lv > 99) up -= kakkokariTaikyu(spec.hp)
-      if(up <= 0) 0 else up
-    }
+  def upTaikyu: Int = maxhp - spec.hp
+  /** 耐久のカッコカリによる上昇値 */
+  def upTaikyuByKakkokari: Int = {
+      if(lv <= 99) 0
+      else {
+        val kakkokari: Int = kakkokariTaikyu(spec.hp)
+        if(upTaikyu <= kakkokari) upTaikyu else kakkokari
+      }
+  }
+  /** 耐久の改修による上昇値 */
+  def upTaikyuByRemodel: Int = if(kyouka isDefinedAt 5) kyouka(5) else upTaikyu - upTaikyuByKakkokari
+  /** 耐久の上昇上限値 */
+  def upTaikyuLimit: Int = {
+    val hpLimit: Int = spec.hpMax - spec.hp
+    val limit: Int = if(lv <= 99) hpLimit else hpLimit - upTaikyuByKakkokari
+    if(limit >= 2) 2 else limit
   }
 
   /** 改修度 */
@@ -146,14 +155,6 @@ object ShipParameter {
     else if(min <= 69) 7
     else if(min <= 90) 8
     else 9
-  }
-
-  def upTaikyuLimit(lv: Int, hpMix: Int, hpMax: Int): Int = {
-    val hpLimit: Int = hpMax - hpMix
-    val limit: Int = if(lv <= 99) hpLimit else hpLimit - kakkokariTaikyu(hpMix)
-    if(limit >= 2) 2
-    else if(limit <= 0) 0
-    else limit
   }
 }
 
