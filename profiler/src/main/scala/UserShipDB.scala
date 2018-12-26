@@ -12,8 +12,8 @@ import scalikejdbc._
  */
 object UserShipDB {
   def main(args: Array[String]): Unit = {
-    Class.forName("com.mysql.jdbc.Driver")
-    ConnectionPool.singleton("jdbc:mysql://localhost:3306/myfleet", "myfleet", "myfleet")
+    Class.forName("org.mariadb.jdbc.Driver")
+    ConnectionPool.singleton("jdbc:mariadb://localhost:3306/myfleet", "myfleet", "myfleet")
 
     val count = Try { args(0).toInt }.getOrElse(20)
     val users = new UserIterator(0)
