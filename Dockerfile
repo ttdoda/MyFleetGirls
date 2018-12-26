@@ -24,6 +24,6 @@ CMD \
   ~/bin/sbt -v server/stage && \
   rm -f server/target/universal/stage/RUNNING_PID && \
   server/target/universal/stage/bin/myfleetgirlsserver \
-    -Ddb.default.url="jdbc:mysql://${DB_HOST}:${DB_PORT}/myfleet" \
+    -Ddb.default.url="jdbc:mariadb://${DB_HOST}:${DB_PORT}/myfleet" \
     -Ddb.default.user="root" \
     -Ddb.default.password=""
