@@ -97,7 +97,8 @@
             <td class="nowrap">@ship.name</td>
             <td class="table-cell-progress" data-rate="@{ship.expRate.percentage}">@ship.lv</td>
             <td class="table-cell-progress" data-rate="@{ship.entireExpRate.percentage}" data-kakkokari="@if(ship.lv >= 100){true}else{false}">@{f"${ship.exp}%,d"}</td>
-            <td class="table-cell-progress" data-rate="@{ship.hpRate.percentage}" @if(ship.damage){data-damage="@ship.damage.map(_.name)" }data-background-color="@ship.hpRGB.toString">@ship.nowhp/@ship.maxhp</td>
+            <td class="table-cell-progress" data-rate="@{ship.hpRate.percentage}" @if(ship.damage){data-damage="@ship.damage.map(_.name)" }data-background-color="@ship.hpRGB.toString"
+              title="改修上昇分: @{ship.upTaikyuByRemodel}/@{ship.upTaikyuLimit}&#13;カッコカリ上昇分: @{ship.upTaikyuByKakkokari}">@ship.nowhp/@ship.maxhp</td>
             <td class="table-cell-progress" data-rate="@{ship.cond.toDouble}" data-background-color="@ship.condBarRGB.toString">@ship.cond</td>
             <td class="table-cell-progress" data-rate="@{ship.karyokuRate.percentage}">@ship.karyoku</td>
             <td class="table-cell-progress" data-rate="@{ship.raisouRate.percentage}">@ship.raisou</td>
