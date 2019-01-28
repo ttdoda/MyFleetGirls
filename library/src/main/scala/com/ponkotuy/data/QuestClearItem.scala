@@ -33,7 +33,7 @@ case class QuestBounusItem(id: Int, name: String)
 object QuestBounus {
   implicit val formats = DefaultFormats
   def fromJson(json: JValue): List[QuestBounus] = {
-    json.extractOrElse[List[RawQuestBounus]](Nil).flatMap(_.build)
+    json.extractOrElse[List[RawQuestBounus]](Nil).map(_.build)
   }
 
   private case class RawQuestBounus(
@@ -41,18 +41,15 @@ object QuestBounus {
       api_count: Int,
       api_item: Option[RawQuestBounusItem]
   ) {
-    def build: Option[QuestBounus] = {
-      for {
-        item <- api_item.map(_.build)
-      } yield {
-        QuestBounus(api_type, api_count, item)
-      }
+    def build: QuestBounus = {
+      val item = api_item.map(_.build)
+      QuestBounus(api_type, api_count, item)
     }
   }
   private case class RawQuestBounusItem(
     api_id: Int,
     api_name: String
   ) {
-    def build: Option[QuestBounusItem] = Option(QuestBounusItem(api_id, api_name))
+    def build: QuestBounusItem = QuestBounusItem(api_id, api_name)
   }
 }
