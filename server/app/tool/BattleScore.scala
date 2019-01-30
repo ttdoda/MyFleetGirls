@@ -32,9 +32,10 @@ object BattleScore {
     val exp = fromExp(memberId)
     val now = DateTime.now(Tokyo)
     val mHead = monthHead(now)
-    val eo = calcNowEo(memberId, new Interval(mHead, now))
+    val nowMonth = new Interval(mHead, now)
+    val eo = calcNowEo(memberId, nowMonth)
     val lastEo = if(now.getMonthOfYear == 1) 0 else calcEo(memberId, new Interval(monthHead(now - 1.month), mHead)) / 35
-    val quest = calcQuest(memberId)
+    val quest = calcQuest(memberId, nowMonth)
     BattleScore(exp.monthly, exp.yearly, eo, lastEo, quest)
   }
 
@@ -71,12 +72,9 @@ object BattleScore {
     }.sum
   }
 
-  private def calcQuest(memberId: Long): Int = {
-    val nowMonth = DateTime.now(Tokyo).getMonthOfYear
-    QuestClearItem.findAllByUserAndBounusType(memberId, 18).map { clearItem =>
-      val created = new DateTime(clearItem.created)
-      if(created.getMonthOfYear == nowMonth) clearItem.count else 0
-    }.sum
+  private def calcQuest(memberId: Long, interval: Interval): Int = {
+    val qci = QuestClearItem.qci
+    QuestClearItem.findAllByUserAndBounusType(memberId, 18, Option(intervalToSQLSyntax(qci.created, interval))).map(_.count).sum
   }
 
   /**

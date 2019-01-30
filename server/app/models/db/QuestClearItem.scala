@@ -41,10 +41,10 @@ object QuestClearItem extends SQLSyntaxSupport[QuestClearItem] {
     }.map(QuestClearItem(qci.resultName)).single.apply()
   }
 
-  def findAllByUserAndBounusType(memberId: Long, bounusType: Int)(implicit session: DBSession = autoSession): List[QuestClearItem] = {
+  def findAllByUserAndBounusType(memberId: Long, bounusType: Int, where: Option[SQLSyntax] = None)(implicit session: DBSession = autoSession): List[QuestClearItem] = {
     withSQL {
       select.from(QuestClearItem as qci)
-        .where.eq(qci.memberId, memberId).and.eq(qci.`type`, bounusType)
+        .where.eq(qci.memberId, memberId).and.eq(qci.`type`, bounusType).and(where)
         .orderBy(qci.created).desc
     }.map(QuestClearItem(qci.resultName)).list.apply()
   }
