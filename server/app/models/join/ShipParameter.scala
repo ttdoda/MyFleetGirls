@@ -34,6 +34,7 @@ trait ShipParameter extends GraphData with AntiAirCutin {
   def taisen = ship.taisen
   def sakuteki = ship.sakuteki
   def lucky = ship.lucky
+  def kyouka = ship.kyouka
   def locked = ship.locked
   def created = ship.created
   def name = master.name
@@ -49,20 +50,50 @@ trait ShipParameter extends GraphData with AntiAirCutin {
 
   def hpRate: Double = nowhp / maxhp.toDouble
 
-  def rowKaryoku: Int = karyoku - slotMaster.map(_.power).sum
-  def rowRaisou: Int = raisou - slotMaster.map(_.torpedo).sum
-  def rowTaiku: Int = taiku - slotMaster.map(_.antiair).sum
-  def rowSoukou: Int = soukou
+  /** 素の火力と上昇値 */
+  def rawKaryoku: Int = if(kyouka isDefinedAt 0) spec.karyokuMin + kyouka(0) else karyoku - slotMaster.map(_.power).sum
+  def upKaryoku: Int = if(kyouka isDefinedAt 0) kyouka(0) else rawKaryoku - spec.karyokuMin
+  /** 素の雷装と上昇値 */
+  def rawRaisou: Int = if(kyouka isDefinedAt 1) spec.raisouMin + kyouka(1) else raisou - slotMaster.map(_.torpedo).sum
+  def upRaisou: Int = if(kyouka isDefinedAt 1) kyouka(1) else rawRaisou - spec.raisouMin
+  /** 素の対空と上昇値 */
+  def rawTaiku: Int = if(kyouka isDefinedAt 2) spec.taikuMin + kyouka(2) else taiku - slotMaster.map(_.antiair).sum
+  def upTaiku: Int = if(kyouka isDefinedAt 2) kyouka(2) else rawTaiku - spec.taikuMin
+  /** 素の装甲と上昇値 */
+  def rawSoukou: Int = if(kyouka isDefinedAt 3) spec.soukoMin + kyouka(3) else soukou
+  def upSoukou: Int = if(kyouka isDefinedAt 3) kyouka(3) else rawSoukou - spec.soukoMin
+  /** 運の上昇値 */
+  def upLucky: Int = if(kyouka isDefinedAt 4) kyouka(4) else lucky - spec.luckyMin
+  /** 耐久の上昇値 */
+  def upTaikyu: Int = maxhp - spec.hp
+  /** 耐久のカッコカリによる上昇値 */
+  def upTaikyuByKakkokari: Int = {
+      if(lv <= 99) 0
+      else {
+        val kakkokari: Int = kakkokariTaikyu(spec.hp)
+        if(upTaikyu <= kakkokari) upTaikyu else kakkokari
+      }
+  }
+  /** 耐久の改修による上昇値 */
+  def upTaikyuByRemodel: Int = if(kyouka isDefinedAt 5) kyouka(5) else upTaikyu - upTaikyuByKakkokari
+  /** 耐久の上昇上限値 */
+  def upTaikyuLimit: Int = {
+    val hpLimit: Int = spec.hpMax - spec.hp
+    val limit: Int = if(lv <= 99) hpLimit else hpLimit - upTaikyuByKakkokari
+    if(limit >= 2) 2 else limit
+  }
+  /** 素の対潜と上昇値 */
+  def upTaisen: Int = if(kyouka isDefinedAt 6) kyouka(6) else 0
+  def rawTaisen: Int = taisen - slotMaster.map(_.antisub).sum - upTaisen
 
-  def calcRate(row: Double, min: Double, max: Double) = if(max == min) 1.0 else (row - min)/(max - min)
-  def karyokuRate: Double = calcRate(rowKaryoku, spec.karyokuMin, spec.karyokuMax)
-  def raisouRate: Double = calcRate(rowRaisou, spec.raisouMin, spec.raisouMax)
-  def taikuRate: Double = calcRate(rowTaiku, spec.taikuMin, spec.taikuMax)
-  def soukouRate: Double = calcRate(rowSoukou, spec.soukoMin, spec.soukoMax)
-
-  /** 運の改修度 */
-  def upLucky: Int = lucky - spec.luckyMin
-  def luckyRate: Double = calcRate(lucky, spec.luckyMin, spec.luckyMax)
+  /** 改修度 */
+  def calcRate(up: Double, upLimit: Double) = if(up >= upLimit) 1.0 else up/upLimit
+  def karyokuRate: Double = calcRate(upKaryoku, spec.karyokuMax - spec.karyokuMin)
+  def raisouRate: Double = calcRate(upRaisou, spec.raisouMax - spec.raisouMin)
+  def taikuRate: Double = calcRate(upTaiku, spec.taikuMax - spec.taikuMin)
+  def soukouRate: Double = calcRate(upSoukou, spec.soukoMax - spec.soukoMin)
+  def luckyRate: Double = calcRate(upLucky, spec.luckyMax - spec.luckyMin)
+  def taisenRate: Double = calcRate(upTaisen, 9)
 
   /** Condition値による色の変化 */
   def rgb: RGB = ShipParameter.rgb(cond)
@@ -118,6 +149,16 @@ object ShipParameter {
   def hpRGB(rate: Double): RGB = {
     if(rate > 0.5) Yellow.blend(Blue, (rate - 0.5) * 2.0)
     else Red.blend(Yellow, rate * 2.0)
+  }
+
+  def kakkokariTaikyu(min: Int): Int = {
+    if(min <= 7) 3
+    else if(min <= 29) 4
+    else if(min <= 39) 5
+    else if(min <= 49) 6
+    else if(min <= 69) 7
+    else if(min <= 90) 8
+    else 9
   }
 }
 

@@ -12,7 +12,7 @@
 }
 @rates = @{
   ships.flatMap { ship =>
-    Seq( ship.expRate, ship.entireExpRate, ship.hpRate, ship.karyokuRate, ship.raisouRate, ship.taikuRate, ship.soukouRate, ship.luckyRate ).filterNot(_.isNaN).map(_.percentage) :+ ship.cond.toDouble
+    Seq( ship.expRate, ship.hpRate ).filterNot(_.isNaN).map(_.percentage) :+ ship.cond.toDouble
   }.distinct
 }
 

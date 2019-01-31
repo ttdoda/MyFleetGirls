@@ -15,11 +15,12 @@ case class Ship(
     id: Int, shipId: Int, memberId: Long,
     lv: Short, exp: Int, nowhp: Short, slot: Seq[Int], fuel: Int, bull: Int, dockTime: Long, cond: Int,
     karyoku: Int, raisou: Int, taiku: Int, soukou: Int, kaihi: Int, taisen: Int, sakuteki: Int, lucky: Int, locked: Boolean,
-    created: Long, maxhp: Int)
+    created: Long, maxhp: Int, kyouka: Seq[Int])
 
 object Ship extends SQLSyntaxSupport[Ship] {
   override val columnNames = Seq("id", "ship_id", "member_id", "lv", "exp", "nowhp", "fuel", "bull", "dock_time", "cond",
-    "karyoku", "raisou", "taiku", "soukou", "kaihi", "taisen", "sakuteki", "lucky", "locked", "created", "maxhp")
+    "karyoku", "raisou", "taiku", "soukou", "kaihi", "taisen", "sakuteki", "lucky", "locked", "created",
+    "maxhp", "kyouka")
   def apply(x: SyntaxProvider[Ship], slot: List[Int])(rs: WrappedResultSet): Ship =
     apply(x.resultName, slot)(rs)
   def apply(x: ResultName[Ship], slot: List[Int])(rs: WrappedResultSet): Ship = {
@@ -45,7 +46,8 @@ object Ship extends SQLSyntaxSupport[Ship] {
       rs.int(x.lucky),
       rs.boolean(x.locked),
       rs.long(x.created),
-      rs.int(x.maxhp)
+      rs.int(x.maxhp),
+      rs.string(x.kyouka).split(',').toList.filter(_.nonEmpty).map(_.toInt)
     )
   }
 
@@ -205,8 +207,8 @@ object Ship extends SQLSyntaxSupport[Ship] {
         column.dockTime -> s.dockTime, column.cond -> s.cond,
         column.karyoku -> s.karyoku, column.raisou -> s.raisou, column.taiku -> s.taiku, column.soukou -> s.soukou,
         column.kaihi -> s.kaihi, column.taisen -> s.taisen, column.sakuteki -> s.sakuteki, column.lucky -> s.lucky,
-        column.locked -> s.locked, column.created -> created,
-        column.maxhp -> s.maxhp
+        column.locked -> s.locked, column.created -> created, column.maxhp -> s.maxhp,
+        column.kyouka -> s.kyouka.mkString(",")
       )
     }
   }
@@ -222,15 +224,16 @@ object Ship extends SQLSyntaxSupport[Ship] {
         column.fuel, column.bull, column.dockTime, column.cond,
         column.karyoku, column.raisou, column.taiku, column.soukou,
         column.kaihi, column.taisen, column.sakuteki, column.lucky,
-        column.locked, column.created, column.maxhp
+        column.locked, column.created, column.maxhp,
+        column.kyouka
       ).multiValues(
           ss.map(_.id), ss.map(_.shipId), Seq.fill(ss.size)(memberId),
           ss.map(_.lv), ss.map(_.exp), ss.map(_.nowhp),
           ss.map(_.fuel), ss.map(_.bull), ss.map(_.dockTime), ss.map(_.cond),
           ss.map(_.karyoku), ss.map(_.raisou), ss.map(_.taiku), ss.map(_.soukou),
           ss.map(_.kaihi), ss.map(_.taisen), ss.map(_.sakuteki), ss.map(_.lucky),
-          ss.map(_.locked), Seq.fill(ss.size)(created),
-          ss.map(_.maxhp)
+          ss.map(_.locked), Seq.fill(ss.size)(created), ss.map(_.maxhp),
+          ss.map(_.kyouka.mkString(","))
         )
     }
   }
@@ -243,12 +246,16 @@ object Ship extends SQLSyntaxSupport[Ship] {
     val params = ss.map { x =>
       Seq[Any](
         x.id, x.shipId, memberId, x.lv, x.exp, x.nowhp, x.fuel, x.bull, x.dockTime, x.cond,
-        x.karyoku, x.raisou, x.taiku, x.soukou, x.kaihi, x.taisen, x.sakuteki, x.lucky, x.locked, created, x.maxhp
+        x.karyoku, x.raisou, x.taiku, x.soukou, x.kaihi, x.taisen, x.sakuteki, x.lucky, x.locked, created, x.maxhp,
+        x.kyouka.mkString(",")
       )
     }
     sql"""replace into ship (id, ship_id, member_id, lv, exp, nowhp, fuel, bull, dock_time, cond,
-          karyoku, raisou, taiku, soukou, kaihi, taisen, sakuteki, lucky, locked, created, maxhp)
-          values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"""
+          karyoku, raisou, taiku, soukou, kaihi, taisen, sakuteki, lucky, locked, created,
+          maxhp, kyouka)
+          values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?,
+          ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,
+          ?, ?)"""
       .batch(params:_*).apply()
   }
 

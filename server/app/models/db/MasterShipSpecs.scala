@@ -11,6 +11,7 @@ import scala.concurrent.duration._
 case class MasterShipSpecs(
   id: Int,
   hp: Int,
+  hpMax: Int,
   soukoMin: Int,
   soukoMax: Int,
   karyokuMin: Int,
@@ -38,12 +39,13 @@ object MasterShipSpecs extends SQLSyntaxSupport[MasterShipSpecs] {
 
   override val tableName = "master_ship_specs"
 
-  override val columns = Seq("id", "hp", "souko_min", "souko_max", "karyoku_min", "karyoku_max", "raisou_min", "raisou_max", "taiku_min", "taiku_max", "lucky_min", "lucky_max", "soku", "length", "maxeq")
+  override val columns = Seq("id", "hp", "hp_max", "souko_min", "souko_max", "karyoku_min", "karyoku_max", "raisou_min", "raisou_max", "taiku_min", "taiku_max", "lucky_min", "lucky_max", "soku", "length", "maxeq")
 
   def apply(mss: SyntaxProvider[MasterShipSpecs])(rs: WrappedResultSet): MasterShipSpecs = apply(mss.resultName)(rs)
   def apply(mss: ResultName[MasterShipSpecs])(rs: WrappedResultSet): MasterShipSpecs = new MasterShipSpecs(
     id = rs.int(mss.id),
     hp = rs.int(mss.hp),
+    hpMax = rs.int(mss.hpMax),
     soukoMin = rs.int(mss.soukoMin),
     soukoMax = rs.int(mss.soukoMax),
     karyokuMin = rs.int(mss.karyokuMin),
@@ -92,6 +94,7 @@ object MasterShipSpecs extends SQLSyntaxSupport[MasterShipSpecs] {
   def create(
     id: Int,
     hp: Int,
+    hpMax: Int,
     soukoMin: Int,
     soukoMax: Int,
     karyokuMin: Int,
@@ -109,6 +112,7 @@ object MasterShipSpecs extends SQLSyntaxSupport[MasterShipSpecs] {
       insert.into(MasterShipSpecs).columns(
         column.id,
         column.hp,
+        column.hpMax,
         column.soukoMin,
         column.soukoMax,
         column.karyokuMin,
@@ -125,6 +129,7 @@ object MasterShipSpecs extends SQLSyntaxSupport[MasterShipSpecs] {
       ).values(
           id,
           hp,
+          hpMax,
           soukoMin,
           soukoMax,
           karyokuMin,
@@ -144,6 +149,7 @@ object MasterShipSpecs extends SQLSyntaxSupport[MasterShipSpecs] {
     MasterShipSpecs(
       id = id,
       hp = hp,
+      hpMax = hpMax,
       soukoMin = soukoMin,
       soukoMax = soukoMax,
       karyokuMin = karyokuMin,
@@ -164,12 +170,12 @@ object MasterShipSpecs extends SQLSyntaxSupport[MasterShipSpecs] {
     applyUpdate {
       insert.into(MasterShipSpecs)
         .columns(
-          column.id, column.hp, column.soukoMin, column.soukoMax, column.karyokuMin, column.karyokuMax,
+          column.id, column.hp, column.hpMax, column.soukoMin, column.soukoMax, column.karyokuMin, column.karyokuMax,
           column.raisouMin, column.raisouMax, column.taikuMin, column.taikuMax, column.luckyMin, column.luckyMax,
           column.soku, column.length, column.maxeq
         )
         .multiValues(
-          xs.map(_.id), xs.map(_.hp), xs.map(_.soukoMin), xs.map(_.soukoMax),
+          xs.map(_.id), xs.map(_.hp), xs.map(_.hpMax), xs.map(_.soukoMin), xs.map(_.soukoMax),
           xs.map(_.karyokuMin), xs.map(_.karyokuMax), xs.map(_.raisouMin), xs.map(_.raisouMax),
           xs.map(_.taikuMin), xs.map(_.taikuMax),
           xs.map(_.luckyMin), xs.map(_.luckyMax), xs.map(_.soku), xs.map(_.length), xs.map(_.maxeq.mkString(","))
@@ -182,6 +188,7 @@ object MasterShipSpecs extends SQLSyntaxSupport[MasterShipSpecs] {
       update(MasterShipSpecs).set(
         column.id -> entity.id,
         column.hp -> entity.hp,
+        column.hpMax -> entity.hpMax,
         column.soukoMin -> entity.soukoMin,
         column.soukoMax -> entity.soukoMax,
         column.karyokuMin -> entity.karyokuMin,
