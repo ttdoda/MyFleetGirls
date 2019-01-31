@@ -22,7 +22,6 @@ case class BattleScore(monthlyExp: Int, yearlyExp: Int, eo: Int, lastEo: Int, qu
 
 object BattleScore {
   import util.MFGDateUtil._
-  val ZMissionFormer = 854
   case class FromExp(monthly: Int, yearly: Int)
 
   object FromExp {
@@ -33,9 +32,10 @@ object BattleScore {
     val exp = fromExp(memberId)
     val now = DateTime.now(Tokyo)
     val mHead = monthHead(now)
-    val eo = calcNowEo(memberId, new Interval(mHead, now))
+    val nowMonth = new Interval(mHead, now)
+    val eo = calcNowEo(memberId, nowMonth)
     val lastEo = if(now.getMonthOfYear == 1) 0 else calcEo(memberId, new Interval(monthHead(now - 1.month), mHead)) / 35
-    val quest = calcQuset(memberId)
+    val quest = calcQuest(memberId, nowMonth)
     BattleScore(exp.monthly, exp.yearly, eo, lastEo, quest)
   }
 
@@ -72,12 +72,9 @@ object BattleScore {
     }.sum
   }
 
-  private def calcQuset(memberId: Long): Int = {
-    val nowMonth = DateTime.now(Tokyo).getMonthOfYear
-    Quest.find(ZMissionFormer, memberId).fold(0) { quest =>
-      val created = new DateTime(quest.created)
-      if(quest.isClear && created.getMonthOfYear == nowMonth) 350 else 0
-    }
+  private def calcQuest(memberId: Long, interval: Interval): Int = {
+    val qci = QuestClearItem.qci
+    QuestClearItem.findAllByUserAndBounusType(memberId, 18, Option(intervalToSQLSyntax(qci.created, interval))).map(_.count).sum
   }
 
   /**

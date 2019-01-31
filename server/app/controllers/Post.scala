@@ -155,6 +155,11 @@ class Post @Inject()(val controllerComponents: ControllerComponents, implicit va
     Res.success
   }
 
+  def questclearitem = authAndParse[QuestClearItem] { case (auth, request) =>
+    db.QuestClearItem.bulkInsert(request, auth.id)
+    Res.success
+  }
+
   def questlist = authAndParse[List[Quest]] { case (auth, quests) =>
     db.Quest.bulkUpsert(quests, auth.id)
     Res.success
