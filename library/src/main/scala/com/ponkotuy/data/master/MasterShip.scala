@@ -70,7 +70,7 @@ object MasterShipBase {
  * @param length : 射程
  */
 case class MasterShipSpecs(
-    id: Int, hp: Int, soukoMin: Int, soukoMax: Int, karyokuMin: Int, karyokuMax: Int,
+    id: Int, hp: Int, hpMax: Int, soukoMin: Int, soukoMax: Int, karyokuMin: Int, karyokuMax: Int,
     raisouMin: Int, raisouMax: Int, taikuMin: Int, taikuMax: Int, luckyMin: Int, luckyMax: Int,
     soku: Int, length: Int, maxeq: List[Int])
 
@@ -78,7 +78,7 @@ object MasterShipSpecs {
   import MasterShip._
   def fromJson(x: JValue): MasterShipSpecs = {
     val id = toInt(x \ "api_id")
-    val (hp, _) = toDoubleInt(x \ "api_taik")
+    val (hp, hpMax) = toDoubleInt(x \ "api_taik")
     val (soukouMin, soukouMax) = toDoubleInt(x \ "api_souk")
     val (karyokuMin, karyokuMax) = toDoubleInt(x \ "api_houg")
     val (raisouMin, raisouMax) = toDoubleInt(x \ "api_raig")
@@ -88,7 +88,7 @@ object MasterShipSpecs {
     val length = toInt(x \ "api_leng")
     val maxeq = toListInt(x \ "api_maxeq")
     MasterShipSpecs(
-      id, hp, soukouMin, soukouMax, karyokuMin, karyokuMax, raisouMin, raisouMax, taikuMin, taikuMax,
+      id, hp, hpMax, soukouMin, soukouMax, karyokuMin, karyokuMax, raisouMin, raisouMax, taikuMin, taikuMax,
       luckyMin, luckyMax, soku, length, maxeq
     )
   }
