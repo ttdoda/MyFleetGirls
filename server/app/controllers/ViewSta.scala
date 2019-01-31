@@ -108,14 +108,14 @@ class ViewSta @Inject()(val controllerComponents: ControllerComponents, implicit
     area match {
       case id if 21 until 42 contains id => Redirect(routes.ViewSta.dropAlpha1st(area, info))
       case _ =>
-        val cells = db.BattleResult.dropedCells(area, info)
+        val cells = db.BattleResult.dropedCellsAlpha(area, info)
         Ok(views.html.sta.drop_alpha(Stage(area, info), cells))
     }
   }
   def dropAlpha1st(area: Int, info: Int) = actionAsync {
     area match {
       case id if (21 until 42 contains id) || id <= 6 =>
-        val cells = db.BattleResult.dropedCells(area, info)
+        val cells = db.BattleResult.dropedCellsAlpha(area, info)
         Ok(views.html.sta.drop_alpha_1st(Stage(area, info), cells))
       case _ => Redirect(routes.ViewSta.dropAlpha(area, info))
     }
