@@ -54,13 +54,11 @@ class MapInfoSuite extends FunSuite {
     assert(mapInfo.last === MapInfo(321, false, false, None, Some(EventMap(Some(Hp(320, 400)), 1, Some(1)))))
   }
 */
-/*
-  test("success new pattern") {
+
+  test("success mapinfo since 2018-11-16") {
     val stream = getClass.getResource("/mapinfo.json").openStream()
     val json = try { parse(stream) } finally { stream.close() }
     val mapInfo = MapInfo.fromJson(json \ "api_data")
-    assert(mapInfo.head == MapInfo(11, true, false, None, None))
+    assert(mapInfo.head == MapInfo(11, true, None, None, None, None, None, None))
   }
-*/
-  test("success mapinfo since 2018-11-16") {pending}
 }
