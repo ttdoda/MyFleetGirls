@@ -37,10 +37,9 @@ object Common extends Controller {
     } else Unauthorized("You are not ponkotuy")
   }
 
-  /** 実際はCheckしてないです */
-  def checkPonkotuAndParse[T](f: (T) => Result)(implicit mf: Manifest[T], ec: ExecutionContext): Action[Req] = {
+  def masterParse[T](f: (T) => Result)(implicit mf: Manifest[T], ec: ExecutionContext): Action[Req] = {
     Action.async(parse.formUrlEncoded(1024*1024*2)) { request =>
-      checkPonkotu(request.body) {
+      Future {
         withData[T](request.body) { data =>
           f(data)
         }
@@ -70,14 +69,6 @@ object Common extends Controller {
           }
         case None => Unauthorized("Authentication Data Required")
       }
-    }
-  }
-
-  /** Checkしなくなりました */
-  def checkPonkotu(request: Req)(f: => Result)(implicit ec: ExecutionContext): Future[Result] = {
-    Future {
-      f
-      Ok("Success")
     }
   }
 
