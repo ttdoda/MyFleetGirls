@@ -17,8 +17,7 @@ case class MasterSlotItem(
   search: Int,
   hit: Int,
   length: Int,
-  rare: Int,
-  info: String) {
+  rare: Int) {
 
   def save()(implicit session: DBSession = MasterSlotItem.autoSession): MasterSlotItem = MasterSlotItem.save(this)(session)
 
@@ -37,7 +36,7 @@ object MasterSlotItem extends SQLSyntaxSupport[MasterSlotItem] {
 
   override val tableName = "master_slot_item"
 
-  override val columns = Seq("id", "name", "typ", "power", "torpedo", "bomb", "antiAir", "antiSub", "search", "hit", "length", "rare", "info")
+  override val columns = Seq("id", "name", "typ", "power", "torpedo", "bomb", "antiAir", "antiSub", "search", "hit", "length", "rare")
 
   def apply(msi: SyntaxProvider[MasterSlotItem])(rs: WrappedResultSet): MasterSlotItem = apply(msi.resultName)(rs)
   def apply(msi: ResultName[MasterSlotItem])(rs: WrappedResultSet): MasterSlotItem = new MasterSlotItem(
@@ -53,7 +52,6 @@ object MasterSlotItem extends SQLSyntaxSupport[MasterSlotItem] {
     hit = rs.int(msi.hit),
     length = rs.int(msi.length),
     rare = rs.int(msi.rare),
-    info = rs.string(msi.info)
   )
 
   val msi = MasterSlotItem.syntax("msi")
@@ -113,8 +111,7 @@ object MasterSlotItem extends SQLSyntaxSupport[MasterSlotItem] {
     search: Int,
     hit: Int,
     length: Int,
-    rare: Int,
-    info: String)(implicit session: DBSession = autoSession): MasterSlotItem = {
+    rare: Int)(implicit session: DBSession = autoSession): MasterSlotItem = {
     withSQL {
       insert.into(MasterSlotItem).columns(
         column.id,
@@ -128,8 +125,7 @@ object MasterSlotItem extends SQLSyntaxSupport[MasterSlotItem] {
         column.search,
         column.hit,
         column.length,
-        column.rare,
-        column.info
+        column.rare
       ).values(
           id,
           name,
@@ -142,8 +138,7 @@ object MasterSlotItem extends SQLSyntaxSupport[MasterSlotItem] {
           search,
           hit,
           length,
-          rare,
-          info
+          rare
         )
     }.update().apply()
 
@@ -159,8 +154,7 @@ object MasterSlotItem extends SQLSyntaxSupport[MasterSlotItem] {
       search = search,
       hit = hit,
       length = length,
-      rare = rare,
-      info = info)
+      rare = rare)
   }
 
   def bulkInsert(xs: Seq[master.MasterSlotItem])(implicit session: DBSession = autoSession): Seq[MasterSlotItem] = {
@@ -168,14 +162,14 @@ object MasterSlotItem extends SQLSyntaxSupport[MasterSlotItem] {
       insert.into(MasterSlotItem)
         .columns(column.id, column.name, column.typ,
           column.power, column.torpedo, column.bomb, column.antiair, column.antisub,
-          column.search, column.hit, column.length, column.rare, column.info)
+          column.search, column.hit, column.length, column.rare)
         .multiValues(xs.map(_.id), xs.map(_.name), xs.map(_.typ.mkString(",")),
           xs.map(_.power), xs.map(_.torpedo), xs.map(_.bomb), xs.map(_.antiAir), xs.map(_.antiSub),
-          xs.map(_.search), xs.map(_.hit), xs.map(_.length), xs.map(_.rare), xs.map(_.info))
+          xs.map(_.search), xs.map(_.hit), xs.map(_.length), xs.map(_.rare))
     }
     xs.map { x =>
       MasterSlotItem(x.id, x.name, x.typ.toArray, x.power, x.torpedo, x.bomb, x.antiAir, x.antiSub,
-        x.search, x.hit, x.length, x.rare, x.info)
+        x.search, x.hit, x.length, x.rare)
     }
   }
 
@@ -193,8 +187,7 @@ object MasterSlotItem extends SQLSyntaxSupport[MasterSlotItem] {
         column.search -> entity.search,
         column.hit -> entity.hit,
         column.length -> entity.length,
-        column.rare -> entity.rare,
-        column.info -> entity.info
+        column.rare -> entity.rare
       ).where.eq(column.id, entity.id)
     }.update().apply()
     entity
