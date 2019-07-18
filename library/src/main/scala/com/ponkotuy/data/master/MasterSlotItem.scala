@@ -9,8 +9,7 @@ import org.json4s._
  */
 case class MasterSlotItem(
     id: Int, name: String, typ: List[Int],
-    power: Int, torpedo: Int, bomb: Int, antiAir: Int, antiSub: Int, search: Int, hit: Int, length: Int, rare: Int,
-    info: String)
+    power: Int, torpedo: Int, bomb: Int, antiAir: Int, antiSub: Int, search: Int, hit: Int, length: Int, rare: Int)
 
 object MasterSlotItem {
   implicit val formats = DefaultFormats
@@ -30,8 +29,7 @@ object MasterSlotItem {
       val hit = math.max(toInt(x \ "api_houm"), toInt(x \ "api_raim"))
       val length = toInt(x \ "api_leng")
       val rare = toInt(x \ "api_rare")
-      val JString(info) = x \ "api_info"
-      MasterSlotItem(id, name, typ, power, torpedo, bomb, antiAir, antiSub, search, hit, length, rare, info)
+      MasterSlotItem(id, name, typ, power, torpedo, bomb, antiAir, antiSub, search, hit, length, rare)
     }
   }
 

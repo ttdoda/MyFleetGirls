@@ -1,5 +1,5 @@
 
-val ver = "1.5.29"
+val ver = "1.5.30"
 
 val scalaVer = "2.12.7"
 
