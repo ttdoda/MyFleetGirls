@@ -33,8 +33,9 @@ object BattleScore {
     val now = DateTime.now(Tokyo)
     val mHead = monthHead(now)
     val nowMonth = new Interval(mHead, now)
+    val lastMonth = new Interval(monthHead(now - 1.month), mHead)
     val eo = calcNowEo(memberId, nowMonth)
-    val lastEo = if(now.getMonthOfYear == 1) 0 else calcEo(memberId, new Interval(monthHead(now - 1.month), mHead)) / 35
+    val lastEo = if(now.getMonthOfYear == 1) 0 else (calcEo(memberId, lastMonth) + calcQuest(memberId, lastMonth)) / 35
     val quest = calcQuest(memberId, nowMonth)
     BattleScore(exp.monthly, exp.yearly, eo, lastEo, quest)
   }
