@@ -163,7 +163,7 @@ object CreateItem extends SQLSyntaxSupport[CreateItem] {
     val now = System.currentTimeMillis()
     createOrig(
       memberId, ci.id,
-      ci.slotitemId, ci.fuel, ci.ammo, ci.steel, ci.bauxite, ci.createFlag, ci.shizaiFlag, ci.flagship, now
+      ci.slotitemId, ci.fuel, ci.ammo, ci.steel, ci.bauxite, ci.createFlag, ci.id.getOrElse(0) > 0, ci.flagship, now
     )
   }
 
