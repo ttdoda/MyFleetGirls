@@ -14,21 +14,22 @@ import scala.util.Try
 case class CreateItem(
     id: Option[Int], slotitemId: Option[Int],
     fuel: Int, ammo: Int, steel: Int, bauxite: Int,
-    createFlag: Boolean, shizaiFlag: Boolean, flagship: Int) {
+    createFlag: Boolean, flagship: Int) {
   def materialSummary: String = s"$fuel/$ammo/$steel/$bauxite"
   def summary: String = Pretty(
-    Map(("成功", shizaiFlag), ("資材", materialSummary)) ++
+    Map(("成功", slotitemId.getOrElse(-1) != -1), ("資材", materialSummary)) ++
       slotitemId.map(i => Map(("ItemID", i))).getOrElse(Map())
   )
 }
 
-object CreateItem {
+object CreateItems {
   implicit val format = DefaultFormats
-  def from(req: Map[String, String], res: JValue, flagship: Int): CreateItem = {
-    val slotitem = CreateSlotItem.fromJson(res \ "api_slot_item")
+  def from(req: Map[String, String], res: JValue, flagship: Int): List[CreateItem] = {
+    val slotitems = (res \ "api_get_items").children.collect {
+      case o: JObject => CreateSlotItem.fromJson(o)
+    }
     val JInt(createFlag) = res \ "api_create_flag"
-    val JInt(shizaiFlag) = res \ "api_shizai_flag"
-    CreateItem(
+    slotitems.map(slotitem => CreateItem(
       slotitem.map(_.id),
       slotitem.map(_.slotitemId),
       fuel = req("api_item1").toInt,
@@ -36,9 +37,8 @@ object CreateItem {
       steel = req("api_item3").toInt,
       bauxite = req("api_item4").toInt,
       createFlag.toInt != 0,
-      shizaiFlag.toInt != 0,
       flagship
-    )
+    ))
   }
 }
 
