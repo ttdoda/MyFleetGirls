@@ -1,5 +1,5 @@
 // The Typesafe repository
-resolvers += "Typesafe repository" at "http://repo.typesafe.com/typesafe/releases/"
+resolvers += Resolver.typesafeRepo("releases")
 
 // Use the Play sbt plugin for Play projects
 addSbtPlugin("io.get-coursier" % "sbt-coursier" % "1.0.2")
