@@ -17,8 +17,8 @@ case object CreateItem extends ResType {
 
   override def postables(q: Query): Seq[Result] = {
     FleetsState.firstFleet.flatMap(_.firstShip).map { flag =>
-      val createItem = data.CreateItem.from(q.req, q.obj, flag)
-      NormalPostable("/createitem", write(createItem), 1, createItem.summary)
+      val createItems = data.CreateItems.from(q.req, q.obj, flag)
+      NormalPostable("/createitems", write(createItems), 2, createItems.map(_.summary).mkString("\n"))
     }.toList
   }
 }

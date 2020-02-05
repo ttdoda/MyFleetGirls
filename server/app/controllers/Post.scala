@@ -78,13 +78,26 @@ class Post @Inject()(val controllerComponents: ControllerComponents, implicit va
     Res.success
   }
 
-  def createItem = authAndParse[CreateItem] { (auth, item) =>
+  def createItem = authAndParse[CreateItem] { case (auth, item) =>
     db.CreateItem.create(item, auth.id)
     for {
       id <- item.id
       slotitemId <- item.slotitemId
     } {
       db.SlotItem.create(auth.id, id, slotitemId)
+    }
+    Res.success
+  }
+
+  def createItems = authAndParse[List[CreateItem]] { case (auth, items) =>
+    items.foreach { item =>
+      db.CreateItem.create(item, auth.id)
+      for {
+        id <- item.id if id > 0
+        slotitemId <- item.slotitemId if slotitemId > 0
+      } {
+        db.SlotItem.create(auth.id, id, slotitemId)
+      }
     }
     Res.success
   }
