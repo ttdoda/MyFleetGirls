@@ -17,7 +17,7 @@ case class CreateItem(
     createFlag: Boolean, flagship: Int) {
   def materialSummary: String = s"$fuel/$ammo/$steel/$bauxite"
   def summary: String = Pretty(
-    Map(("成功", slotitemId.getOrElse(-1) != -1), ("資材", materialSummary)) ++
+    Map(("成功", slotitemId.isDefined), ("資材", materialSummary)) ++
       slotitemId.map(i => Map(("ItemID", i))).getOrElse(Map())
   )
 }
@@ -47,10 +47,9 @@ case class CreateSlotItem(id: Int, slotitemId: Int)
 object CreateSlotItem {
   implicit val formats = DefaultFormats
   def fromJson(obj: JValue): Option[CreateSlotItem] = {
-    Try {
-      val id = (obj \ "api_id").extract[Int]
-      val slotitemId = (obj \ "api_slotitem_id").extract[Int]
-      CreateSlotItem(id, slotitemId)
-    }.toOption
+    for {
+      id <- (obj \ "api_id").extractOpt[Int] if id > 0
+      slotitemId <- (obj \ "api_slotitem_id").extractOpt[Int] if slotitemId > 0
+    } yield CreateSlotItem(id, slotitemId)
   }
 }
