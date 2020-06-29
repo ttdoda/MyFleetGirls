@@ -69,7 +69,7 @@ jqplotOpt =
 
 restoreURLParam = ->
   param = fromURLParameter(location.hash.replace(/^\#/, ''))
-  param.lv = if param.lv? then decodeURIComponent(param.lv) else ""
+  param.lv ?= ""
   if param.modal?
     if param.fleet?
       $('#modal').modal({remote: "fleet/#{param.id}"})
