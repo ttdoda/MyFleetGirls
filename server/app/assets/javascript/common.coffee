@@ -7,6 +7,6 @@
   obj = {}
   for kv in str.split('&')
     ary = kv.split('=')
-    key = ary.shift()
-    obj[key] = ary.join('=')
+    key = decodeURIComponent(ary.shift())
+    obj[key] = decodeURIComponent(ary.join('='))
   obj
