@@ -78,7 +78,8 @@ vueSettings =
       location.hash = toURLParameter(param)
     restoreHash: ->
       param = fromURLParameter(location.hash.replace(/^\#/, ''))
-      @query = if param.query? then decodeURIComponent(param.query) else @query
+      if param.query?
+        @query = param.query
       @shipId = param.ship ? @shipId
       @itemId = param.item ? @itemId
       if param.from
