@@ -4,8 +4,14 @@
 function FindProxyForURL(url, host) {
 
   @for(server <- servers) {
-    if ( isInNet(host, "@(server.ip)","255.255.255.255") ) {
-      return "PROXY 127.0.0.1:@{port}";
+    @if(server.isFQDN) {
+      if ( localHostOrDomainIs(host, "@(server.ip)") ) {
+	return "PROXY 127.0.0.1:@{port}";
+      }
+    } else {
+      if ( isInNet(host, "@(server.ip)","255.255.255.255") ) {
+	return "PROXY 127.0.0.1:@{port}";
+      }
     }
   }
 
