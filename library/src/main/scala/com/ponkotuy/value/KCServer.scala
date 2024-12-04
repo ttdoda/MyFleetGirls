@@ -7,7 +7,7 @@ import org.slf4j.{Logger, LoggerFactory}
 /**
  * Date: 14/06/10
  */
-case class KCServer(number: Int, ip: String, name: String)
+case class KCServer(number: Int, ip: String, name: String, isFQDN: Boolean)
 
 object KCServer {
   val configName = "kc-server"
@@ -24,8 +24,9 @@ object KCServer {
       val number = config.getInt("number")
       val ip = config.getString("ip")
       val name = config.getString("name")
+      val isFQDN = config.getBoolean("isFQDN")
       logger.debug(s"add server. number: ${number}, ip: ${ip}, name: ${name}")
-      KCServer(number,ip,name)
+      KCServer(number,ip,name,isFQDN)
     }
     serverList
   }
