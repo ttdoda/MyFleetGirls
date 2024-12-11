@@ -55,7 +55,7 @@ if ! cmp -s $pub_jar $orig_jar ; then
     mv $pub_zip/MyFleetGirls.zip $pub_zip/MyFleetGirls.zip.old
     eval $nice zip -j $pub_zip/MyFleetGirls.zip $pub_files
     eval cp $orig_jar $pub_files $pub_client/
-    eval pack200 -J-Xms128M -J-Xmx512M --gzip server/public/client/MyFleetGirls.jar.pack.gz server/public/client/MyFleetGirls.jar
+    # eval pack200 -J-Xms128M -J-Xmx512M --gzip server/public/client/MyFleetGirls.jar.pack.gz server/public/client/MyFleetGirls.jar
 fi
 
 $nice $sbt -java-home $JAVA_HOME clean
