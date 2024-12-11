@@ -28,7 +28,7 @@ public class Connection {
 
     static URLConnection withRedirect(URL url, long lastModified) throws IOException {
         URLConnection conn = url.openConnection();
-        conn.setRequestProperty("Accept-Encoding", "pack200-gzip, gzip");
+        conn.setRequestProperty("Accept-Encoding", "gzip");
         conn.setRequestProperty("User-Agent", USER_AGENT);
         conn.setUseCaches(false);
         conn.setIfModifiedSince(lastModified);
